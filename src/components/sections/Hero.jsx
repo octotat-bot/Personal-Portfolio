@@ -110,7 +110,7 @@ export default function Hero() {
                                 className="relative w-80 md:w-96 aspect-[3/4] rounded-lg overflow-hidden bg-gray-900 border border-white/10"
                             >
                                 <motion.img
-                                    src="/mukund_photo_1765773847066.png"
+                                    src="/mk_profile.png"
                                     alt="Mukund Mangla"
                                     className="w-full h-full object-cover" // Removed grayscale filter
                                     whileHover={{ scale: 1.05 }}
