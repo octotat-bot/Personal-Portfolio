@@ -66,6 +66,22 @@ export const projects = [
     },
     {
         id: 2,
+        title: "SmartResume",
+        category: "AI-Powered Tool",
+        description: "An intelligent resume builder powered by AI that helps users create professional, ATS-friendly resumes. Features include AI-powered content suggestions, multiple templates, real-time preview, and PDF export functionality for seamless job applications.",
+        technologies: ["React", "Node.js", "Express", "MongoDB", "Gemini AI", "Vite"],
+        image: "/smartresume.png",
+        link: "https://smartresume-rouge.vercel.app/",
+        github: "https://github.com/octotat-bot/SmartResume",
+        featured: true,
+        stats: {
+            ai: "Gemini",
+            templates: "Multiple",
+            export: "PDF"
+        }
+    },
+    {
+        id: 3,
         title: "Notora",
         category: "Web Application",
         description: "A modern note-taking application built with React.js and Clerk authentication. Features include creating notes, organizing them into notebooks, and locking sensitive notes for enhanced privacy. Designed with a minimal, responsive interface for efficient note management.",
@@ -81,7 +97,7 @@ export const projects = [
         }
     },
     {
-        id: 3,
+        id: 4,
         title: "Task flow",
         category: "Productivity",
         description: "An intuitive and efficient task management experience built with React.js and Clerk. Features include light/dark mode, task creation with due dates, sorting, and filtering. Designed for flexibility and productivity with a responsive, user-friendly interface.",
@@ -94,38 +110,6 @@ export const projects = [
             users: "Active",
             experience: "Smooth",
             platform: "Web"
-        }
-    },
-    {
-        id: 4,
-        title: "Smart Fitness Tracker",
-        category: "Mobile App",
-        description: "Cross-platform fitness application with AI-powered workout recommendations, progress tracking, and social features.",
-        technologies: ["React Native", "TensorFlow", "Firebase", "Node.js", "PostgreSQL"],
-        image: "/projects/fitness-tracker.jpg",
-        link: "https://example.com",
-        github: "https://github.com",
-        featured: true,
-        stats: {
-            downloads: "50K+",
-            rating: "4.7/5",
-            retention: "68%"
-        }
-    },
-    {
-        id: 5,
-        title: "Blockchain Explorer",
-        category: "Web3",
-        description: "Advanced blockchain explorer with transaction tracking, wallet analytics, and smart contract interaction capabilities.",
-        technologies: ["React", "Web3.js", "GraphQL", "Node.js", "Ethereum"],
-        image: "/projects/blockchain-explorer.jpg",
-        link: "https://example.com",
-        github: "https://github.com",
-        featured: true,
-        stats: {
-            transactions: "1M+",
-            networks: "5",
-            accuracy: "100%"
         }
     }
 ];
