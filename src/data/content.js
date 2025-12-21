@@ -70,7 +70,7 @@ export const projects = [
         category: "AI-Powered Tool",
         description: "An intelligent resume builder powered by AI that helps users create professional, ATS-friendly resumes. Features include AI-powered content suggestions, multiple templates, real-time preview, and PDF export functionality for seamless job applications.",
         technologies: ["React", "Node.js", "Express", "MongoDB", "Gemini AI", "Vite"],
-        image: "/smartresume.png",
+        image: "/projects/SmartResume.png",
         link: "https://smartresume-rouge.vercel.app/",
         github: "https://github.com/octotat-bot/SmartResume",
         featured: true,
