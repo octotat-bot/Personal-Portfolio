@@ -11,6 +11,13 @@
     cursor: none;
   }
 
+  /* Show regular cursor on touch devices */
+  @media (hover: none) and (pointer: coarse) {
+    body {
+      cursor: auto;
+    }
+  }
+
   html {
     scroll-behavior: smooth;
   }

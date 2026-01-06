@@ -12,11 +12,11 @@ export default function Hero() {
                 }} />
             </div>
 
-            <div className="container mx-auto px-6 lg:px-12 relative z-10">
-                <div className="grid grid-cols-12 gap-8 items-center min-h-screen py-20">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center min-h-screen py-16 lg:py-20">
 
                     {/* Left Side - Text */}
-                    <div className="col-span-12 lg:col-span-7 space-y-12">
+                    <div className="lg:col-span-7 space-y-8 lg:space-y-12 order-2 lg:order-1">
 
                         {/* Status Label */}
                         <motion.div
@@ -33,9 +33,9 @@ export default function Hero() {
                                 <span className="text-xs font-medium text-gray-300 tracking-wide">AVAILABLE FOR WORK</span>
                             </div>
 
-                            <div className="h-px w-8 bg-gray-800 hidden sm:block"></div>
+                            <div className="h-px w-8 bg-gray-800 hidden md:block"></div>
 
-                            <div className="text-xs text-gray-500 tracking-widest uppercase flex items-center gap-2">
+                            <div className="text-xs text-gray-500 tracking-widest uppercase hidden sm:flex items-center gap-2">
                                 <span>Based in India</span>
                                 <span className="text-lg leading-none">🇮🇳</span>
                             </div>
@@ -44,7 +44,7 @@ export default function Hero() {
                         {/* Title */}
                         <div className="relative">
                             <motion.h1
-                                className="text-5xl md:text-8xl font-bold text-white tracking-tight leading-none"
+                                className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight leading-none"
                                 initial={{ opacity: 0, x: -50 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -52,7 +52,7 @@ export default function Hero() {
                                 MUKUND
                             </motion.h1>
                             <motion.h1
-                                className="text-5xl md:text-8xl font-bold text-gray-500 tracking-tight leading-none"
+                                className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-gray-500 tracking-tight leading-none"
                                 initial={{ opacity: 0, x: 50 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.8, delay: 0.4 }}
@@ -63,7 +63,7 @@ export default function Hero() {
 
                         {/* Description */}
                         <motion.div
-                            className="max-w-md ml-auto"
+                            className="max-w-md ml-0 lg:ml-auto"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.8, delay: 0.8 }}
@@ -76,43 +76,43 @@ export default function Hero() {
 
                         {/* Stats */}
                         <motion.div
-                            className="grid grid-cols-2 gap-8 max-w-lg"
+                            className="grid grid-cols-2 gap-4 sm:gap-8 max-w-lg"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.8, delay: 1 }}
                         >
-                            <div className="border-l border-gray-800 pl-4">
-                                <div className="text-2xl font-bold text-white">225+</div>
+                            <div className="border-l border-gray-800 pl-3 sm:pl-4">
+                                <div className="text-xl sm:text-2xl font-bold text-white">225+</div>
                                 <div className="text-xs text-gray-600 mt-1">LeetCode</div>
                             </div>
-                            <div className="border-l border-gray-800 pl-4">
-                                <div className="text-2xl font-bold text-white">10+</div>
+                            <div className="border-l border-gray-800 pl-3 sm:pl-4">
+                                <div className="text-xl sm:text-2xl font-bold text-white">10+</div>
                                 <div className="text-xs text-gray-600 mt-1">technologies</div>
                             </div>
                         </motion.div>
                     </div>
 
                     {/* Right Side - Photo (Original Style + Lines) */}
-                    <div className="col-span-12 lg:col-span-5 relative hidden lg:flex items-center justify-center h-full min-h-[500px]">
+                    <div className="lg:col-span-5 relative flex items-center justify-center h-auto lg:h-full min-h-[300px] lg:min-h-[500px] order-1 lg:order-2">
 
                         {/* Frame Lines container */}
-                        <div className="relative p-6 border border-white/5 rounded-2xl">
+                        <div className="relative p-4 lg:p-6 border border-white/5 rounded-2xl">
                             {/* Corner Accents */}
-                            <div className="absolute top-0 left-0 w-4 h-4 border-t border-l border-white/40 rounded-tl-lg" />
-                            <div className="absolute top-0 right-0 w-4 h-4 border-t border-r border-white/40 rounded-tr-lg" />
-                            <div className="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-white/40 rounded-bl-lg" />
-                            <div className="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-white/40 rounded-br-lg" />
+                            <div className="absolute top-0 left-0 w-3 lg:w-4 h-3 lg:h-4 border-t border-l border-white/40 rounded-tl-lg" />
+                            <div className="absolute top-0 right-0 w-3 lg:w-4 h-3 lg:h-4 border-t border-r border-white/40 rounded-tr-lg" />
+                            <div className="absolute bottom-0 left-0 w-3 lg:w-4 h-3 lg:h-4 border-b border-l border-white/40 rounded-bl-lg" />
+                            <div className="absolute bottom-0 right-0 w-3 lg:w-4 h-3 lg:h-4 border-b border-r border-white/40 rounded-br-lg" />
 
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ duration: 0.8, delay: 0.5 }}
-                                className="relative w-80 md:w-96 aspect-[3/4] rounded-lg overflow-hidden bg-gray-900 border border-white/10"
+                                className="relative w-48 sm:w-64 md:w-80 lg:w-96 aspect-[3/4] rounded-lg overflow-hidden bg-gray-900 border border-white/10"
                             >
                                 <motion.img
                                     src="/mk_profile.png"
                                     alt="Mukund Mangla"
-                                    className="w-full h-full object-cover" // Removed grayscale filter
+                                    className="w-full h-full object-cover"
                                     whileHover={{ scale: 1.05 }}
                                     transition={{ duration: 0.7 }}
                                 />

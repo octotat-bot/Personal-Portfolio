@@ -16,7 +16,7 @@ export default function Skills() {
                 }} />
             </div>
 
-            <div ref={ref} className="container mx-auto px-6 lg:px-12 relative z-10">
+            <div ref={ref} className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
 
                 {/* Section Label */}
                 <motion.div
@@ -31,10 +31,10 @@ export default function Skills() {
                     </div>
                 </motion.div>
 
-                <div className="grid grid-cols-12 gap-16">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
 
                     {/* Left Column - Large Number */}
-                    <div className="col-span-12 lg:col-span-3">
+                    <div className="hidden lg:block lg:col-span-3">
                         <motion.div
                             className="sticky top-32"
                             initial={{ opacity: 0 }}
@@ -48,7 +48,7 @@ export default function Skills() {
                     </div>
 
                     {/* Right Column - Skills */}
-                    <div className="col-span-12 lg:col-span-9 space-y-1">
+                    <div className="lg:col-span-9 space-y-1">
                         {skills.map((skill, index) => (
                             <motion.div
                                 key={skill.id}
@@ -57,7 +57,7 @@ export default function Skills() {
                                 animate={isInView ? { opacity: 1, x: 0 } : {}}
                                 transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
                             >
-                                <div className="py-8 flex items-start justify-between gap-8">
+                                <div className="py-6 lg:py-8 flex flex-col lg:flex-row items-start justify-between gap-4 lg:gap-8">
 
                                     {/* Left - Icon & Title */}
                                     <div className="flex items-start gap-6 flex-1">
@@ -65,7 +65,7 @@ export default function Skills() {
                                             {skill.icon}
                                         </span>
                                         <div className="flex-1">
-                                            <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-gray-300 transition-colors">
+                                            <h3 className="text-xl lg:text-2xl font-bold text-white mb-2 group-hover:text-gray-300 transition-colors">
                                                 {skill.category}
                                             </h3>
                                             {(skill.highlights || skill.highlight) && (
@@ -131,11 +131,11 @@ export default function Skills() {
                                     </div>
 
                                     {/* Right - Technologies & Achievement */}
-                                    <div className="hidden md:block">
-                                        <div className="flex flex-col items-end gap-6">
+                                    <div className="w-full lg:w-auto">
+                                        <div className="flex flex-col items-start lg:items-end gap-4 lg:gap-6">
 
                                             {/* Technologies List */}
-                                            <div className="flex flex-wrap gap-2 max-w-xs justify-end">
+                                            <div className="flex flex-wrap gap-2 max-w-full lg:max-w-xs lg:justify-end">
                                                 {skill.technologies.map((tech, i) => (
                                                     <span
                                                         key={i}
@@ -147,9 +147,11 @@ export default function Skills() {
                                                 ))}
                                             </div>
 
-                                            {/* 3D Holographic Card */}
+                                            {/* 3D Holographic Card - Hidden on mobile */}
                                             {skill.achievement && (
-                                                <AchievementCard achievement={skill.achievement} />
+                                                <div className="hidden lg:block">
+                                                    <AchievementCard achievement={skill.achievement} />
+                                                </div>
                                             )}
                                         </div>
                                     </div>
@@ -164,21 +166,21 @@ export default function Skills() {
 
                 {/* Bottom Stats */}
                 <motion.div
-                    className="mt-32 grid grid-cols-3 gap-8 max-w-2xl ml-auto"
+                    className="mt-16 lg:mt-32 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl mx-auto lg:ml-auto lg:mr-0"
                     initial={{ opacity: 0, y: 30 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.8, delay: 1.2 }}
                 >
-                    <div className="text-right border-r border-gray-900 pr-8">
-                        <div className="text-5xl font-bold text-white mb-2">4+</div>
+                    <div className="text-center sm:text-right sm:border-r border-gray-900 sm:pr-8">
+                        <div className="text-4xl lg:text-5xl font-bold text-white mb-2">4+</div>
                         <div className="text-xs text-gray-600 uppercase tracking-wider">Areas</div>
                     </div>
-                    <div className="text-right border-r border-gray-900 pr-8">
-                        <div className="text-5xl font-bold text-white mb-2">10+</div>
+                    <div className="text-center sm:text-right sm:border-r border-gray-900 sm:pr-8">
+                        <div className="text-4xl lg:text-5xl font-bold text-white mb-2">10+</div>
                         <div className="text-xs text-gray-600 uppercase tracking-wider">Technologies</div>
                     </div>
-                    <div className="text-right pr-8">
-                        <div className="text-5xl font-bold text-white mb-2">225+</div>
+                    <div className="text-center sm:text-right sm:pr-8">
+                        <div className="text-4xl lg:text-5xl font-bold text-white mb-2">225+</div>
                         <div className="text-xs text-gray-600 uppercase tracking-wider">LeetCode</div>
                     </div>
                 </motion.div>

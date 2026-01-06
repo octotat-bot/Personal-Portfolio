@@ -7,7 +7,7 @@ export default function Projects() {
     const ref = useRef(null);
     return (
         <section id="work" className="relative bg-black py-32 overflow-hidden">
-            <div ref={ref} className="container mx-auto px-6 lg:px-12 relative z-10">
+            <div ref={ref} className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
 
                 {/* Section Label */}
                 <motion.div
@@ -22,9 +22,9 @@ export default function Projects() {
                     </div>
                 </motion.div>
 
-                <div className="grid grid-cols-12 gap-12 lg:gap-20 relative">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-20 relative">
                     {/* Left Column - Sticky Number */}
-                    <div className="col-span-12 lg:col-span-4 hidden lg:block relative z-0">
+                    <div className="hidden lg:block lg:col-span-4 relative z-0">
                         <motion.div
                             className="sticky top-32"
                             initial={{ opacity: 0 }}
@@ -38,10 +38,10 @@ export default function Projects() {
                     </div>
 
                     {/* Right Column - Content */}
-                    <div className="col-span-12 lg:col-span-8 relative z-10">
+                    <div className="lg:col-span-8 relative z-10">
 
                         {/* Projects List */}
-                        <div className="space-y-32">
+                        <div className="space-y-16 lg:space-y-32">
                             {projects.map((project, index) => (
                                 <ProjectItem key={project.id} project={project} index={index} />
                             ))}
@@ -52,7 +52,7 @@ export default function Projects() {
                             initial={{ opacity: 0 }}
                             whileInView={{ opacity: 1 }}
                             transition={{ duration: 0.8 }}
-                            className="mt-32 flex justify-center lg:justify-start"
+                            className="mt-16 lg:mt-32 flex justify-center lg:justify-start"
                         >
                             <Magnetic>
                                 <a
@@ -94,7 +94,7 @@ function ProjectItem({ project, index }) {
         <motion.div
             ref={ref}
             style={{ opacity, scale, y }}
-            className={`flex flex-col ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-12 lg:gap-16 items-center perspective-1000`}
+            className={`flex flex-col gap-8 lg:gap-12 xl:gap-16 items-center perspective-1000 ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}
         >
             {/* Image Section with 3D Tilt */}
             <div className="w-full lg:w-3/5 group relative perspective-1000">
@@ -153,14 +153,14 @@ function ProjectItem({ project, index }) {
             </div>
 
             {/* Content Section with Staggered Entrance */}
-            <div className={`w-full lg:w-2/5 flex flex-col ${isEven ? 'items-start text-left' : 'items-end text-right'}`}>
+            <div className="w-full lg:w-2/5 flex flex-col items-center text-center lg:items-start lg:text-left">
 
                 {/* Index Number */}
                 <motion.div
-                    initial={{ opacity: 0, x: isEven ? -50 : 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="mb-6"
+                    className="mb-4 lg:mb-6"
                 >
                     <div className="text-xs font-mono text-amber-500/80 mb-2 tracking-widest uppercase">Featured Project</div>
                     <div className="text-6xl font-black text-white/20 font-mono select-none">
@@ -173,7 +173,7 @@ function ProjectItem({ project, index }) {
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.1 }}
-                    className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight leading-none"
+                    className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 lg:mb-6 tracking-tight leading-none"
                 >
                     {project.title}
                 </motion.h3>
@@ -183,7 +183,7 @@ function ProjectItem({ project, index }) {
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
-                    className={`flex flex-wrap gap-2 mb-8 ${isEven ? 'justify-start' : 'justify-end'}`}
+                    className="flex flex-wrap gap-2 mb-6 lg:mb-8 justify-center lg:justify-start"
                 >
                     {project.technologies.slice(0, 4).map((tech, i) => (
                         <div
@@ -200,7 +200,7 @@ function ProjectItem({ project, index }) {
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.3 }}
-                    className="text-gray-400 leading-relaxed text-base md:text-lg mb-8 max-w-md"
+                    className="text-gray-400 leading-relaxed text-sm sm:text-base md:text-lg mb-6 lg:mb-8 max-w-md"
                 >
                     {project.description}
                 </motion.p>
@@ -211,7 +211,7 @@ function ProjectItem({ project, index }) {
                         initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.4 }}
-                        className={`grid grid-cols-2 gap-8 pt-8 border-t border-gray-800 w-full ${isEven ? '' : 'text-right'}`}
+                        className="grid grid-cols-2 gap-4 lg:gap-8 pt-6 lg:pt-8 border-t border-gray-800 w-full"
                     >
                         {Object.entries(project.stats).slice(0, 2).map(([key, value], i) => (
                             <div key={i}>

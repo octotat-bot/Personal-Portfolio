@@ -29,7 +29,7 @@ export default function About() {
                 }} />
             </div>
 
-            <div ref={ref} className="container mx-auto px-6 lg:px-12 relative z-10">
+            <div ref={ref} className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
 
                 {/* Section Label */}
                 <motion.div
@@ -44,7 +44,7 @@ export default function About() {
                     </div>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
 
                     {/* Numbering Column (Restored) */}
                     <div className="hidden lg:block col-span-2">
@@ -69,7 +69,7 @@ export default function About() {
                             animate={isInView ? { opacity: 1, y: 0 } : {}}
                             transition={{ duration: 0.8, delay: 0.2 }}
                         >
-                            <h2 className="text-4xl md:text-5xl font-bold text-white leading-tight mb-8">
+                            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight mb-6 lg:mb-8">
                                 {aboutContent.intro.split(' ').map((word, i) => (
                                     <motion.span
                                         key={i}
@@ -128,7 +128,7 @@ export default function About() {
                     </div>
 
                     {/* RIGHT COLUMN: Journey Timeline */}
-                    <div className="col-span-1 md:col-span-6 lg:col-span-6 relative">
+                    <div className="col-span-1 md:col-span-6 lg:col-span-6 relative mt-8 md:mt-0">
                         <motion.div
                             className="lg:sticky lg:top-32"
                             initial={{ opacity: 0, x: 50 }}
@@ -144,7 +144,7 @@ export default function About() {
                                 {timeline.map((item, index) => (
                                     <motion.div
                                         key={index}
-                                        className="relative pl-12"
+                                        className="relative pl-8 lg:pl-12"
                                         initial={{ opacity: 0, x: 20 }}
                                         animate={isInView ? { opacity: 1, x: 0 } : {}}
                                         transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
@@ -159,7 +159,7 @@ export default function About() {
                                             <span className="inline-block px-3 py-1 text-[10px] font-bold tracking-wider text-black bg-white rounded-full mb-3">
                                                 {item.year}
                                             </span>
-                                            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-gray-300 transition-colors">
+                                            <h3 className="text-lg lg:text-xl font-bold text-white mb-2 group-hover:text-gray-300 transition-colors">
                                                 {item.title}
                                             </h3>
                                             <p className="text-sm text-gray-500 leading-relaxed">

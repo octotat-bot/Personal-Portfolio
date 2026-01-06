@@ -77,7 +77,7 @@ export default function Contact() {
                 }} />
             </div>
 
-            <div ref={ref} className="container mx-auto px-6 lg:px-12 relative z-10">
+            <div ref={ref} className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
 
                 {/* Section Label */}
                 <motion.div
@@ -92,10 +92,10 @@ export default function Contact() {
                     </div>
                 </motion.div>
 
-                <div className="grid grid-cols-12 gap-16">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
 
                     {/* Left Column - Large Number */}
-                    <div className="col-span-12 lg:col-span-3">
+                    <div className="hidden lg:block lg:col-span-3">
                         <motion.div
                             className="sticky top-32"
                             initial={{ opacity: 0 }}
@@ -109,7 +109,7 @@ export default function Contact() {
                     </div>
 
                     {/* Right Column - Contact */}
-                    <div className="col-span-12 lg:col-span-9">
+                    <div className="lg:col-span-9">
 
                         {/* Large CTA */}
                         <motion.div
@@ -118,13 +118,13 @@ export default function Contact() {
                             animate={isInView ? { opacity: 1, y: 0 } : {}}
                             transition={{ duration: 0.8, delay: 0.4 }}
                         >
-                            <h2 className="text-5xl md:text-7xl font-bold text-white leading-tight mb-8">
+                            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6 lg:mb-8">
                                 Let's work<br />
                                 <span className="text-gray-600 gradient-text-animated">together</span>
                             </h2>
                         </motion.div>
 
-                        <div className="grid md:grid-cols-2 gap-16">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16">
 
                             {/* Contact Info */}
                             <motion.div
