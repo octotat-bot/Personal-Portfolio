@@ -66,18 +66,18 @@ export const projects = [
     },
     {
         id: 2,
-        title: "SmartResume",
-        category: "AI-Powered Tool",
-        description: "An intelligent resume builder powered by AI that helps users create professional, ATS-friendly resumes. Features include AI-powered content suggestions, multiple templates, real-time preview, and PDF export functionality for seamless job applications.",
-        technologies: ["React", "Node.js", "Express", "MongoDB", "Gemini AI", "Vite"],
-        image: "/projects/SmartResume.png",
-        link: "https://smartresume-rouge.vercel.app/",
-        github: "https://github.com/octotat-bot/SmartResume",
+        title: "Balancio",
+        category: "Finance & Utility",
+        description: "Balancio is a full-stack expense-splitting app built with the MERN stack. It enables users to create groups, add friends, track shared expenses, and settle debts with real-time balance calculations. Key features include group chat, smart debt simplification, spending analytics, and a fully responsive mobile-first design.",
+        technologies: ["React", "Node.js", "MongoDB", "Socket.io", "Zustand", "Framer Motion"],
+        image: "/projects/Balancio.jpg",
+        link: "https://balancio-three.vercel.app/auth",
+        github: "https://github.com/octotat-bot/balancio",
         featured: true,
         stats: {
-            ai: "Gemini",
-            templates: "Multiple",
-            export: "PDF"
+            sync: "Real-time",
+            split: "Smart",
+            design: "Mobile-1st"
         }
     },
     {
