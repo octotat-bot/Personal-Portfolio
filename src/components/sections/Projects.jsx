@@ -5,11 +5,21 @@ import Magnetic from '../Magnetic';
 
 export default function Projects() {
     const ref = useRef(null);
+
+    // Section-level scroll for the "03" number parallax
+    const { scrollYProgress } = useScroll({
+        target: ref,
+        offset: ["start end", "end start"]
+    });
+
+    const numberY = useTransform(scrollYProgress, [0, 1], [100, -100]);
+    const numberOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+
     return (
         <section id="work" className="relative bg-black py-32 overflow-hidden">
             <div ref={ref} className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
 
-                {/* Section Label */}
+                {/* Section Label with Animated Line */}
                 <motion.div
                     className="mb-20"
                     initial={{ opacity: 0, x: -50 }}
@@ -18,18 +28,22 @@ export default function Projects() {
                 >
                     <div className="flex items-center gap-4">
                         <span className="text-xs tracking-[0.3em] text-gray-600 uppercase">Selected Works</span>
-                        <div className="flex-1 h-px bg-gray-900" />
+                        <motion.div
+                            className="flex-1 h-px bg-gray-900"
+                            initial={{ scaleX: 0 }}
+                            whileInView={{ scaleX: 1 }}
+                            transition={{ duration: 1, delay: 0.2 }}
+                            style={{ transformOrigin: "left" }}
+                        />
                     </div>
                 </motion.div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 xl:gap-20 relative">
-                    {/* Left Column - Sticky Number */}
+                    {/* Left Column - Sticky Number with Parallax */}
                     <div className="hidden lg:block lg:col-span-4 relative z-0">
                         <motion.div
                             className="sticky top-32"
-                            initial={{ opacity: 0 }}
-                            whileInView={{ opacity: 1 }}
-                            transition={{ duration: 1, delay: 0.2 }}
+                            style={{ y: numberY, opacity: numberOpacity }}
                         >
                             <div className="text-[8rem] lg:text-[10rem] xl:text-[12rem] font-bold leading-none text-white/5 gradient-text-animated select-none pointer-events-none">
                                 03

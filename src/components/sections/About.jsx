@@ -13,6 +13,11 @@ export default function About() {
     const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
     const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
 
+    // Enhanced "01" parallax
+    const numberY = useTransform(scrollYProgress, [0, 1], [150, -150]);
+    const numberOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
+    const numberScale = useTransform(scrollYProgress, [0, 0.5, 1], [0.8, 1, 0.8]);
+
     return (
         <section id="about" className="relative bg-black py-32 overflow-hidden">
             {/* Animated Background Elements */}
@@ -31,7 +36,7 @@ export default function About() {
 
             <div ref={ref} className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
 
-                {/* Section Label */}
+                {/* Section Label with Animated Line */}
                 <motion.div
                     className="mb-20"
                     initial={{ opacity: 0, x: -50 }}
@@ -40,21 +45,25 @@ export default function About() {
                 >
                     <div className="flex items-center gap-4">
                         <span className="text-xs tracking-[0.3em] text-gray-600 uppercase">About</span>
-                        <div className="flex-1 h-px bg-gray-900" />
+                        <motion.div
+                            className="flex-1 h-px bg-gray-900"
+                            initial={{ scaleX: 0 }}
+                            animate={isInView ? { scaleX: 1 } : {}}
+                            transition={{ duration: 1, delay: 0.2 }}
+                            style={{ transformOrigin: "left" }}
+                        />
                     </div>
                 </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
 
-                    {/* Numbering Column (Restored) */}
+                    {/* Numbering Column with Enhanced Parallax */}
                     <div className="hidden lg:block col-span-2">
                         <motion.div
                             className="sticky top-32"
-                            initial={{ opacity: 0 }}
-                            animate={isInView ? { opacity: 1 } : {}}
-                            transition={{ duration: 1, delay: 0.2 }}
+                            style={{ y: numberY, opacity: numberOpacity, scale: numberScale }}
                         >
-                            <div className="text-[10rem] font-bold leading-none text-white/5 gradient-text-animated">
+                            <div className="text-[10rem] font-bold leading-none text-white/5 gradient-text-animated select-none">
                                 01
                             </div>
                         </motion.div>

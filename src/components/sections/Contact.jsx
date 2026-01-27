@@ -1,6 +1,51 @@
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { useRef, useState } from 'react';
 import { contactInfo } from '../../data/content';
+
+// Animated letter component for wave effect
+function AnimatedLetter({ letter, index, isInView }) {
+    return (
+        <motion.span
+            className="inline-block"
+            initial={{ opacity: 0, y: 50, rotateX: -90 }}
+            animate={isInView ? {
+                opacity: 1,
+                y: 0,
+                rotateX: 0,
+            } : {}}
+            transition={{
+                duration: 0.6,
+                delay: 0.5 + index * 0.03,
+                type: "spring",
+                stiffness: 100,
+                damping: 12
+            }}
+            whileHover={{
+                scale: 1.1,
+                color: "#fff",
+                transition: { duration: 0.2 }
+            }}
+        >
+            {letter === " " ? "\u00A0" : letter}
+        </motion.span>
+    );
+}
+
+// Animated word that handles full words
+function AnimatedWord({ word, startIndex, isInView, className }) {
+    return (
+        <span className={className}>
+            {word.split("").map((letter, i) => (
+                <AnimatedLetter
+                    key={startIndex + i}
+                    letter={letter}
+                    index={startIndex + i}
+                    isInView={isInView}
+                />
+            ))}
+        </span>
+    );
+}
 
 export default function Contact() {
     const ref = useRef(null);
@@ -10,6 +55,15 @@ export default function Contact() {
     const [submitStatus, setSubmitStatus] = useState(null); // 'success' or 'error'
     const [errors, setErrors] = useState({});
     const [emailCopied, setEmailCopied] = useState(false);
+
+    // Scroll-linked parallax for the "04" number
+    const { scrollYProgress } = useScroll({
+        target: ref,
+        offset: ["start end", "end start"]
+    });
+
+    const numberY = useTransform(scrollYProgress, [0, 1], [100, -100]);
+    const numberOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
 
     const validateForm = () => {
         const newErrors = {};
@@ -88,21 +142,25 @@ export default function Contact() {
                 >
                     <div className="flex items-center gap-4">
                         <span className="text-xs tracking-[0.3em] text-gray-600 uppercase">Get In Touch</span>
-                        <div className="flex-1 h-px bg-gray-900" />
+                        <motion.div
+                            className="flex-1 h-px bg-gray-900"
+                            initial={{ scaleX: 0 }}
+                            animate={isInView ? { scaleX: 1 } : {}}
+                            transition={{ duration: 1, delay: 0.2 }}
+                            style={{ transformOrigin: "left" }}
+                        />
                     </div>
                 </motion.div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
 
-                    {/* Left Column - Large Number */}
+                    {/* Left Column - Large Number with Parallax */}
                     <div className="hidden lg:block lg:col-span-3">
                         <motion.div
                             className="sticky top-32"
-                            initial={{ opacity: 0 }}
-                            animate={isInView ? { opacity: 1 } : {}}
-                            transition={{ duration: 1, delay: 0.2 }}
+                            style={{ y: numberY, opacity: numberOpacity }}
                         >
-                            <div className="text-[12rem] font-bold leading-none text-white/5 gradient-text-animated">
+                            <div className="text-[12rem] font-bold leading-none text-white/5 gradient-text-animated select-none">
                                 04
                             </div>
                         </motion.div>
@@ -111,16 +169,27 @@ export default function Contact() {
                     {/* Right Column - Contact */}
                     <div className="lg:col-span-9">
 
-                        {/* Large CTA */}
+                        {/* Large CTA with Wave Typography Animation */}
                         <motion.div
                             className="mb-20"
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={isInView ? { opacity: 1, y: 0 } : {}}
-                            transition={{ duration: 0.8, delay: 0.4 }}
+                            initial={{ opacity: 0 }}
+                            animate={isInView ? { opacity: 1 } : {}}
+                            transition={{ duration: 0.3 }}
                         >
-                            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6 lg:mb-8">
-                                Let's work<br />
-                                <span className="text-gray-600 gradient-text-animated">together</span>
+                            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 lg:mb-8" style={{ perspective: "1000px" }}>
+                                <div className="text-white overflow-hidden">
+                                    <AnimatedWord word="Let's" startIndex={0} isInView={isInView} className="" />
+                                    <span> </span>
+                                    <AnimatedWord word="work" startIndex={6} isInView={isInView} className="" />
+                                </div>
+                                <div className="overflow-hidden">
+                                    <AnimatedWord
+                                        word="together"
+                                        startIndex={11}
+                                        isInView={isInView}
+                                        className="text-gray-600 gradient-text-animated"
+                                    />
+                                </div>
                             </h2>
                         </motion.div>
 
