@@ -157,7 +157,7 @@ export default function Hero() {
                                 className="relative w-48 sm:w-64 md:w-80 lg:w-96 aspect-[3/4] rounded-lg overflow-hidden bg-gray-900 border border-white/10"
                             >
                                 <motion.img
-                                    src="/mk_profile.png"
+                                    src="/mk_profile_old.jpg"
                                     alt="Mukund Mangla"
                                     className="w-full h-full object-cover"
                                     whileHover={{ scale: 1.05 }}
