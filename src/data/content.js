@@ -50,6 +50,22 @@ export const skills = [
 export const projects = [
     {
         id: 1,
+        title: "HabitFlow",
+        category: "Productivity & Growth",
+        description: "An AI-powered habit tracking operating system designed to gamify personal growth through structured routines, rich analytics, and intelligent insights.",
+        technologies: ["React", "Node.js", "MongoDB", "Express", "Tailwind CSS"],
+        image: "/projects/habitflow.jpg",
+        link: "https://habitflow-one-omega.vercel.app",
+        github: "https://github.com/octotat-bot/habitflow",
+        featured: true,
+        stats: {
+            insights: "AI-Powered",
+            tracking: "Gamified",
+            analytics: "Rich"
+        }
+    },
+    {
+        id: 2,
         title: "Ember",
         category: "Cafe Management",
         description: "Ember is a premium, real-time cafe management system built with the MERN stack and Socket.io. It features role-based dashboards to seamlessly connect cashiers, kitchen staff, and management. Live order tracking eliminates paper tickets, synchronizing the front-of-house with a dedicated Kitchen Display System. The application is wrapped in a highly polished, responsive, and dynamic light-themed user interface.",
@@ -65,7 +81,7 @@ export const projects = [
         }
     },
     {
-        id: 2,
+        id: 3,
         title: "OpsPilot",
         category: "Enterprise Operations",
         description: "A comprehensive internal operations platform featuring role-based access control (RBAC), multi-level approval workflows, and real-time resource management. Streamlines organizational processes with automated reporting and secure data handling.",
@@ -81,7 +97,7 @@ export const projects = [
         }
     },
     {
-        id: 3,
+        id: 4,
         title: "Balancio",
         category: "Finance & Utility",
         description: "Balancio is a full-stack expense-splitting app built with the MERN stack. It enables users to create groups, add friends, track shared expenses, and settle debts with real-time balance calculations. Key features include group chat, smart debt simplification, spending analytics, and a fully responsive mobile-first design.",
@@ -94,22 +110,6 @@ export const projects = [
             sync: "Real-time",
             split: "Smart",
             design: "Mobile-1st"
-        }
-    },
-    {
-        id: 4,
-        title: "Notora",
-        category: "Web Application",
-        description: "A modern note-taking application built with React.js and Clerk authentication. Features include creating notes, organizing them into notebooks, and locking sensitive notes for enhanced privacy. Designed with a minimal, responsive interface for efficient note management.",
-        technologies: ["React", "JavaScript", "HTML", "CSS", "Clerk"],
-        image: "/projects/notora.png",
-        link: "https://notora-two.vercel.app/",
-        github: "https://github.com/octotat-bot/notora",
-        featured: true,
-        stats: {
-            privacy: "Encrypted",
-            sync: "Real-time",
-            uptime: "99.9%"
         }
     }
 ];
