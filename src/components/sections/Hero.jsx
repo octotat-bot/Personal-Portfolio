@@ -8,17 +8,17 @@ export default function Hero() {
 
     useEffect(() => {
         // Fetch real-time LeetCode stats
-        fetch("https://leetcode-stats-api.herokuapp.com/Hakka123")
+        fetch("https://alfa-leetcode-api.onrender.com/Hakka123/solved")
             .then(res => res.json())
             .then(data => {
-                if (data.status === "success") {
-                    setLeetCodeStats({ count: data.totalSolved, label: "LeetCode Solved" });
+                if (data && data.solvedProblem) {
+                    setLeetCodeStats({ count: data.solvedProblem, label: "LeetCode Solved" });
                 }
             })
             .catch(() => console.log("LeetCode fetch failed, using fallback"));
 
         // Fetch GitHub latest push activity
-        fetch("https://api.github.com/users/mukundmangla/events/public")
+        fetch("https://api.github.com/users/octotat-bot/events/public")
             .then(res => res.json())
             .then(data => {
                 if (Array.isArray(data)) {
