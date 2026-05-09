@@ -1,5 +1,5 @@
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { aboutContent, timeline } from '../../data/content';
 
 export default function About() {
@@ -9,6 +9,19 @@ export default function About() {
         target: ref,
         offset: ["start end", "end start"]
     });
+
+    const [leetCodeSolved, setLeetCodeSolved] = useState("225+");
+
+    useEffect(() => {
+        fetch("https://alfa-leetcode-api.onrender.com/Hakka123/solved")
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.solvedProblem) {
+                    setLeetCodeSolved(data.solvedProblem);
+                }
+            })
+            .catch(() => {});
+    }, []);
 
     const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
     const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
@@ -110,7 +123,9 @@ export default function About() {
                                     className="group relative p-6 border border-gray-900 hover:border-white/20 bg-white/5 hover:bg-white/10 transition-all duration-500"
                                     whileHover={{ y: -5 }}
                                 >
-                                    <div className="text-3xl font-bold text-white mb-2">{stat.value}</div>
+                                    <div className="text-3xl font-bold text-white mb-2">
+                                        {stat.label === "LeetCode Solved" ? leetCodeSolved : stat.value}
+                                    </div>
                                     <div className="text-[10px] text-gray-600 uppercase tracking-wider">{stat.label}</div>
                                 </motion.div>
                             ))}

@@ -4,10 +4,10 @@ export const skills = [
         category: "DSA & Problem Solving",
         icon: "🧠",
         technologies: ["Data Structures", "Algorithms", "LeetCode", "Python", "JavaScript"],
-        description: "Strong foundation in data structures and algorithms with 225+ LeetCode problems solved. Expertise in optimizing code complexity and solving challenging algorithmic problems.",
+        description: "Strong foundation in data structures and algorithms with hundreds of LeetCode problems solved. Expertise in optimizing code complexity and solving challenging algorithmic problems.",
         color: "from-white to-gray-400",
         highlights: [
-            { text: "225+ LeetCode Solutions", link: "https://leetcode.com/u/Hakka123/" }
+            { text: "View LeetCode Profile", link: "https://leetcode.com/u/Hakka123/" }
         ],
         achievement: {
             title: "Speed Demon",

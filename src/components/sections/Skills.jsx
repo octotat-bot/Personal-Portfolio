@@ -1,5 +1,5 @@
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { skills } from '../../data/content';
 
 // Individual skill item with scroll-linked progress bar
@@ -180,6 +180,18 @@ function SkillItem({ skill, index, containerRef }) {
 export default function Skills() {
     const ref = useRef(null);
     const isInView = useInView(ref, { once: true, margin: '-100px' });
+    const [leetCodeSolved, setLeetCodeSolved] = useState("225+");
+
+    useEffect(() => {
+        fetch("https://alfa-leetcode-api.onrender.com/Hakka123/solved")
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.solvedProblem) {
+                    setLeetCodeSolved(data.solvedProblem);
+                }
+            })
+            .catch(() => {});
+    }, []);
 
     // Section-level scroll for the "02" number parallax
     const { scrollYProgress } = useScroll({
@@ -258,7 +270,7 @@ export default function Skills() {
                     {[
                         { value: "4+", label: "Areas" },
                         { value: "10+", label: "Technologies" },
-                        { value: "225+", label: "LeetCode" }
+                        { value: leetCodeSolved, label: "LeetCode" }
                     ].map((stat, i) => (
                         <motion.div
                             key={stat.label}
