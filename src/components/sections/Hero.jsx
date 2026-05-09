@@ -159,7 +159,7 @@ export default function Hero() {
                                 <motion.img
                                     src="/mk_profile.jpg"
                                     alt="Mukund Mangla"
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-cover object-top"
                                     whileHover={{ scale: 1.05 }}
                                     transition={{ duration: 0.7 }}
                                 />
