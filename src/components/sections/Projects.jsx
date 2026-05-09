@@ -113,7 +113,8 @@ function ProjectItem({ project, index }) {
             {/* Image Section with 3D Tilt */}
             <div className="w-full lg:w-3/5 group relative perspective-1000">
                 <motion.div
-                    className="relative overflow-hidden rounded-xl aspect-[16/10] bg-gray-900 shadow-2xl"
+                    className="relative overflow-hidden rounded-xl aspect-[16/10] bg-gray-900 shadow-2xl cursor-none"
+                    data-cursor-text="VIEW"
                     style={{
                         rotateX: rotateX,
                         transformStyle: "preserve-3d"

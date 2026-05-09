@@ -1,8 +1,44 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 export default function Hero() {
     const sectionRef = useRef(null);
+    const [leetCodeStats, setLeetCodeStats] = useState({ count: "225+", label: "LeetCode" });
+    const [githubActivity, setGithubActivity] = useState({ text: "10+", label: "Technologies" });
+
+    useEffect(() => {
+        // Fetch real-time LeetCode stats
+        fetch("https://leetcode-stats-api.herokuapp.com/Hakka123")
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    setLeetCodeStats({ count: data.totalSolved, label: "LeetCode Solved" });
+                }
+            })
+            .catch(() => console.log("LeetCode fetch failed, using fallback"));
+
+        // Fetch GitHub latest push activity
+        fetch("https://api.github.com/users/mukundmangla/events/public")
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    const pushEvents = data.filter(e => e.type === "PushEvent");
+                    if (pushEvents.length > 0) {
+                        const lastPush = new Date(pushEvents[0].created_at);
+                        const isToday = new Date().toDateString() === lastPush.toDateString();
+                        const diffDays = Math.floor((new Date() - lastPush) / (1000 * 60 * 60 * 24));
+                        
+                        let text = "";
+                        if (isToday) text = "Today";
+                        else if (diffDays === 1) text = "Yesterday";
+                        else text = `${diffDays}d ago`;
+
+                        setGithubActivity({ text, label: "Last Code Push" });
+                    }
+                }
+            })
+            .catch(() => console.log("GitHub fetch failed, using fallback"));
+    }, []);
 
     // Track scroll progress within the hero section
     const { scrollYProgress } = useScroll({
@@ -114,7 +150,7 @@ export default function Hero() {
                             </p>
                         </motion.div>
 
-                        {/* Stats - Slide down and fade */}
+                        {/* Stats - Slide down and fade (Now Live Data) */}
                         <motion.div
                             className="grid grid-cols-2 gap-4 sm:gap-8 max-w-lg"
                             initial={{ opacity: 0, y: 20 }}
@@ -122,13 +158,23 @@ export default function Hero() {
                             transition={{ duration: 0.8, delay: 1 }}
                             style={{ opacity: statsOpacity, y: statsY }}
                         >
-                            <div className="border-l border-gray-800 pl-3 sm:pl-4">
-                                <div className="text-xl sm:text-2xl font-bold text-white">225+</div>
-                                <div className="text-xs text-gray-600 mt-1">LeetCode</div>
+                            <div className="border-l border-gray-800 pl-3 sm:pl-4 group relative">
+                                <div className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+                                    {leetCodeStats.count}
+                                    {leetCodeStats.label === "LeetCode Solved" && (
+                                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" title="Live Data" />
+                                    )}
+                                </div>
+                                <div className="text-xs text-gray-600 mt-1">{leetCodeStats.label}</div>
                             </div>
-                            <div className="border-l border-gray-800 pl-3 sm:pl-4">
-                                <div className="text-xl sm:text-2xl font-bold text-white">10+</div>
-                                <div className="text-xs text-gray-600 mt-1">technologies</div>
+                            <div className="border-l border-gray-800 pl-3 sm:pl-4 group relative">
+                                <div className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+                                    {githubActivity.text}
+                                    {githubActivity.label === "Last Code Push" && (
+                                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" title="Live Data" />
+                                    )}
+                                </div>
+                                <div className="text-xs text-gray-600 mt-1">{githubActivity.label}</div>
                             </div>
                         </motion.div>
                     </div>

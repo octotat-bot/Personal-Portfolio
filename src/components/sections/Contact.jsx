@@ -1,5 +1,6 @@
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { useRef, useState } from 'react';
+import useSound from 'use-sound';
 import { contactInfo } from '../../data/content';
 
 // Animated letter component for wave effect
@@ -55,6 +56,8 @@ export default function Contact() {
     const [submitStatus, setSubmitStatus] = useState(null); // 'success' or 'error'
     const [errors, setErrors] = useState({});
     const [emailCopied, setEmailCopied] = useState(false);
+    
+    const [playSend] = useSound('/sounds/send.mp3', { volume: 0.3 });
 
     // Scroll-linked parallax for the "04" number
     const { scrollYProgress } = useScroll({
@@ -120,6 +123,7 @@ export default function Contact() {
             const result = await response.json();
             
             if (result.success) {
+                playSend();
                 setSubmitStatus('success');
                 setFormData({ name: '', email: '', message: '' });
                 setErrors({});

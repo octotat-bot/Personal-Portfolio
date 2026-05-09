@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function CustomCursor() {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [isHovering, setIsHovering] = useState(false);
+    const [cursorText, setCursorText] = useState("");
 
     useEffect(() => {
         const updateMousePosition = (e) => {
@@ -11,6 +12,16 @@ export default function CustomCursor() {
         };
 
         const handleMouseOver = (e) => {
+            // Check for specific text to show inside cursor
+            const textElement = e.target.closest('[data-cursor-text]');
+            if (textElement) {
+                setCursorText(textElement.getAttribute('data-cursor-text'));
+                setIsHovering(true);
+                return;
+            } else {
+                setCursorText("");
+            }
+
             // Check if hovering over interactive elements
             if (
                 e.target.tagName === 'A' ||
@@ -38,11 +49,13 @@ export default function CustomCursor() {
         <>
             {/* Main Cursor Dot */}
             <motion.div
-                className="fixed top-0 left-0 w-2 h-2 bg-white rounded-full pointer-events-none z-[9999] mix-blend-difference"
+                className="fixed top-0 left-0 w-2 h-2 bg-white rounded-full pointer-events-none z-[9999] mix-blend-difference flex items-center justify-center overflow-hidden"
                 animate={{
-                    x: mousePosition.x - 4,
-                    y: mousePosition.y - 4,
-                    scale: isHovering ? 0.5 : 1,
+                    x: mousePosition.x - (cursorText ? 40 : 4),
+                    y: mousePosition.y - (cursorText ? 40 : 4),
+                    scale: isHovering && !cursorText ? 0.5 : 1,
+                    width: cursorText ? 80 : 8,
+                    height: cursorText ? 80 : 8,
                 }}
                 transition={{
                     type: 'spring',
@@ -50,7 +63,20 @@ export default function CustomCursor() {
                     damping: 28,
                     mass: 0.5,
                 }}
-            />
+            >
+                <AnimatePresence>
+                    {cursorText && (
+                        <motion.span
+                            initial={{ opacity: 0, scale: 0 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0 }}
+                            className="text-[10px] font-bold tracking-widest text-black whitespace-nowrap"
+                        >
+                            {cursorText}
+                        </motion.span>
+                    )}
+                </AnimatePresence>
+            </motion.div>
 
             {/* Outer Ring */}
             <motion.div
@@ -58,8 +84,8 @@ export default function CustomCursor() {
                 animate={{
                     x: mousePosition.x - 16,
                     y: mousePosition.y - 16,
-                    scale: isHovering ? 1.5 : 1,
-                    opacity: isHovering ? 0.5 : 0.3,
+                    scale: isHovering && !cursorText ? 1.5 : (cursorText ? 0 : 1),
+                    opacity: isHovering && !cursorText ? 0.5 : (cursorText ? 0 : 0.3),
                 }}
                 transition={{
                     type: 'spring',
