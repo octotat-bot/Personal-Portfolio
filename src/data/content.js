@@ -50,6 +50,22 @@ export const skills = [
 export const projects = [
     {
         id: 1,
+        title: "Ember",
+        category: "Cafe Management",
+        description: "Ember is a premium, real-time cafe management system built with the MERN stack and Socket.io. It features role-based dashboards to seamlessly connect cashiers, kitchen staff, and management. Live order tracking eliminates paper tickets, synchronizing the front-of-house with a dedicated Kitchen Display System. The application is wrapped in a highly polished, responsive, and dynamic light-themed user interface.",
+        technologies: ["React", "Node.js", "Express", "MongoDB", "Socket.io", "Tailwind CSS"],
+        image: "/projects/ember.png",
+        link: "https://ember-mu-lilac.vercel.app/login",
+        github: "https://github.com/octotat-bot/ember",
+        featured: true,
+        stats: {
+            realtime: "Socket.io",
+            roles: "RBAC",
+            stack: "MERN"
+        }
+    },
+    {
+        id: 2,
         title: "OpsPilot",
         category: "Enterprise Operations",
         description: "A comprehensive internal operations platform featuring role-based access control (RBAC), multi-level approval workflows, and real-time resource management. Streamlines organizational processes with automated reporting and secure data handling.",
@@ -65,7 +81,7 @@ export const projects = [
         }
     },
     {
-        id: 2,
+        id: 3,
         title: "Balancio",
         category: "Finance & Utility",
         description: "Balancio is a full-stack expense-splitting app built with the MERN stack. It enables users to create groups, add friends, track shared expenses, and settle debts with real-time balance calculations. Key features include group chat, smart debt simplification, spending analytics, and a fully responsive mobile-first design.",
@@ -81,7 +97,7 @@ export const projects = [
         }
     },
     {
-        id: 3,
+        id: 4,
         title: "Notora",
         category: "Web Application",
         description: "A modern note-taking application built with React.js and Clerk authentication. Features include creating notes, organizing them into notebooks, and locking sensitive notes for enhanced privacy. Designed with a minimal, responsive interface for efficient note management.",
@@ -94,22 +110,6 @@ export const projects = [
             privacy: "Encrypted",
             sync: "Real-time",
             uptime: "99.9%"
-        }
-    },
-    {
-        id: 4,
-        title: "Task flow",
-        category: "Productivity",
-        description: "An intuitive and efficient task management experience built with React.js and Clerk. Features include light/dark mode, task creation with due dates, sorting, and filtering. Designed for flexibility and productivity with a responsive, user-friendly interface.",
-        technologies: ["React", "JavaScript", "HTML", "CSS", "Clerk"],
-        image: "/projects/task-flow.png",
-        link: "https://task-manager-app-rosy-kappa.vercel.app/",
-        github: "https://github.com/octotat-bot/task-manager-app",
-        featured: true,
-        stats: {
-            users: "Active",
-            experience: "Smooth",
-            platform: "Web"
         }
     }
 ];
