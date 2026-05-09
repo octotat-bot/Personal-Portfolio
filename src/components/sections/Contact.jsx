@@ -101,18 +101,36 @@ export default function Contact() {
         setIsSubmitting(true);
         setSubmitStatus(null);
 
-        // Simple mailto fallback - opens email client
-        const mailtoLink = `mailto:${contactInfo.email}?subject=Portfolio Contact from ${encodeURIComponent(formData.name)}&body=${encodeURIComponent(formData.message)}%0A%0AFrom: ${encodeURIComponent(formData.email)}`;
-
-        window.location.href = mailtoLink;
-
-        // Reset form and show success
-        setTimeout(() => {
-            setFormData({ name: '', email: '', message: '' });
-            setErrors({});
-            setSubmitStatus('success');
+        try {
+            const response = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                },
+                body: JSON.stringify({
+                    // Web3Forms access key
+                    access_key: "68e731ee-beab-45d7-9c57-50081bd8d3de",
+                    name: formData.name,
+                    email: formData.email,
+                    message: formData.message,
+                }),
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                setSubmitStatus('success');
+                setFormData({ name: '', email: '', message: '' });
+                setErrors({});
+            } else {
+                setSubmitStatus('error');
+            }
+        } catch (error) {
+            setSubmitStatus('error');
+        } finally {
             setIsSubmitting(false);
-        }, 500);
+        }
     };
 
     const copyEmail = () => {
