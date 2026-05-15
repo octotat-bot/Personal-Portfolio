@@ -268,8 +268,8 @@ export default function Skills() {
                     transition={{ duration: 0.8, delay: 0.8 }}
                 >
                     {[
-                        { value: "4+", label: "Areas" },
-                        { value: "10+", label: "Technologies" },
+                        { value: "15+", label: "LLM Integrations" },
+                        { value: "20+", label: "AI Workflows" },
                         { value: leetCodeSolved, label: "LeetCode" }
                     ].map((stat, i) => (
                         <motion.div

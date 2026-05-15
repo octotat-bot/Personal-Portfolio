@@ -145,8 +145,8 @@ export default function Hero() {
                             transition={{ duration: 0.8, delay: 0.8 }}
                         >
                             <p className="text-gray-400 leading-relaxed text-sm md:text-base">
-                                Crafting digital experiences with clean code and creative solutions.
-                                Specialized in full-stack development with a strong foundation in algorithms.
+                                AI Engineer & Full-Stack Developer specializing in Agentic workflows, RAG, and high-performance intelligent applications.
+                                Bridging the gap between complex ML models and premium user experiences.
                             </p>
                         </motion.div>
 

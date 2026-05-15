@@ -204,25 +204,26 @@ export default function About() {
 
 
 const techStackCategories = {
-    'Frontend': [
-        'React',
-        'JavaScript',
-        'HTML/CSS',
-        'Three.js',
-        'Figma'
+    'AI & Agentic': [
+        'LangGraph',
+        'LangChain',
+        'RAG',
+        'ReAct',
+        'Prompt Eng.',
+        'n8n'
     ],
-    'Backend': [
-        'Node.js',
-        'Express',
+    'ML & Models': [
         'Python',
-        'REST API',
-        'SQL/NoSQL'
+        'PyTorch',
+        'Scikit-Learn',
+        'Transformers',
+        'LLMs (Llama/GPT)'
     ],
-    'Tools & Others': [
-        'Git',
+    'Web & Systems': [
+        'React',
+        'Node.js',
         'MongoDB',
-        'Pandas',
-        'VS Code',
-        'Postman'
+        'Socket.io',
+        'Express'
     ]
 };
