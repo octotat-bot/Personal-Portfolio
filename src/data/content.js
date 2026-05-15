@@ -50,6 +50,22 @@ export const skills = [
 export const projects = [
     {
         id: 1,
+        title: "Grief Companion",
+        category: "AI & Mental Health",
+        description: "Grief Companion is an AI-powered writing instrument designed to help users find the right words during difficult life transitions. Built with the MERN stack and Groq AI, it features real-time SSE streaming, A/B tone comparison, and a custom RAG service. The app prioritizes empathy and focus with a premium parchment-and-gold aesthetic and a distraction-free, zero-scroll layout.",
+        technologies: ["React", "Node.js", "MongoDB", "Groq AI", "Express", "Vanilla CSS"],
+        image: "/projects/griefcompanion.png",
+        link: "https://grief-companion-two.vercel.app/",
+        github: "https://github.com/octotat-bot/grief-companion",
+        featured: true,
+        stats: {
+            llm: "Llama 3",
+            rag: "Custom",
+            ui: "Premium"
+        }
+    },
+    {
+        id: 2,
         title: "HabitFlow",
         category: "Productivity & Growth",
         description: "An AI-powered habit tracking operating system designed to gamify personal growth through structured routines, rich analytics, and intelligent insights.",
@@ -65,7 +81,7 @@ export const projects = [
         }
     },
     {
-        id: 2,
+        id: 3,
         title: "Ember",
         category: "Cafe Management",
         description: "Ember is a premium, real-time cafe management system built with the MERN stack and Socket.io. It features role-based dashboards to seamlessly connect cashiers, kitchen staff, and management. Live order tracking eliminates paper tickets, synchronizing the front-of-house with a dedicated Kitchen Display System. The application is wrapped in a highly polished, responsive, and dynamic light-themed user interface.",
@@ -81,7 +97,7 @@ export const projects = [
         }
     },
     {
-        id: 3,
+        id: 4,
         title: "OpsPilot",
         category: "Enterprise Operations",
         description: "A comprehensive internal operations platform featuring role-based access control (RBAC), multi-level approval workflows, and real-time resource management. Streamlines organizational processes with automated reporting and secure data handling.",
@@ -94,22 +110,6 @@ export const projects = [
             users: "RBAC",
             security: "JWT",
             workflow: "Auto"
-        }
-    },
-    {
-        id: 4,
-        title: "Balancio",
-        category: "Finance & Utility",
-        description: "Balancio is a full-stack expense-splitting app built with the MERN stack. It enables users to create groups, add friends, track shared expenses, and settle debts with real-time balance calculations. Key features include group chat, smart debt simplification, spending analytics, and a fully responsive mobile-first design.",
-        technologies: ["React", "Node.js", "MongoDB", "Socket.io", "Zustand", "Framer Motion"],
-        image: "/projects/Balancio.jpg",
-        link: "https://balancio-three.vercel.app/auth",
-        github: "https://github.com/octotat-bot/balancio",
-        featured: true,
-        stats: {
-            sync: "Real-time",
-            split: "Smart",
-            design: "Mobile-1st"
         }
     }
 ];
