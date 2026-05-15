@@ -54,7 +54,7 @@ export const projects = [
         category: "AI & Mental Health",
         description: "Grief Companion is an AI-powered writing instrument designed to help users find the right words during difficult life transitions. Built with the MERN stack and Groq AI, it features real-time SSE streaming, A/B tone comparison, and a custom RAG service. The app prioritizes empathy and focus with a premium parchment-and-gold aesthetic and a distraction-free, zero-scroll layout.",
         technologies: ["React", "Node.js", "MongoDB", "Groq AI", "Express", "Vanilla CSS"],
-        image: "/projects/griefcompanion.png",
+        image: "/projects/griefcompanion.jpg",
         link: "https://grief-companion-two.vercel.app/",
         github: "https://github.com/octotat-bot/grief-companion",
         featured: true,
