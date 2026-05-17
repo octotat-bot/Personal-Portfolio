@@ -7,6 +7,7 @@ export default function Navigation() {
     const [activeCanvas, setActiveCanvas] = useState(false);
     const [activeSection, setActiveSection] = useState('home');
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isMapFullscreen, setIsMapFullscreen] = useState(false);
 
     // Scroll Progress
     const { scrollYProgress } = useScroll();
@@ -27,6 +28,17 @@ export default function Navigation() {
                         setActiveSection(section);
                     }
                 }
+            }
+
+            // Hide navbar when Projects map is in fullscreen expansion phase
+            const projectsEl = document.getElementById('projects');
+            if (projectsEl) {
+                const rect = projectsEl.getBoundingClientRect();
+                const totalHeight = projectsEl.offsetHeight;
+                const scrolledIn = -rect.top; // how many px we've scrolled into the section
+                const progress = scrolledIn / totalHeight;
+                // Hide between 30% (expansion starts) and 95% (exit begins)
+                setIsMapFullscreen(progress > 0.28 && progress < 0.95);
             }
         };
 
@@ -54,8 +66,8 @@ export default function Navigation() {
         <>
             <motion.nav
                 initial={{ y: -100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
+                animate={isMapFullscreen ? { y: -120, opacity: 0 } : { y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                 className="fixed top-6 left-0 right-0 z-50 flex justify-center pointer-events-none"
             >
                 <div

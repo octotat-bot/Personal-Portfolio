@@ -28,7 +28,7 @@ function App() {
         )}
       </AnimatePresence>
 
-      <div className="relative bg-black text-white overflow-hidden">
+      <div className="relative bg-black text-white overflow-x-clip">
         {/* Sorting Visualizer Background - Full App */}
         <div className="fixed inset-0 z-0 flex items-end pb-0">
           <SortingBackground />

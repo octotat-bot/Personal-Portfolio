@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useScroll, useInView } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion';
 import { FaGithub, FaExternalLinkAlt, FaTimes, FaMapSigns, FaSatelliteDish, FaNetworkWired, FaCodeBranch } from 'react-icons/fa';
 
 const lines = {
@@ -144,126 +144,246 @@ const getConnectedStations = (targetStation) => {
     );
 };
 
+// --- BACKGROUND CITYSCAPE DATA ---
+const seededRandom = (seed) => {
+    let x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
+};
+
+const techLabels = ["REACT", "NODE.JS", "PYTHON", "MONGO", "AWS", "DOCKER", "REDIS", "GRAPHQL", "NEXT.JS", "VITE", "SQL", "TYPESCRIPT", "TAILWIND", "KUBERNETES", "KAFKA", "LINUX", "RUST", "GOLANG", "AZURE", "VERCEL"];
+
+// Massive dense background city! ALL rendered behind the tracks so they never obscure the path.
+const backgroundBuildings = Array.from({ length: 250 }).map((_, i) => {
+    const hasGlow = seededRandom(i * 10 + 4) > 0.8;
+    const isTech = hasGlow || seededRandom(i * 10 + 5) > 0.6; // More tech buildings
+    return {
+        x: seededRandom(i * 10) * 1000,
+        y: seededRandom(i * 10 + 1) * 800,
+        width: 8 + seededRandom(i * 10 + 2) * 18,
+        height: 20 + seededRandom(i * 10 + 3) * 140,
+        hasGlow,
+        label: isTech ? techLabels[Math.floor(seededRandom(i * 10 + 6) * techLabels.length)] : ""
+    };
+});
+
+// We no longer use foregroundBuildings so they don't block the tracks! The tracks will float clearly over the city.
+const foregroundBuildings = [];
+
+// Isometric Skyscraper Component for Background Theme City
+const CityBuilding = ({ x, y, width, height, hasGlow, label }) => {
+    const w = width;
+    const h = height;
+    
+    // Determine building tech color
+    const techColors = {
+        "REACT": "#00f3ff", "NEXT.JS": "#00f3ff", "VITE": "#00f3ff", "TAILWIND": "#00f3ff",
+        "PYTHON": "#b026ff", "TENSORFLOW": "#b026ff", "OPENAI": "#b026ff", 
+        "NODE.JS": "#00ff66", "MONGO": "#00ff66", "DOCKER": "#00ff66", "AWS": "#00ff66", "SQL": "#00ff66", "REDIS": "#00ff66", "GRAPHQL": "#00ff66", "KUBERNETES": "#00ff66", "KAFKA": "#00ff66", "LINUX": "#00ff66", "RUST": "#00ff66", "GOLANG": "#00ff66", "AZURE": "#00ff66", "VERCEL": "#00ff66"
+    };
+    const baseColor = label ? (techColors[label] || "#ffffff") : (hasGlow ? "#00f3ff" : "#ffffff");
+    
+    // Randomize blinking windows based on position seed
+    const hasWindows = seededRandom(x + y) > 0.4;
+    
+    return (
+        <g transform={`translate(${x}, ${y})`} className="opacity-100" style={{ pointerEvents: 'none' }}>
+            {/* Left Face */}
+            <polygon points={`0,0 -${w},-${w*0.5} -${w},-${w*0.5 + h} 0,-${h}`} fill="#050505" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+            {/* Right Face */}
+            <polygon points={`0,0 ${w},-${w*0.5} ${w},-${w*0.5 + h} 0,-${h}`} fill="#080808" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+            {/* Top Face */}
+            <polygon points={`0,-${h} -${w},-${w*0.5 + h} 0,-${w + h} ${w},-${w*0.5 + h}`} fill="#111111" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+            
+            {/* Grid Lines / Blinking Windows */}
+            {hasWindows && (
+                <g className="opacity-40">
+                    <path d={`M -${w*0.5},-${w*0.25} L -${w*0.5},-${w*0.25 + h - 5}`} stroke={baseColor} strokeWidth="1.5" strokeDasharray="3 6" />
+                    <path d={`M ${w*0.5},-${w*0.25} L ${w*0.5},-${w*0.25 + h - 5}`} stroke={baseColor} strokeWidth="1.5" strokeDasharray="3 6" />
+                </g>
+            )}
+
+            {/* Glowing Inner Core on Top */}
+            {hasGlow && (
+                <polygon points={`0,-${h + 2} -${w - 5},-${w*0.5 + h + 2} 0,-${w + h - 2} ${w - 5},-${w*0.5 + h + 2}`} fill={baseColor} opacity="0.4" filter="blur(4px)" />
+            )}
+
+            {/* Floating Tech Label */}
+            {label && (
+                <text x="0" y={-(h + w + 15)} fill={baseColor} opacity="0.9" fontSize="9" fontFamily="monospace" textAnchor="middle" style={{ textShadow: `0 0 8px ${baseColor}` }}>{label}</text>
+            )}
+        </g>
+    );
+};
+
 export default function Projects() {
+  const containerWrapperRef = useRef(null);
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
+  
+  const { scrollYProgress: stickyScroll } = useScroll({
+      target: containerWrapperRef,
+      offset: ["start start", "end end"]
+  });
+
   const { scrollYProgress } = useScroll({
-      target: sectionRef,
+      target: containerWrapperRef,
       offset: ["start end", "end start"]
   });
-  const numberY = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const numberOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  
+
+
+  // CORRECT EXPANSION APPROACH:
+  // The map is always fullscreen underneath.
+  // A clip-path mask REVEALS it as the user scrolls.
+  // Internal content NEVER scales — only the visible window grows.
+  // All transforms are clamped to [0.2, 0.6] — beyond 0.6 nothing changes.
+
+  const clipInset = useTransform(
+    stickyScroll,
+    [0, 0.2, 0.6],
+    ['35% 15% 20% 15%', '35% 15% 20% 15%', '0% 0% 0% 0%']
+  );
+
+  const mapBorderRadius = useTransform(stickyScroll, [0.2, 0.6], ['2rem', '0rem']);
+  const headerOpacity = useTransform(stickyScroll, [0, 0.2], [1, 0]);
+  const headerY = useTransform(stickyScroll, [0, 0.2], [0, -30]);
+  const hudOpacity = useTransform(stickyScroll, [0.35, 0.6], [0, 1]);
+
+  // City Boot Sequence Animations
+  const cityFogOpacity = useTransform(stickyScroll, [0.2, 0.6], [0, 1]);
+  const cityDronesOpacity = useTransform(stickyScroll, [0.2, 0.6], [0, 1]);
+
+  // Derived clip-path motion value — fully reactive, no .get() calls inside render
+  const clipPathValue = useTransform(
+    [clipInset, mapBorderRadius],
+    ([inset, radius]) => `inset(${inset} round ${radius})`
+  );
 
   const [activeStation, setActiveStation] = useState(null);
   const [hoveredStation, setHoveredStation] = useState(null);
-  
-  // Parallax Setup
-  const containerRef = useRef(null);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  
-  // Spring config for smooth parallax
-  const springConfig = { damping: 25, stiffness: 100 };
-  const smoothX = useSpring(mouseX, springConfig);
-  const smoothY = useSpring(mouseY, springConfig);
-  
-  const rotateX = useTransform(smoothY, [-500, 500], [5, -5]);
-  const rotateY = useTransform(smoothX, [-500, 500], [-5, 5]);
+  const [isTerminalHovered, setIsTerminalHovered] = useState(false);
+  const [isTerminalClicked, setIsTerminalClicked] = useState(false);
+  const [githubStats, setGithubStats] = useState({ repos: "...", status: "INITIALIZING_UPLINK..." });
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        // Calculate mouse position relative to center of container
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        mouseX.set(e.clientX - centerX);
-        mouseY.set(e.clientY - centerY);
-      }
+      fetch('https://api.github.com/users/octotat-bot')
+          .then(res => res.json())
+          .then(data => {
+              if (data.public_repos) {
+                  setGithubStats({ repos: data.public_repos, status: "UPLINK_ESTABLISHED" });
+              }
+          })
+          .catch(() => {
+              setGithubStats({ repos: "140+", status: "OFFLINE_CACHE" });
+          });
+  }, []);
+
+  // Disable background scrolling when modal is open
+  useEffect(() => {
+    if (activeStation) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [mouseX, mouseY]);
+  }, [activeStation]);
+  
+  // Parallax Setup
 
   return (
-    <section id="projects" className="relative bg-black py-32 overflow-hidden selection:bg-cyan-500/30">
+    <section id="projects" ref={containerWrapperRef} className="relative bg-black selection:bg-cyan-500/30" style={{ height: '250vh' }}>
       
-      {/* Minimal Grid to match website aesthetic */}
-      <div className="absolute inset-0 opacity-5 z-0">
-          <div className="absolute inset-0" style={{
-              backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-              backgroundSize: '50px 50px'
-          }} />
-      </div>
+      {/* Sticky Container */}
+      <div className="sticky top-0 w-full h-screen overflow-hidden flex flex-col justify-center items-center">
 
-      <div ref={sectionRef} className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10 w-full">
-        
-        {/* Section Label */}
-        <motion.div
-            className="mb-20"
-            initial={{ opacity: 0, x: -50 }}
+          {/* Background grid */}
+          <div className="absolute inset-0 opacity-5 z-0">
+              <div className="absolute inset-0" style={{
+                  backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
+                  backgroundSize: '50px 50px'
+              }} />
+          </div>
+
+          {/* Section Label — top left, matches other sections */}
+          <motion.div
+            className="absolute top-8 left-6 z-30 pointer-events-none"
+            initial={{ opacity: 0, x: -30 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
-        >
+            style={{ opacity: headerOpacity }}
+          >
             <div className="flex items-center gap-4">
-                <span className="text-xs tracking-[0.3em] text-gray-600 uppercase">Selected Works</span>
-                <motion.div
-                    className="flex-1 h-px bg-gray-900"
-                    initial={{ scaleX: 0 }}
-                    animate={isInView ? { scaleX: 1 } : {}}
-                    transition={{ duration: 1, delay: 0.2 }}
-                    style={{ transformOrigin: "left" }}
-                />
+              <span className="text-xs tracking-[0.3em] text-gray-600 uppercase">Selected Works</span>
+              <div className="w-16 h-px bg-gray-900" />
             </div>
-        </motion.div>
+          </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
-            {/* Left Column - Large Number with Parallax */}
-            <div className="hidden lg:block lg:col-span-3">
-                <motion.div
-                    className="sticky top-32"
-                    style={{ y: numberY, opacity: numberOpacity }}
-                >
-                    <div className="text-[12rem] font-bold leading-none text-white/5 gradient-text-animated select-none">
-                        03
-                    </div>
-                </motion.div>
+          {/* Title HUD — 03 + SYSTEM_MAP side by side, above the map clip area */}
+          <motion.div
+            ref={sectionRef}
+            className="absolute top-8 left-6 z-30 pointer-events-none flex flex-col gap-2"
+            style={{ opacity: headerOpacity, y: headerY }}
+          >
+            <div className="flex items-center gap-4">
+              <span className="text-[10rem] font-bold leading-none text-white/5 gradient-text-animated select-none">03</span>
+              <div className="flex flex-col gap-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 border border-cyan-500/30 text-cyan-400 text-[10px] font-mono uppercase tracking-widest backdrop-blur-sm w-fit">
+                  <FaNetworkWired className="animate-pulse" />
+                  <span>Interactive Node Network</span>
+                </div>
+                <h2 className="text-2xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-300 to-gray-600 tracking-tighter">
+                  SYSTEM_MAP
+                </h2>
+                <p className="text-gray-500 text-xs font-light">Scroll to enter the transit network</p>
+              </div>
             </div>
+          </motion.div>
 
-            {/* Right Column - Map and Content */}
-            <div className="lg:col-span-9 flex flex-col">
-                
-                {/* Header HUD */}
-                <motion.div 
-                  className="mb-12 flex flex-col items-start text-left max-w-2xl"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 1, ease: "easeOut" }}
-                >
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-cyan-400 text-xs font-mono uppercase tracking-widest mb-6 backdrop-blur-sm shadow-[0_0_15px_rgba(0,243,255,0.2)]">
-                    <FaNetworkWired className="animate-pulse" />
-                    <span>Interactive Node Network</span>
+          {/* Track Legend HUD — fades in as map expands, stays in fullscreen */}
+          <motion.div
+            className="absolute bottom-6 left-6 z-30 pointer-events-none"
+            style={{ opacity: hudOpacity }}
+          >
+            <div className="flex flex-col gap-2 bg-black/70 border border-white/10 rounded-xl px-4 py-3 backdrop-blur-md">
+              <div className="text-[9px] font-mono text-gray-500 uppercase tracking-widest mb-1 flex items-center gap-2">
+                <FaMapSigns className="text-gray-400" /> Track Class
+              </div>
+              {Object.values(lines).map(line => (
+                <div key={line.id} className="flex items-center gap-3">
+                  <div className="relative flex items-center justify-center w-8 h-3">
+                    <div className="absolute w-full h-[3px] opacity-60 blur-[2px]" style={{ backgroundColor: line.color }} />
+                    <div className="absolute w-full h-[1.5px]" style={{ backgroundColor: line.color }} />
                   </div>
-                  <h2 className="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-300 to-gray-600 tracking-tighter mb-4">
-                    SYSTEM_MAP
-                  </h2>
-                  <p className="text-gray-400 text-sm md:text-base font-light leading-relaxed">
-                    A living visualization of my technical infrastructure. Hover over nodes to analyze connections, tech stack dependencies, and active deployments across the ecosystem.
-                  </p>
-                </motion.div>
+                  <span className="text-[10px] font-mono text-gray-300 uppercase tracking-wider">{line.name}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
 
-        {/* --- LAYER 2: INTERACTIVE 3D MAP --- */}
-        <motion.div 
-            ref={containerRef}
-            style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-            className="w-full max-w-6xl relative z-20 perspective-1000"
-        >
-            <div className="w-full bg-[#050505]/80 backdrop-blur-md border border-white/10 rounded-3xl p-4 md:p-10 shadow-[0_0_80px_rgba(0,0,0,0.8)] overflow-visible">
-                
-                {/* SVG MAP CORE */}
-                <div className="w-full relative aspect-[4/3] sm:aspect-video overflow-visible">
-                    <svg viewBox="0 0 1000 800" className="w-full h-full drop-shadow-2xl overflow-visible">
+          {/* 
+            =====================================================
+            THE MAP — always fixed fullscreen, revealed via clip
+            =====================================================
+            The inner SVG map is ALWAYS 100vw x 100vh in size.
+            A clip-path mask grows to reveal it as the user scrolls.
+            Internal content NEVER scales. Only the window opens.
+          */}
+          <motion.div 
+              className="absolute inset-0 z-20"
+              style={{ clipPath: clipPathValue, willChange: 'clip-path' }}
+          >
+              {/* The Map itself — 100vw x 100vh, internal content is fixed */}
+              <div className="w-full h-full bg-[#020202] relative overflow-hidden">
+                <svg viewBox="-140 -20 1280 840" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 w-full h-full">
                         <defs>
+                            {/* Technical Grid Pattern */}
+                            <pattern id="techGrid" width="100" height="100" patternUnits="userSpaceOnUse">
+                                <path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.02)" strokeWidth="1" />
+                                <circle cx="100" cy="100" r="1.5" fill="rgba(255,255,255,0.05)" />
+                                <text x="5" y="15" fill="rgba(255,255,255,0.03)" fontSize="6" fontFamily="monospace">SYS.NET.ACTIVE</text>
+                            </pattern>
                             {/* Layered Glow Filters for Cinematic Lighting */}
                             {/* Optimized Glow Filters for Performance */}
                             <filter id="neon-glow-cyan" x="-50%" y="-50%" width="200%" height="200%">
@@ -287,7 +407,98 @@ export default function Projects() {
                                 <stop offset="0%" stopColor="#ffffff" stopOpacity="0.4" />
                                 <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
                             </linearGradient>
+                            <radialGradient id="tunnel-gradient" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stopColor="#00f3ff" stopOpacity="0.8" />
+                                <stop offset="50%" stopColor="#00f3ff" stopOpacity="0.2" />
+                                <stop offset="100%" stopColor="#020202" stopOpacity="0" />
+                            </radialGradient>
                         </defs>
+
+                        {/* Layer 0: Volumetric Fog & Atmospheric Mist */}
+                        <motion.g style={{ opacity: cityFogOpacity }}>
+                            <motion.circle cx="300" cy="200" r="400" fill="#00f3ff" filter="blur(80px)" pointerEvents="none" animate={{ opacity: [0.02, 0.08, 0.02] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
+                            <motion.circle cx="700" cy="600" r="500" fill="#b026ff" filter="blur(100px)" pointerEvents="none" animate={{ opacity: [0.01, 0.06, 0.01] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }} />
+                            <motion.circle cx="500" cy="400" r="350" fill="#00ff66" filter="blur(90px)" pointerEvents="none" animate={{ opacity: [0.02, 0.07, 0.02] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }} />
+                        </motion.g>
+
+                        {/* SVG Background Grid with Binary Rain Elements */}
+                        <rect width="100%" height="100%" fill="url(#techGrid)" rx="20" />
+
+                        {/* Ambient Flying Drones (Data Packets) */}
+                        <motion.g style={{ opacity: cityDronesOpacity }}>
+                            {Array.from({ length: 25 }).map((_, i) => (
+                                <motion.circle 
+                                    key={`drone-${i}`}
+                                    r="1.5" 
+                                    fill={seededRandom(i) > 0.5 ? "#00f3ff" : "#00ff66"}
+                                    filter="blur(1px)"
+                                    initial={{ x: seededRandom(i * 10) * 1000, y: seededRandom(i * 10 + 1) * 800, opacity: 0 }}
+                                    animate={{ 
+                                        x: seededRandom(i * 10 + 2) * 1000, 
+                                        y: seededRandom(i * 10 + 3) * 800,
+                                        opacity: [0, 0.8, 0]
+                                    }}
+                                    transition={{ 
+                                        duration: 15 + seededRandom(i) * 15, 
+                                        repeat: Infinity,
+                                        delay: seededRandom(i * 2) * 20
+                                    }}
+                                />
+                            ))}
+                        </motion.g>
+
+                        {/* --- CREATIVE AESTHETIC ELEMENTS (Background Chaos) --- */}
+                        {/* Real-World Topographic Map Contours (Tech Aesthetic) */}
+                        <g fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1" style={{ pointerEvents: 'none' }}>
+                            {/* Abstract landmass/elevation lines mimicking a satellite map */}
+                            <path d="M 0 600 Q 150 550 250 650 T 500 600 T 800 700 T 1000 600" />
+                            <path d="M 0 620 Q 150 570 250 670 T 500 620 T 800 720 T 1000 620" />
+                            <path d="M 0 640 Q 150 590 250 690 T 500 640 T 800 740 T 1000 640" />
+
+                            <path d="M 100 0 Q 200 150 400 100 T 700 200 T 1000 50" />
+                            <path d="M 120 0 Q 220 170 420 120 T 720 220 T 1000 70" />
+                            
+                            {/* Radar / Latitude arcs */}
+                            <circle cx="500" cy="400" r="300" strokeDasharray="4 20" opacity="0.5" />
+                            <circle cx="500" cy="400" r="450" strokeDasharray="2 30" opacity="0.5" />
+                        </g>
+
+                        {/* --- ISOMETRIC CITY SKYLINE --- */}
+                        {backgroundBuildings.map((building, i) => (
+                            <CityBuilding key={`building-${i}`} {...building} />
+                        ))}
+                        
+                        {/* Subtle HUD Metadata removed to prevent overlap with corner diagnostics */}
+                        
+                        {/* Corner Crosshairs */}
+                        <g stroke="rgba(0,243,255,0.3)" strokeWidth="1" fill="none">
+                            <path d="M 30 30 L 60 30 M 30 30 L 30 60" />
+                            <path d="M 970 30 L 940 30 M 970 30 L 970 60" />
+                            <path d="M 30 770 L 60 770 M 30 770 L 30 740" />
+                            <path d="M 970 770 L 940 770 M 970 770 L 970 740" />
+                        </g>
+
+                        {/* Abstract Circuit Glitch Lines */}
+                        <path d="M 100 650 L 250 650 L 300 700 L 450 700" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" strokeDasharray="5 5" />
+                        <path d="M 650 150 L 700 100 L 900 100" fill="none" stroke="rgba(0,255,102,0.05)" strokeWidth="1" strokeDasharray="2 10" />
+                        <path d="M 400 300 L 450 250 L 450 150 L 550 150" fill="none" stroke="rgba(176,38,255,0.05)" strokeWidth="1" strokeDasharray="8 4" />
+
+                        {/* Static Data Dust (Dead Nodes) */}
+                        <g fill="rgba(255,255,255,0.08)">
+                            <circle cx="150" cy="250" r="1.5" /><circle cx="280" cy="180" r="1" /><circle cx="350" cy="450" r="2" />
+                            <circle cx="750" cy="550" r="1.5" /><circle cx="820" cy="380" r="1" /><circle cx="650" cy="650" r="2" />
+                            <circle cx="850" cy="150" r="1" /><circle cx="120" cy="550" r="1.5" /><circle cx="480" cy="680" r="1" />
+                        </g>
+
+                        {/* Animated Scanning Laser */}
+                        <motion.line 
+                            x1="0" y1="0" x2="1000" y2="0" 
+                            stroke="rgba(0, 243, 255, 0.1)" strokeWidth="1" 
+                            animate={{ y1: [0, 800, 0], y2: [0, 800, 0] }} 
+                            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                            style={{ pointerEvents: 'none' }}
+                        />
+                        {/* --- END AESTHETIC ELEMENTS --- */}
 
                         {/* --- DRAW CONNECTING INTELLIGENCE LINES ON HOVER --- */}
                         <AnimatePresence>
@@ -314,6 +525,9 @@ export default function Projects() {
                             
                             return (
                                 <g key={`line-${line.id}`} style={{ opacity: isDimmed ? 0.15 : 1, transition: 'opacity 0.4s ease' }}>
+                                    
+                                    {/* Circuitry Notches underneath */}
+                                    <path d={line.path} fill="none" stroke={line.color} strokeWidth="16" strokeOpacity="0.08" strokeDasharray="2 15" strokeLinecap="round" strokeLinejoin="round" />
                                     
                                     {/* Base Structural Line (Ghost) */}
                                     <path d={line.path} fill="none" stroke={line.color} strokeWidth="12" strokeOpacity="0.05" strokeLinecap="round" strokeLinejoin="round" />
@@ -364,6 +578,11 @@ export default function Projects() {
                             );
                         })}
 
+                        {/* --- FOREGROUND BUILDINGS (Overlapping the Tracks) --- */}
+                        {foregroundBuildings.map((building, i) => (
+                            <CityBuilding key={`fg-building-${i}`} {...building} />
+                        ))}
+
                         {/* --- DRAW STATIONS --- */}
                         {stations.map((station) => {
                             const primaryLine = lines[station.lines[0]];
@@ -391,8 +610,9 @@ export default function Projects() {
                                     {/* Interchange rings for large stations */}
                                     {station.size === 'large' && (
                                         <>
-                                            <circle r={coreRadius + 8} fill="none" stroke={primaryLine.color} strokeWidth="1" strokeOpacity="0.3" strokeDasharray="4 4" className="animate-spin-slow" style={{ animationDuration: '8s' }} />
-                                            <circle r={coreRadius + 14} fill="none" stroke="#fff" strokeWidth="0.5" strokeOpacity="0.2" className="animate-reverse-spin" style={{ animationDuration: '12s' }} />
+                                            <circle r={coreRadius + 18} fill="none" stroke={primaryLine.color} strokeWidth="0.5" strokeOpacity="0.4" strokeDasharray="1 6" className="animate-spin-slow" style={{ animationDuration: '20s' }} />
+                                            <circle r={coreRadius + 12} fill="none" stroke="#fff" strokeWidth="1" strokeOpacity="0.3" strokeDasharray="4 8" className="animate-reverse-spin" style={{ animationDuration: '12s' }} />
+                                            <path d={`M -${coreRadius + 26} 0 L -${coreRadius + 14} 0 M ${coreRadius + 14} 0 L ${coreRadius + 26} 0 M 0 -${coreRadius + 26} L 0 -${coreRadius + 14} M 0 ${coreRadius + 14} L 0 ${coreRadius + 26}`} stroke={primaryLine.color} strokeWidth="1" strokeOpacity="0.5" />
                                         </>
                                     )}
                                     
@@ -410,21 +630,91 @@ export default function Projects() {
                                     {/* Micro Center dot for large stations */}
                                     {station.size === 'large' && !isHovered && <circle r="2" fill="#fff" />}
 
-                                    {/* Render Custom Hover Tooltip directly in SVG or absolute HTML (SVG is tricky for complex HTML, so we use HTML absolute positioning outside SVG) */}
                                 </g>
                             );
                         })}
+
+                        {/* --- EXTERNAL GATEWAY (GITHUB UPLINK TERMINAL) --- */}
+                        <g 
+                            transform="translate(850, 700)" 
+                            className="cursor-pointer group"
+                            onMouseEnter={() => setIsTerminalHovered(true)}
+                            onMouseLeave={() => setIsTerminalHovered(false)}
+                            onClick={() => {
+                                setIsTerminalClicked(true);
+                                setTimeout(() => {
+                                    window.open("https://github.com/octotat-bot", "_blank");
+                                    setIsTerminalClicked(false);
+                                }, 1500);
+                            }}
+                        >
+                            {/* Cinematic Tunnel Effect */}
+                            <g className="opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+                                <ellipse cx="80" cy="0" rx="40" ry="120" fill="url(#tunnel-gradient)" className="opacity-40" />
+                                <ellipse cx="60" cy="0" rx="20" ry="80" fill="none" stroke="rgba(0,243,255,0.2)" strokeWidth="2" />
+                                <ellipse cx="40" cy="0" rx="10" ry="40" fill="none" stroke="rgba(0,243,255,0.4)" strokeWidth="1" />
+                            </g>
+                            
+                            {/* Track leading into tunnel */}
+                            <path d="M -200 -150 Q -50 0 0 0 L 100 0" fill="none" stroke="#ffffff" strokeWidth="8" strokeOpacity="0.05" />
+                            <path d="M -200 -150 Q -50 0 0 0 L 100 0" fill="none" stroke="#00f3ff" strokeWidth="2" strokeOpacity="0.8" strokeDasharray="8 8" className="animate-pulse" />
+                            
+                            {/* Animated Glowing Data Train */}
+                            {isTerminalHovered && (
+                                <motion.circle 
+                                    r="4" fill="#fff"
+                                    animate={{ offsetDistance: ["0%", "100%"] }}
+                                    transition={{ duration: 1.5, ease: "easeInOut", repeat: Infinity }}
+                                    style={{ offsetPath: `path('M -200 -150 Q -50 0 0 0 L 100 0')` }}
+                                    className="drop-shadow-[0_0_10px_rgba(0,243,255,1)]"
+                                />
+                            )}
+
+                            {/* Gateway Node rings */}
+                            <circle cx="0" cy="0" r="32" fill="#050505" stroke="#ffffff" strokeWidth="1.5" className="group-hover:fill-white/10 transition-all duration-300" />
+                            <circle cx="0" cy="0" r="42" fill="none" stroke="#00f3ff" strokeWidth="1" strokeOpacity="0.6" strokeDasharray="2 4" className="animate-spin-slow" />
+                            <circle cx="0" cy="0" r="48" fill="none" stroke="rgba(0, 243, 255, 0.3)" strokeWidth="2" strokeDasharray="20 10" className="animate-reverse-spin" style={{ animationDuration: '8s' }} />
+                            <circle cx="0" cy="0" r="54" fill="none" stroke="rgba(0, 243, 255, 0.1)" strokeWidth="1" className="group-hover:scale-[1.15] transition-transform duration-700 origin-center" />
+                            
+                            {/* Ambient Particles & Blinking Lights */}
+                            <g className={`transition-opacity duration-500 ${isTerminalHovered ? 'opacity-100' : 'opacity-0'}`}>
+                                <circle cx="-40" cy="-40" r="1" fill="#00f3ff" className="animate-ping" />
+                                <circle cx="50" cy="-20" r="1.5" fill="#00f3ff" className="animate-pulse" />
+                                <circle cx="-20" cy="50" r="1" fill="#ffffff" className="animate-ping" style={{ animationDelay: '0.5s' }} />
+                                <circle cx="30" cy="40" r="2" fill="#00f3ff" className="animate-pulse" style={{ animationDelay: '0.2s' }} />
+                                {/* Scanning Laser */}
+                                <line x1="-60" y1="0" x2="60" y2="0" stroke="rgba(0,243,255,0.2)" strokeWidth="1" className="animate-spin-slow" />
+                            </g>
+
+                            {/* Futuristic GitHub Logo (Holographic) */}
+                            <g className="group-hover:scale-125 group-hover:rotate-12 transition-all duration-500 origin-center drop-shadow-[0_0_10px_rgba(0,243,255,0.8)]">
+                                <foreignObject x="-16" y="-16" width="32" height="32" className="pointer-events-none">
+                                    <div className="w-full h-full flex items-center justify-center">
+                                        <FaGithub size={24} className={`transition-colors duration-300 ${isTerminalHovered ? 'text-cyan-400' : 'text-white'}`} />
+                                    </div>
+                                </foreignObject>
+                            </g>
+                            
+                            {/* Holographic Text Label */}
+                            <text x="0" y="75" fill="#ffffff" fontSize="11" fontFamily="monospace" textAnchor="middle" letterSpacing="4" fontWeight="bold" className="opacity-80 group-hover:opacity-100 group-hover:fill-cyan-400 transition-all" style={{ textShadow: '0 0 10px rgba(0,243,255,0.5)' }}>OPEN SOURCE TERMINAL</text>
+                            <text x="0" y="90" fill="rgba(0,243,255,0.7)" fontSize="9" fontFamily="monospace" textAnchor="middle" letterSpacing="2" className="group-hover:fill-cyan-300 transition-colors opacity-0 group-hover:opacity-100">+ MORE PROJECTS</text>
+                            
+                            {/* Click Transition Portal Effect */}
+                            {isTerminalClicked && (
+                                <motion.circle
+                                    cx="0" cy="0" r="0"
+                                    fill="#00f3ff"
+                                    initial={{ r: 0, opacity: 0.8 }}
+                                    animate={{ r: 2000, opacity: 0 }}
+                                    transition={{ duration: 1.5, ease: "easeIn" }}
+                                    className="pointer-events-none"
+                                />
+                            )}
+                        </g>
                     </svg>
 
                     {/* --- HTML HUD OVERLAYS --- */}
                     
-                    {/* Corner Diagnostics */}
-                    <div className="absolute top-4 left-6 flex flex-col gap-1 pointer-events-none opacity-60">
-                        <div className="text-[9px] font-mono text-cyan-400 flex items-center gap-2"><FaSatelliteDish className="animate-pulse" /> UPLINK SECURE</div>
-                        <div className="text-[9px] font-mono text-gray-400">COORD: {Math.round(smoothX.get())}x {Math.round(smoothY.get())}y</div>
-                        <div className="text-[9px] font-mono text-gray-400">NODES_ACTIVE: {stations.length}</div>
-                    </div>
-
                     <div className="absolute bottom-4 right-6 flex flex-col items-end gap-1 pointer-events-none opacity-60">
                         <div className="text-[9px] font-mono text-gray-500">SYS_V3.0_BUILD</div>
                         <div className="w-16 h-px bg-gradient-to-r from-transparent to-cyan-500 mt-1" />
@@ -442,7 +732,6 @@ export default function Projects() {
                                 style={{
                                     left: `${(hoveredStation.cx / 1000) * 100}%`,
                                     top: `${(hoveredStation.cy / 800) * 100}%`,
-                                    // Custom tooltip placement logic based on coordinates
                                     x: hoveredStation.cx > 500 ? '-110%' : '10%',
                                     y: hoveredStation.cy > 400 ? '-110%' : '10%'
                                 }}
@@ -464,16 +753,55 @@ export default function Projects() {
                                 </div>
                             </motion.div>
                         )}
+
+                        {isTerminalHovered && (
+                            <motion.div 
+                                className="absolute pointer-events-none z-50 bottom-8 right-8"
+                                initial={{ opacity: 0, scale: 0.9, x: 20 }}
+                                animate={{ opacity: 1, scale: 1, x: 0 }}
+                                exit={{ opacity: 0, scale: 0.9, x: 20 }}
+                                transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                            >
+                                <div className="bg-[#020202]/90 backdrop-blur-xl border border-cyan-500/30 rounded-xl p-5 shadow-[0_0_30px_rgba(0,243,255,0.2)] w-72 relative overflow-hidden">
+                                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-500" />
+                                    
+                                    <div className="flex items-center gap-3 mb-4 border-b border-white/10 pb-3">
+                                        <FaGithub className="text-3xl text-white" />
+                                        <div>
+                                            <h4 className="text-sm font-bold text-white leading-none">OPEN SOURCE TERMINAL</h4>
+                                            <span className="text-[10px] font-mono text-cyan-400 uppercase tracking-widest">Connected GitHub Network</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex flex-col gap-2">
+                                        <div className="flex justify-between items-center text-xs font-mono">
+                                            <span className="text-gray-500">USERNAME</span>
+                                            <span className="text-gray-200">@octotat-bot</span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-xs font-mono">
+                                            <span className="text-gray-500">TOTAL_PROJECTS</span>
+                                            <span className="text-cyan-400 font-bold">{githubStats.repos}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-xs font-mono">
+                                            <span className="text-gray-500">SYS_STATUS</span>
+                                            <span className="text-green-400">{githubStats.status}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-4 pt-3 border-t border-white/10">
+                                        <p className="text-[10px] text-gray-400 font-mono text-center opacity-70 animate-pulse">
+                                            [ CLICK TO INITIATE UPLINK TRANSFER ]
+                                        </p>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
                     </AnimatePresence>
 
-                </div>
-            </div>
-        </motion.div>
-        
-            </div> {/* Closes Right Column (col-span-9) */}
-        </div> {/* Closes Grid */}
+              </div> {/* closes inner map div */}
+          </motion.div> {/* closes clip container */}
 
-      </div> {/* Closes Container */}
+      </div> {/* closes sticky container */}
 
       {/* --- MODAL / STATION DETAIL PANEL --- */}
       <AnimatePresence>
@@ -594,7 +922,6 @@ export default function Projects() {
             </motion.div>
         )}
       </AnimatePresence>
-
     </section>
   );
 }
