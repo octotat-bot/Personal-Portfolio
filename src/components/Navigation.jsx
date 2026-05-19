@@ -213,7 +213,7 @@ export default function Navigation() {
                     {/* Download Resume Button with Magnetic */}
                     <Magnetic>
                         <a
-                            href="/resume.pdf"
+                            href="/Resume-Mukund Mangla (1).pdf"
                             download="Mukund_Mangla_Resume.pdf"
                             className="hidden md:flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-white/10 to-white/5 text-white text-xs uppercase tracking-wider font-bold rounded-full border border-white/20 hover:border-white/40 hover:bg-white/20 transition-all duration-300 backdrop-blur-sm"
                         >
@@ -280,7 +280,7 @@ export default function Navigation() {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: navLinks.length * 0.1 }}
-                                href="/resume.pdf"
+                                href="/Resume-Mukund Mangla (1).pdf"
                                 download="Mukund_Mangla_Resume.pdf"
                                 className="mt-8 flex items-center gap-3 px-8 py-4 bg-gradient-to-br from-white/10 to-white/5 text-white text-sm uppercase tracking-wider font-bold rounded-full border border-white/20 hover:border-white/40 hover:bg-white/20 transition-all duration-300"
                             >
