@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, memo } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion';
 import { FaGithub, FaExternalLinkAlt, FaTimes, FaMapSigns, FaSatelliteDish, FaNetworkWired, FaCodeBranch } from 'react-icons/fa';
 
@@ -152,10 +152,10 @@ const seededRandom = (seed) => {
 
 const techLabels = ["REACT", "NODE.JS", "PYTHON", "MONGO", "AWS", "DOCKER", "REDIS", "GRAPHQL", "NEXT.JS", "VITE", "SQL", "TYPESCRIPT", "TAILWIND", "KUBERNETES", "KAFKA", "LINUX", "RUST", "GOLANG", "AZURE", "VERCEL"];
 
-// Massive dense background city! ALL rendered behind the tracks so they never obscure the path.
-const backgroundBuildings = Array.from({ length: 250 }).map((_, i) => {
+// Background city skyline (kept light - this is decorative and re-renders are expensive in SVG).
+const backgroundBuildings = Array.from({ length: 80 }).map((_, i) => {
     const hasGlow = seededRandom(i * 10 + 4) > 0.8;
-    const isTech = hasGlow || seededRandom(i * 10 + 5) > 0.6; // More tech buildings
+    const isTech = hasGlow || seededRandom(i * 10 + 5) > 0.6;
     return {
         x: seededRandom(i * 10) * 1000,
         y: seededRandom(i * 10 + 1) * 800,
@@ -166,11 +166,10 @@ const backgroundBuildings = Array.from({ length: 250 }).map((_, i) => {
     };
 });
 
-// We no longer use foregroundBuildings so they don't block the tracks! The tracks will float clearly over the city.
 const foregroundBuildings = [];
 
 // Isometric Skyscraper Component for Background Theme City
-const CityBuilding = ({ x, y, width, height, hasGlow, label }) => {
+const CityBuilding = memo(function CityBuilding({ x, y, width, height, hasGlow, label }) {
     const w = width;
     const h = height;
     
@@ -213,7 +212,125 @@ const CityBuilding = ({ x, y, width, height, hasGlow, label }) => {
             )}
         </g>
     );
-};
+});
+
+// Static SVG defs (filters + gradients). Isolated so React never re-creates them on hover state changes.
+const MapDefs = memo(function MapDefs() {
+    return (
+        <defs>
+            {/* Technical Grid Pattern */}
+            <pattern id="techGrid" width="100" height="100" patternUnits="userSpaceOnUse">
+                <path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.02)" strokeWidth="1" />
+                <circle cx="100" cy="100" r="1.5" fill="rgba(255,255,255,0.05)" />
+                <text x="5" y="15" fill="rgba(255,255,255,0.03)" fontSize="6" fontFamily="monospace">SYS.NET.ACTIVE</text>
+            </pattern>
+            {/* Light-weight glow filters (stdDeviation lowered from 6 -> 2.5 for perf) */}
+            <filter id="neon-glow-cyan" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="2.5" result="blur" />
+                <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                </feMerge>
+            </filter>
+            <filter id="neon-glow-green" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="2.5" result="blur" />
+                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+            <filter id="neon-glow-purple" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="2.5" result="blur" />
+                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+
+            {/* Gradients */}
+            <linearGradient id="link-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
+            </linearGradient>
+            <radialGradient id="tunnel-gradient" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#00f3ff" stopOpacity="0.8" />
+                <stop offset="50%" stopColor="#00f3ff" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="#020202" stopOpacity="0" />
+            </radialGradient>
+        </defs>
+    );
+});
+
+// All static decorative SVG layers (grid, topo, crosshairs, glitch lines, dead nodes, scanning laser,
+// city skyline, drones). Memoized so hover/click state in the parent never re-renders this huge tree.
+const MapBackdrop = memo(function MapBackdrop() {
+    return (
+        <g style={{ pointerEvents: 'none' }}>
+            {/* SVG Background Grid */}
+            <rect width="100%" height="100%" fill="url(#techGrid)" rx="20" />
+
+            {/* Ambient Flying Drones (reduced from 25 -> 8) */}
+            <g>
+                {Array.from({ length: 8 }).map((_, i) => (
+                    <motion.circle
+                        key={`drone-${i}`}
+                        r="1.5"
+                        fill={seededRandom(i) > 0.5 ? "#00f3ff" : "#00ff66"}
+                        initial={{ x: seededRandom(i * 10) * 1000, y: seededRandom(i * 10 + 1) * 800, opacity: 0 }}
+                        animate={{
+                            x: seededRandom(i * 10 + 2) * 1000,
+                            y: seededRandom(i * 10 + 3) * 800,
+                            opacity: [0, 0.8, 0]
+                        }}
+                        transition={{
+                            duration: 18 + seededRandom(i) * 12,
+                            repeat: Infinity,
+                            delay: seededRandom(i * 2) * 20
+                        }}
+                    />
+                ))}
+            </g>
+
+            {/* Topographic Map Contours */}
+            <g fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1">
+                <path d="M 0 600 Q 150 550 250 650 T 500 600 T 800 700 T 1000 600" />
+                <path d="M 0 620 Q 150 570 250 670 T 500 620 T 800 720 T 1000 620" />
+                <path d="M 0 640 Q 150 590 250 690 T 500 640 T 800 740 T 1000 640" />
+                <path d="M 100 0 Q 200 150 400 100 T 700 200 T 1000 50" />
+                <path d="M 120 0 Q 220 170 420 120 T 720 220 T 1000 70" />
+                <circle cx="500" cy="400" r="300" strokeDasharray="4 20" opacity="0.5" />
+                <circle cx="500" cy="400" r="450" strokeDasharray="2 30" opacity="0.5" />
+            </g>
+
+            {/* Isometric City Skyline */}
+            {backgroundBuildings.map((building, i) => (
+                <CityBuilding key={`building-${i}`} {...building} />
+            ))}
+
+            {/* Corner Crosshairs */}
+            <g stroke="rgba(0,243,255,0.3)" strokeWidth="1" fill="none">
+                <path d="M 30 30 L 60 30 M 30 30 L 30 60" />
+                <path d="M 970 30 L 940 30 M 970 30 L 970 60" />
+                <path d="M 30 770 L 60 770 M 30 770 L 30 740" />
+                <path d="M 970 770 L 940 770 M 970 770 L 970 740" />
+            </g>
+
+            {/* Circuit Glitch Lines */}
+            <path d="M 100 650 L 250 650 L 300 700 L 450 700" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" strokeDasharray="5 5" />
+            <path d="M 650 150 L 700 100 L 900 100" fill="none" stroke="rgba(0,255,102,0.05)" strokeWidth="1" strokeDasharray="2 10" />
+            <path d="M 400 300 L 450 250 L 450 150 L 550 150" fill="none" stroke="rgba(176,38,255,0.05)" strokeWidth="1" strokeDasharray="8 4" />
+
+            {/* Static Data Dust (Dead Nodes) */}
+            <g fill="rgba(255,255,255,0.08)">
+                <circle cx="150" cy="250" r="1.5" /><circle cx="280" cy="180" r="1" /><circle cx="350" cy="450" r="2" />
+                <circle cx="750" cy="550" r="1.5" /><circle cx="820" cy="380" r="1" /><circle cx="650" cy="650" r="2" />
+                <circle cx="850" cy="150" r="1" /><circle cx="120" cy="550" r="1.5" /><circle cx="480" cy="680" r="1" />
+            </g>
+
+            {/* Animated Scanning Laser */}
+            <motion.line
+                x1="0" y1="0" x2="1000" y2="0"
+                stroke="rgba(0, 243, 255, 0.1)" strokeWidth="1"
+                animate={{ y1: [0, 800, 0], y2: [0, 800, 0] }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+            />
+        </g>
+    );
+});
 
 export default function Projects() {
   const containerWrapperRef = useRef(null);
@@ -249,9 +366,8 @@ export default function Projects() {
   const headerY = useTransform(stickyScroll, [0, 0.2], [0, -30]);
   const hudOpacity = useTransform(stickyScroll, [0.35, 0.6], [0, 1]);
 
-  // City Boot Sequence Animations
+  // City Boot Sequence
   const cityFogOpacity = useTransform(stickyScroll, [0.2, 0.6], [0, 1]);
-  const cityDronesOpacity = useTransform(stickyScroll, [0.2, 0.6], [0, 1]);
 
   // Derived clip-path motion value — fully reactive, no .get() calls inside render
   const clipPathValue = useTransform(
@@ -264,6 +380,16 @@ export default function Projects() {
   const [isTerminalHovered, setIsTerminalHovered] = useState(false);
   const [isTerminalClicked, setIsTerminalClicked] = useState(false);
   const [githubStats, setGithubStats] = useState({ repos: "...", status: "INITIALIZING_UPLINK..." });
+
+  // Precomputed station connection graph - avoids re-scanning all stations on every hover render.
+  const connectionMap = useMemo(() => {
+    const map = new Map();
+    stations.forEach(s => {
+      map.set(s.id, new Set(getConnectedStations(s).map(c => c.id)));
+    });
+    return map;
+  }, []);
+  const hoveredConnections = hoveredStation ? connectionMap.get(hoveredStation.id) : null;
 
   useEffect(() => {
       fetch('https://api.github.com/users/octotat-bot')
@@ -372,138 +498,31 @@ export default function Projects() {
           */}
           <motion.div 
               className="absolute inset-0 z-20"
-              style={{ clipPath: clipPathValue, willChange: 'clip-path' }}
+              style={{ clipPath: clipPathValue }}
           >
               {/* The Map itself — 100vw x 100vh, internal content is fixed */}
               <div className="w-full h-full bg-[#020202] relative overflow-hidden">
+                {/* Cheap CSS-based atmospheric fog (replaces 3 huge blur-100px SVG circles). */}
+                <motion.div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                        opacity: cityFogOpacity,
+                        background:
+                            'radial-gradient(circle at 30% 25%, rgba(0,243,255,0.08), transparent 45%), ' +
+                            'radial-gradient(circle at 70% 75%, rgba(176,38,255,0.07), transparent 50%), ' +
+                            'radial-gradient(circle at 50% 50%, rgba(0,255,102,0.05), transparent 40%)'
+                    }}
+                />
                 <svg viewBox="-140 -20 1280 840" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 w-full h-full">
-                        <defs>
-                            {/* Technical Grid Pattern */}
-                            <pattern id="techGrid" width="100" height="100" patternUnits="userSpaceOnUse">
-                                <path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.02)" strokeWidth="1" />
-                                <circle cx="100" cy="100" r="1.5" fill="rgba(255,255,255,0.05)" />
-                                <text x="5" y="15" fill="rgba(255,255,255,0.03)" fontSize="6" fontFamily="monospace">SYS.NET.ACTIVE</text>
-                            </pattern>
-                            {/* Layered Glow Filters for Cinematic Lighting */}
-                            {/* Optimized Glow Filters for Performance */}
-                            <filter id="neon-glow-cyan" x="-50%" y="-50%" width="200%" height="200%">
-                                <feGaussianBlur stdDeviation="6" result="blur" />
-                                <feMerge>
-                                    <feMergeNode in="blur" />
-                                    <feMergeNode in="SourceGraphic" />
-                                </feMerge>
-                            </filter>
-                            <filter id="neon-glow-green" x="-50%" y="-50%" width="200%" height="200%">
-                                <feGaussianBlur stdDeviation="6" result="blur" />
-                                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                            </filter>
-                            <filter id="neon-glow-purple" x="-50%" y="-50%" width="200%" height="200%">
-                                <feGaussianBlur stdDeviation="6" result="blur" />
-                                <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                            </filter>
-                            
-                            {/* Gradients */}
-                            <linearGradient id="link-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stopColor="#ffffff" stopOpacity="0.4" />
-                                <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-                            </linearGradient>
-                            <radialGradient id="tunnel-gradient" cx="50%" cy="50%" r="50%">
-                                <stop offset="0%" stopColor="#00f3ff" stopOpacity="0.8" />
-                                <stop offset="50%" stopColor="#00f3ff" stopOpacity="0.2" />
-                                <stop offset="100%" stopColor="#020202" stopOpacity="0" />
-                            </radialGradient>
-                        </defs>
+                        <MapDefs />
 
-                        {/* Layer 0: Volumetric Fog & Atmospheric Mist */}
-                        <motion.g style={{ opacity: cityFogOpacity }}>
-                            <motion.circle cx="300" cy="200" r="400" fill="#00f3ff" filter="blur(80px)" pointerEvents="none" animate={{ opacity: [0.02, 0.08, 0.02] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} />
-                            <motion.circle cx="700" cy="600" r="500" fill="#b026ff" filter="blur(100px)" pointerEvents="none" animate={{ opacity: [0.01, 0.06, 0.01] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }} />
-                            <motion.circle cx="500" cy="400" r="350" fill="#00ff66" filter="blur(90px)" pointerEvents="none" animate={{ opacity: [0.02, 0.07, 0.02] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }} />
-                        </motion.g>
-
-                        {/* SVG Background Grid with Binary Rain Elements */}
-                        <rect width="100%" height="100%" fill="url(#techGrid)" rx="20" />
-
-                        {/* Ambient Flying Drones (Data Packets) */}
-                        <motion.g style={{ opacity: cityDronesOpacity }}>
-                            {Array.from({ length: 25 }).map((_, i) => (
-                                <motion.circle 
-                                    key={`drone-${i}`}
-                                    r="1.5" 
-                                    fill={seededRandom(i) > 0.5 ? "#00f3ff" : "#00ff66"}
-                                    filter="blur(1px)"
-                                    initial={{ x: seededRandom(i * 10) * 1000, y: seededRandom(i * 10 + 1) * 800, opacity: 0 }}
-                                    animate={{ 
-                                        x: seededRandom(i * 10 + 2) * 1000, 
-                                        y: seededRandom(i * 10 + 3) * 800,
-                                        opacity: [0, 0.8, 0]
-                                    }}
-                                    transition={{ 
-                                        duration: 15 + seededRandom(i) * 15, 
-                                        repeat: Infinity,
-                                        delay: seededRandom(i * 2) * 20
-                                    }}
-                                />
-                            ))}
-                        </motion.g>
-
-                        {/* --- CREATIVE AESTHETIC ELEMENTS (Background Chaos) --- */}
-                        {/* Real-World Topographic Map Contours (Tech Aesthetic) */}
-                        <g fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1" style={{ pointerEvents: 'none' }}>
-                            {/* Abstract landmass/elevation lines mimicking a satellite map */}
-                            <path d="M 0 600 Q 150 550 250 650 T 500 600 T 800 700 T 1000 600" />
-                            <path d="M 0 620 Q 150 570 250 670 T 500 620 T 800 720 T 1000 620" />
-                            <path d="M 0 640 Q 150 590 250 690 T 500 640 T 800 740 T 1000 640" />
-
-                            <path d="M 100 0 Q 200 150 400 100 T 700 200 T 1000 50" />
-                            <path d="M 120 0 Q 220 170 420 120 T 720 220 T 1000 70" />
-                            
-                            {/* Radar / Latitude arcs */}
-                            <circle cx="500" cy="400" r="300" strokeDasharray="4 20" opacity="0.5" />
-                            <circle cx="500" cy="400" r="450" strokeDasharray="2 30" opacity="0.5" />
-                        </g>
-
-                        {/* --- ISOMETRIC CITY SKYLINE --- */}
-                        {backgroundBuildings.map((building, i) => (
-                            <CityBuilding key={`building-${i}`} {...building} />
-                        ))}
-                        
-                        {/* Subtle HUD Metadata removed to prevent overlap with corner diagnostics */}
-                        
-                        {/* Corner Crosshairs */}
-                        <g stroke="rgba(0,243,255,0.3)" strokeWidth="1" fill="none">
-                            <path d="M 30 30 L 60 30 M 30 30 L 30 60" />
-                            <path d="M 970 30 L 940 30 M 970 30 L 970 60" />
-                            <path d="M 30 770 L 60 770 M 30 770 L 30 740" />
-                            <path d="M 970 770 L 940 770 M 970 770 L 970 740" />
-                        </g>
-
-                        {/* Abstract Circuit Glitch Lines */}
-                        <path d="M 100 650 L 250 650 L 300 700 L 450 700" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" strokeDasharray="5 5" />
-                        <path d="M 650 150 L 700 100 L 900 100" fill="none" stroke="rgba(0,255,102,0.05)" strokeWidth="1" strokeDasharray="2 10" />
-                        <path d="M 400 300 L 450 250 L 450 150 L 550 150" fill="none" stroke="rgba(176,38,255,0.05)" strokeWidth="1" strokeDasharray="8 4" />
-
-                        {/* Static Data Dust (Dead Nodes) */}
-                        <g fill="rgba(255,255,255,0.08)">
-                            <circle cx="150" cy="250" r="1.5" /><circle cx="280" cy="180" r="1" /><circle cx="350" cy="450" r="2" />
-                            <circle cx="750" cy="550" r="1.5" /><circle cx="820" cy="380" r="1" /><circle cx="650" cy="650" r="2" />
-                            <circle cx="850" cy="150" r="1" /><circle cx="120" cy="550" r="1.5" /><circle cx="480" cy="680" r="1" />
-                        </g>
-
-                        {/* Animated Scanning Laser */}
-                        <motion.line 
-                            x1="0" y1="0" x2="1000" y2="0" 
-                            stroke="rgba(0, 243, 255, 0.1)" strokeWidth="1" 
-                            animate={{ y1: [0, 800, 0], y2: [0, 800, 0] }} 
-                            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                            style={{ pointerEvents: 'none' }}
-                        />
-                        {/* --- END AESTHETIC ELEMENTS --- */}
+                        {/* Static decorative layers (grid, drones, topo, city, crosshairs, glitch, dust, laser) */}
+                        <MapBackdrop />
 
                         {/* --- DRAW CONNECTING INTELLIGENCE LINES ON HOVER --- */}
                         <AnimatePresence>
-                            {hoveredStation && getConnectedStations(hoveredStation).map(target => (
-                                <motion.line 
+                            {hoveredStation && stations.filter(s => hoveredConnections?.has(s.id)).map(target => (
+                                <motion.line
                                     key={`link-${hoveredStation.id}-${target.id}`}
                                     x1={hoveredStation.cx} y1={hoveredStation.cy}
                                     x2={target.cx} y2={target.cy}
@@ -557,9 +576,9 @@ export default function Projects() {
                                         transition={{ duration: 2.5, ease: "easeInOut" }}
                                     />
 
-                                    {/* Animated Data Pulses (Trains) */}
+                                    {/* Animated Data Pulses (Trains) - no SVG filter on moving elements (huge perf win) */}
                                     {[0, 33, 66].map((offset, i) => (
-                                        <motion.g 
+                                        <motion.g
                                             key={`train-${line.id}-${i}`}
                                             animate={{ offsetDistance: ["0%", "100%"] }}
                                             transition={{
@@ -570,7 +589,7 @@ export default function Projects() {
                                             }}
                                             style={{ offsetPath: `path('${line.path}')` }}
                                         >
-                                            <circle r="8" fill={line.color} filter={filterId} opacity="0.8" />
+                                            <circle r="8" fill={line.color} opacity="0.35" />
                                             <circle r="4" fill="#ffffff" />
                                         </motion.g>
                                     ))}
@@ -587,24 +606,23 @@ export default function Projects() {
                         {stations.map((station) => {
                             const primaryLine = lines[station.lines[0]];
                             const isHovered = hoveredStation?.id === station.id;
-                            const isConnected = hoveredStation && getConnectedStations(hoveredStation).some(s => s.id === station.id);
+                            const isConnected = hoveredConnections?.has(station.id);
                             const isDimmed = hoveredStation && !isHovered && !isConnected;
-                            
-                            // Station size logic
+
                             const coreRadius = station.size === 'large' ? 12 : station.size === 'medium' ? 9 : 6;
                             const glowRadius = isHovered ? coreRadius * 2.5 : coreRadius * 1.5;
 
                             return (
-                                <g 
+                                <g
                                     key={station.id}
                                     transform={`translate(${station.cx}, ${station.cy})`}
                                     onMouseEnter={() => setHoveredStation(station)}
                                     onMouseLeave={() => setHoveredStation(null)}
                                     onClick={() => setActiveStation(station)}
                                     className="cursor-pointer"
-                                    style={{ 
-                                        opacity: isDimmed ? 0.3 : 1, 
-                                        transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+                                    style={{
+                                        opacity: isDimmed ? 0.3 : 1,
+                                        transition: 'opacity 0.4s ease'
                                     }}
                                 >
                                     {/* Interchange rings for large stations */}
@@ -615,18 +633,17 @@ export default function Projects() {
                                             <path d={`M -${coreRadius + 26} 0 L -${coreRadius + 14} 0 M ${coreRadius + 14} 0 L ${coreRadius + 26} 0 M 0 -${coreRadius + 26} L 0 -${coreRadius + 14} M 0 ${coreRadius + 14} L 0 ${coreRadius + 26}`} stroke={primaryLine.color} strokeWidth="1" strokeOpacity="0.5" />
                                         </>
                                     )}
-                                    
-                                    {/* Ambient Glow */}
-                                    <motion.circle 
-                                        r={glowRadius * 1.5} fill={primaryLine.color} opacity={isHovered ? 0.6 : 0.3}
-                                        filter={`url(#neon-glow-${primaryLine.id === 'frontend' ? 'cyan' : primaryLine.id === 'backend' ? 'green' : 'purple'})`}
-                                        animate={isHovered || isConnected ? { scale: [1, 1.3, 1], opacity: [0.5, 0.8, 0.5] } : {}}
-                                        transition={{ repeat: Infinity, duration: 2 }}
+
+                                    {/* Ambient Glow - no SVG filter, only animates on the hovered node */}
+                                    <motion.circle
+                                        r={glowRadius * 1.5} fill={primaryLine.color} opacity={isHovered ? 0.5 : 0.2}
+                                        animate={isHovered ? { scale: [1, 1.3, 1], opacity: [0.4, 0.7, 0.4] } : { scale: 1 }}
+                                        transition={isHovered ? { repeat: Infinity, duration: 2 } : { duration: 0.3 }}
                                     />
-                                    
+
                                     {/* Inner Node */}
                                     <circle r={coreRadius} fill={isHovered ? "#ffffff" : "#1a1a1a"} stroke={primaryLine.color} strokeWidth="4" className="transition-all duration-300" />
-                                    
+
                                     {/* Micro Center dot for large stations */}
                                     {station.size === 'large' && !isHovered && <circle r="2" fill="#fff" />}
 
