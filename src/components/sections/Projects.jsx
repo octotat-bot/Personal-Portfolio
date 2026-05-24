@@ -34,7 +34,7 @@ const stations = [
     features: ["Async AI Pipeline", "Semantic RAG Search", "SSE Real-time Streaming"],
     challenges: "Distributed microservices architecture linking analog UI to complex machine learning pipelines.",
     image: "/projects/dreamsignal.png",
-    video: "/projects/dreamsignal-demo.mp4"
+    video: "/projects/dreamsignal.mp4"
   },
   {
     id: "grief-companion", title: "Grief Companion",
