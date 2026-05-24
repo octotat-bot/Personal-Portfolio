@@ -865,7 +865,9 @@ export default function Projects() {
 
                     {/* Left: Image/Video & Decor */}
                     <div className="w-full lg:w-1/2 h-64 lg:h-auto relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#050505] via-transparent to-transparent z-10" />
+                        {!activeStation.video && (
+                            <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#050505] via-transparent to-transparent z-10" />
+                        )}
                         {activeStation.video ? (
                             <video
                                 src={activeStation.video}
