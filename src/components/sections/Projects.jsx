@@ -665,7 +665,7 @@ export default function Projects() {
 
                         {/* --- EXTERNAL GATEWAY (GITHUB UPLINK TERMINAL) --- */}
                         <g 
-                            transform="translate(850, 700)" 
+                            transform="translate(1000, 720)" 
                             className="cursor-pointer group"
                             onMouseEnter={() => setIsTerminalHovered(true)}
                             onMouseLeave={() => setIsTerminalHovered(false)}
@@ -685,8 +685,8 @@ export default function Projects() {
                             </g>
                             
                             {/* Track leading into tunnel */}
-                            <path d="M -200 -150 Q -50 0 0 0 L 100 0" fill="none" stroke="#ffffff" strokeWidth="8" strokeOpacity="0.05" />
-                            <path d="M -200 -150 Q -50 0 0 0 L 100 0" fill="none" stroke="#00f3ff" strokeWidth="2" strokeOpacity="0.8" strokeDasharray="8 8" className="animate-pulse" />
+                            <path d="M -100 -120 Q -50 0 0 0 L 100 0" fill="none" stroke="#ffffff" strokeWidth="8" strokeOpacity="0.05" />
+                            <path d="M -100 -120 Q -50 0 0 0 L 100 0" fill="none" stroke="#00f3ff" strokeWidth="2" strokeOpacity="0.8" strokeDasharray="8 8" className="animate-pulse" />
                             
                             {/* Animated Glowing Data Train */}
                             {isTerminalHovered && (
@@ -694,7 +694,7 @@ export default function Projects() {
                                     r="4" fill="#fff"
                                     animate={{ offsetDistance: ["0%", "100%"] }}
                                     transition={{ duration: 1.5, ease: "easeInOut", repeat: Infinity }}
-                                    style={{ offsetPath: `path('M -200 -150 Q -50 0 0 0 L 100 0')` }}
+                                    style={{ offsetPath: `path('M -100 -120 Q -50 0 0 0 L 100 0')` }}
                                     className="drop-shadow-[0_0_10px_rgba(0,243,255,1)]"
                                 />
                             )}
