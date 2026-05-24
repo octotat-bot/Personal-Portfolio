@@ -59,6 +59,22 @@ export const skills = [
 
 export const projects = [
     {
+        id: 5,
+        title: "DreamSignal",
+        category: "AI & Microservices",
+        description: "An immersive, analog-themed classified dossier system for recording, analyzing, and archiving dreams. Uses a distributed microservices architecture to transcribe voice, extract emotional spectrums and symbolic meaning, and semantically link related entries using vector embeddings and RAG.",
+        technologies: ["React", "Node.js", "Python", "FastAPI", "MongoDB", "Whisper", "Gemini API"],
+        image: "/projects/dreamsignal.png",
+        link: "https://dream-signal.vercel.app/",
+        github: "https://github.com/octotat-bot/DreamSignal",
+        featured: true,
+        stats: {
+            pipeline: "Async AI",
+            search: "Semantic RAG",
+            streaming: "SSE Real-time"
+        }
+    },
+    {
         id: 1,
         title: "Grief Companion",
         category: "Agentic AI & Mental Health",
