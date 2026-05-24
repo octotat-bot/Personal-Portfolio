@@ -25,6 +25,17 @@ const lines = {
 
 const stations = [
   {
+    id: "dreamsignal", title: "DreamSignal",
+    lines: ["aiml", "backend"], cx: 500, cy: 100, size: "large",
+    description: "An immersive, analog-themed classified dossier system for recording, analyzing, and archiving dreams.",
+    tech: ["React", "Node.js", "Python", "FastAPI", "MongoDB", "Whisper", "Gemini API"],
+    status: "Completed", year: "2024",
+    github: "https://github.com/octotat-bot/DreamSignal", demo: "https://dream-signal.vercel.app/",
+    features: ["Async AI Pipeline", "Semantic RAG Search", "SSE Real-time Streaming"],
+    challenges: "Distributed microservices architecture linking analog UI to complex machine learning pipelines.",
+    image: "/projects/dreamsignal.png"
+  },
+  {
     id: "grief-companion", title: "Grief Companion",
     lines: ["aiml", "backend"], cx: 500, cy: 600, size: "large",
     description: "An empathetic AI writing instrument that uses Agentic workflows and RAG to help users navigate difficult life transitions.",
