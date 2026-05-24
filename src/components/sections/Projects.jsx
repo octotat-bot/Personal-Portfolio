@@ -33,7 +33,8 @@ const stations = [
     github: "https://github.com/octotat-bot/DreamSignal", demo: "https://dream-signal.vercel.app/",
     features: ["Async AI Pipeline", "Semantic RAG Search", "SSE Real-time Streaming"],
     challenges: "Distributed microservices architecture linking analog UI to complex machine learning pipelines.",
-    image: "/projects/dreamsignal.png"
+    image: "/projects/dreamsignal.png",
+    video: "/projects/dreamsignal-demo.mp4"
   },
   {
     id: "grief-companion", title: "Grief Companion",
@@ -862,17 +863,29 @@ export default function Projects() {
                         <FaTimes />
                     </button>
 
-                    {/* Left: Image & Decor */}
+                    {/* Left: Image/Video & Decor */}
                     <div className="w-full lg:w-1/2 h-64 lg:h-auto relative overflow-hidden group">
                         <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#050505] via-transparent to-transparent z-10" />
-                        <motion.img 
-                            src={activeStation.image} 
-                            alt={activeStation.title}
-                            className="w-full h-full object-cover"
-                            initial={{ scale: 1.1 }}
-                            animate={{ scale: 1 }}
-                            transition={{ duration: 1 }}
-                        />
+                        {activeStation.video ? (
+                            <video
+                                src={activeStation.video}
+                                poster={activeStation.image}
+                                autoPlay
+                                loop
+                                muted
+                                playsInline
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <motion.img 
+                                src={activeStation.image} 
+                                alt={activeStation.title}
+                                className="w-full h-full object-cover"
+                                initial={{ scale: 1.1 }}
+                                animate={{ scale: 1 }}
+                                transition={{ duration: 1 }}
+                            />
+                        )}
                         {/* Scanning Line Effect */}
                         <motion.div 
                             className="absolute top-0 left-0 w-full h-1 bg-cyan-500/50 blur-[2px] z-20"
