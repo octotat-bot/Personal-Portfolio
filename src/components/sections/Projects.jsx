@@ -18,7 +18,7 @@ const lines = {
   aiml: { 
     id: "aiml", name: "AI/ML", color: "#b026ff", 
     glow: "rgba(176, 38, 255, 0.8)", 
-    path: "M 500 50 Q 420 125 500 200 T 500 400 T 500 600 T 500 750",
+    path: "M 500 50 Q 420 125 500 200 T 500 400 T 500 600 Q 500 700 600 700 T 700 600 L 700 450",
     type: 'neural', speed: 6
   }
 };
@@ -26,7 +26,7 @@ const lines = {
 const stations = [
   {
     id: "dreamsignal", title: "DreamSignal",
-    lines: ["aiml", "backend"], cx: 500, cy: 100, size: "large",
+    lines: ["aiml", "backend"], cx: 700, cy: 600, size: "large",
     description: "An immersive, analog-themed classified dossier system for recording, analyzing, and archiving dreams.",
     tech: ["React", "Node.js", "Python", "FastAPI", "MongoDB", "Whisper", "Gemini API"],
     status: "Completed", year: "2024",
@@ -81,7 +81,7 @@ const stations = [
   },
   {
     id: "balancio", title: "Balancio",
-    lines: ["backend"], cx: 700, cy: 600, size: "medium",
+    lines: ["backend"], cx: 900, cy: 600, size: "medium",
     description: "Collaborative fintech platform for managing shared expenses and simplified debt settlements with real-time sync.",
     tech: ["React 19", "Node.js", "Express", "MongoDB", "Socket.io"],
     status: "Completed", year: "2024",
