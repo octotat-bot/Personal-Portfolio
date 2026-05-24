@@ -864,36 +864,72 @@ export default function Projects() {
                     </button>
 
                     {/* Left: Image/Video & Decor */}
-                    <div className="w-full lg:w-1/2 h-64 lg:h-auto relative overflow-hidden group">
-                        {!activeStation.video && (
-                            <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#050505] via-transparent to-transparent z-10" />
-                        )}
-                        {activeStation.video ? (
-                            <video
-                                src={activeStation.video}
-                                poster={activeStation.image}
-                                autoPlay
-                                loop
-                                muted
-                                playsInline
-                                className="w-full h-full object-cover"
-                            />
-                        ) : (
-                            <motion.img 
-                                src={activeStation.image} 
-                                alt={activeStation.title}
-                                className="w-full h-full object-cover"
-                                initial={{ scale: 1.1 }}
-                                animate={{ scale: 1 }}
-                                transition={{ duration: 1 }}
-                            />
-                        )}
-                        {/* Scanning Line Effect */}
-                        <motion.div 
-                            className="absolute top-0 left-0 w-full h-1 bg-cyan-500/50 blur-[2px] z-20"
-                            animate={{ top: ["0%", "100%", "0%"] }}
-                            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                        />
+                    <div className="w-full lg:w-1/2 min-h-[300px] lg:min-h-0 relative flex items-center justify-center p-4 sm:p-8 bg-black overflow-hidden group">
+                        
+                        {/* Ambient Background Glow (Blurred) */}
+                        <div className="absolute inset-0 z-0 pointer-events-none">
+                            {activeStation.video ? (
+                                <video
+                                    src={activeStation.video}
+                                    autoPlay loop muted playsInline
+                                    className="w-full h-full object-cover blur-3xl opacity-40 scale-125 transform-gpu"
+                                />
+                            ) : (
+                                <img 
+                                    src={activeStation.image} 
+                                    alt=""
+                                    className="w-full h-full object-cover blur-3xl opacity-40 scale-125 transform-gpu"
+                                />
+                            )}
+                            <div className="absolute inset-0 bg-black/40" />
+                            {/* Blend edge to right panel */}
+                            <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-transparent via-transparent to-[#050505] z-10" />
+                        </div>
+
+                        {/* Foreground Content Container (MacOS Window Style) */}
+                        <div 
+                            className="relative z-10 w-full rounded-xl overflow-hidden border border-white/20 bg-[#0a0a0a] shadow-2xl transition-all duration-700 group-hover:scale-[1.02] group-hover:border-white/40"
+                            style={{ 
+                                boxShadow: `0 25px 50px -12px rgba(0,0,0,1), 0 0 60px -15px ${lines[activeStation.lines[0]].color}50` 
+                            }}
+                        >
+                            {/* Window controls decoration */}
+                            <div className="w-full h-7 bg-white/5 border-b border-white/10 flex items-center px-3 gap-1.5 z-30">
+                                <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
+                                <div className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
+                                <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
+                            </div>
+
+                            <div className="relative">
+                                {activeStation.video ? (
+                                    <video
+                                        src={activeStation.video}
+                                        poster={activeStation.image}
+                                        autoPlay
+                                        loop
+                                        muted
+                                        playsInline
+                                        className="w-full h-auto max-h-[60vh] object-contain bg-black/50"
+                                    />
+                                ) : (
+                                    <motion.img 
+                                        src={activeStation.image} 
+                                        alt={activeStation.title}
+                                        className="w-full h-auto max-h-[60vh] object-contain bg-black/50"
+                                        initial={{ scale: 1.05 }}
+                                        animate={{ scale: 1 }}
+                                        transition={{ duration: 1 }}
+                                    />
+                                )}
+                                
+                                {/* Scanning Line Effect */}
+                                <motion.div 
+                                    className="absolute left-0 w-full h-[1px] bg-cyan-400/50 shadow-[0_0_10px_rgba(34,211,238,0.8)] z-40 pointer-events-none"
+                                    animate={{ top: ["0%", "100%", "0%"] }}
+                                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     {/* Right: Content */}
