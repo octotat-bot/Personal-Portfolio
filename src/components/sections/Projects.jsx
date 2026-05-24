@@ -900,7 +900,7 @@ export default function Projects() {
                                 <div className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
                             </div>
 
-                            <div className="relative">
+                            <div className="relative overflow-hidden rounded-b-xl bg-black/50">
                                 {activeStation.video ? (
                                     <video
                                         src={activeStation.video}
@@ -909,13 +909,13 @@ export default function Projects() {
                                         loop
                                         muted
                                         playsInline
-                                        className="w-full h-auto max-h-[60vh] object-contain bg-black/50"
+                                        className="w-full h-auto -mt-[6%]"
                                     />
                                 ) : (
                                     <motion.img 
                                         src={activeStation.image} 
                                         alt={activeStation.title}
-                                        className="w-full h-auto max-h-[60vh] object-contain bg-black/50"
+                                        className="w-full h-auto -mt-[6%]"
                                         initial={{ scale: 1.05 }}
                                         animate={{ scale: 1 }}
                                         transition={{ duration: 1 }}
