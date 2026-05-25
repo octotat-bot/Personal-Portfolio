@@ -66,8 +66,12 @@ export default function Navigation() {
         <>
             <motion.nav
                 initial={{ y: -100, opacity: 0 }}
-                animate={isMapFullscreen ? { y: -120, opacity: 0 } : { y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                animate={
+                    isMapFullscreen ? { y: -120, opacity: 0 } :
+                    activeSection === 'home' ? { y: -100, opacity: 0 } :
+                    { y: 0, opacity: 1 }
+                }
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                 className="fixed top-6 left-0 right-0 z-50 flex justify-center pointer-events-none"
             >
                 <div

@@ -9,6 +9,15 @@
     @apply bg-black text-white font-sans antialiased;
     overflow-x: hidden;
     cursor: none;
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  body::-webkit-scrollbar,
+  *::-webkit-scrollbar {
+    display: none;
   }
 
   /* Show regular cursor on touch devices */

@@ -1,235 +1,162 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback, useState } from 'react';
+import LiveActivity from './LiveActivity';
+import { useFrameLoader } from './useFrameLoader';
+import { useScrollProgress } from './useScrollProgress';
+import { TEXT_BLOCKS } from './textBlocks';
+import styles from './HeroSequence.module.css';
 
 export default function Hero() {
-    const sectionRef = useRef(null);
-    const [leetCodeStats, setLeetCodeStats] = useState({ count: "225+", label: "LeetCode" });
-    const [githubActivity, setGithubActivity] = useState({ text: "10+", label: "Technologies" });
+  const sectionRef = useRef(null);
+  const canvasRef  = useRef(null);
+  const lastFrame  = useRef(-1);
 
-    useEffect(() => {
-        // Fetch real-time LeetCode stats
-        fetch("https://alfa-leetcode-api.onrender.com/Hakka123/solved")
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.solvedProblem) {
-                    setLeetCodeStats({ count: data.solvedProblem, label: "LeetCode Solved" });
-                }
-            })
-            .catch(() => console.log("LeetCode fetch failed, using fallback"));
+  const { images, progress: loadProgress, ready, frameCount } = useFrameLoader();
+  const scrollProgress = useScrollProgress(sectionRef);
 
-        // Fetch GitHub latest push activity
-        fetch("https://api.github.com/users/octotat-bot/events/public")
-            .then(res => res.json())
-            .then(data => {
-                if (Array.isArray(data)) {
-                    const pushEvents = data.filter(e => e.type === "PushEvent");
-                    if (pushEvents.length > 0) {
-                        const lastPush = new Date(pushEvents[0].created_at);
-                        const isToday = new Date().toDateString() === lastPush.toDateString();
-                        const diffDays = Math.floor((new Date() - lastPush) / (1000 * 60 * 60 * 24));
-                        
-                        let text = "";
-                        if (isToday) text = "Today";
-                        else if (diffDays === 1) text = "Yesterday";
-                        else text = `${diffDays}d ago`;
+  // ── Lock scroll until all frames loaded ──────────────────
+  useEffect(() => {
+    document.body.style.overflow = ready ? 'auto' : 'hidden';
+    return () => { document.body.style.overflow = 'auto'; };
+  }, [ready]);
 
-                        setGithubActivity({ text, label: "Last Code Push" });
-                    }
-                }
-            })
-            .catch(() => console.log("GitHub fetch failed, using fallback"));
-    }, []);
+  // ── Draw frame — SHARP, NO BLUR ──────────────────────────
+  const drawFrame = useCallback((idx) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    const img = images[idx];
+    if (!img || !img.complete || !img.naturalWidth) return;
 
-    // Track scroll progress within the hero section
-    const { scrollYProgress } = useScroll({
-        target: sectionRef,
-        offset: ["start start", "end start"]
-    });
+    const cw = canvas.width;
+    const ch = canvas.height;
+    const iw = img.naturalWidth;
+    const ih = img.naturalHeight;
 
-    // Scroll-linked transformations for cinematic effect
-    const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-    const heroY = useTransform(scrollYProgress, [0, 0.5], [0, -100]);
-    const heroScale = useTransform(scrollYProgress, [0, 0.5], [1, 0.95]);
+    // Calculate base scale to fit the image
+    let scale = Math.min(cw / iw, ch / ih);
+    
+    // Zoom in by 15% to crop out the empty black headroom baked into the photo
+    scale = scale * 1.15; 
 
-    // Name split effect - letters spread apart on scroll
-    const nameXLeft = useTransform(scrollYProgress, [0, 0.4], [0, -50]);
-    const nameXRight = useTransform(scrollYProgress, [0, 0.4], [0, 50]);
+    const sw = iw * scale;
+    const sh = ih * scale;
 
-    // Photo parallax - moves slower than content
-    const photoY = useTransform(scrollYProgress, [0, 1], [0, 150]);
-    const photoScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1]);
-    const photoRotate = useTransform(scrollYProgress, [0, 0.5], [0, -3]);
+    // Right-anchor: flush to right edge
+    const sx = cw - sw;
+    
+    // Shift upwards to hide the black padding at the top of the image
+    // Center it vertically, then subtract a portion to push it up
+    const sy = ((ch - sh) / 2) - (sh * 0.08);
 
-    // Status badge fades first
-    const statusOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
-    const statusY = useTransform(scrollYProgress, [0, 0.2], [0, -30]);
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.drawImage(img, sx, sy, sw, sh);
+    lastFrame.current = idx;
+  }, [images]);
 
-    // Stats slide and fade
-    const statsOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
-    const statsY = useTransform(scrollYProgress, [0, 0.3], [0, 50]);
+  // ── Resize canvas to container — prevents blur from CSS scaling ──
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      const dpr  = window.devicePixelRatio || 1;
+      canvas.width  = rect.width  * dpr;
+      canvas.height = rect.height * dpr;
+      const ctx = canvas.getContext('2d');
+      // Removed ctx.scale(dpr, dpr) to prevent double-scaling
+      drawFrame(lastFrame.current >= 0 ? lastFrame.current : 0);
+    };
+    resize();
+    window.addEventListener('resize', resize);
+    return () => window.removeEventListener('resize', resize);
+  }, [drawFrame]);
 
-    // Scroll indicator fades out immediately on scroll
-    const scrollIndicatorOpacity = useTransform(scrollYProgress, [0, 0.1], [1, 0]);
+  // ── Drive frame from scroll ───────────────────────────────
+  useEffect(() => {
+    if (!ready) return;
+    const idx = Math.min(frameCount - 1, Math.floor(scrollProgress * frameCount));
+    if (idx !== lastFrame.current) drawFrame(idx);
+  }, [scrollProgress, ready, drawFrame, frameCount]);
 
-    return (
-        <section ref={sectionRef} id="home" className="relative min-h-screen bg-transparent flex items-center overflow-hidden">
+  // ── Draw first frame once loaded ─────────────────────────
+  useEffect(() => {
+    if (ready) drawFrame(0);
+  }, [ready, drawFrame]);
 
-            {/* Minimal Grid Overlay */}
-            <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
-                <div className="absolute inset-0" style={{
-                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',
-                    backgroundSize: '50px 50px'
-                }} />
-            </div>
+  return (
+    <>
+      {/* ── Preloader is now globally managed in LoadingScreen.jsx ── */}
 
-            <motion.div
-                className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10"
-                style={{ opacity: heroOpacity, y: heroY, scale: heroScale }}
-            >
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center min-h-screen py-16 lg:py-20">
+      {/* ── Hero section — tall enough for scroll room ── */}
+      <section ref={sectionRef} id="home" className={styles.section}>
+        <div className={styles.sticky}>
 
-                    {/* Left Side - Text */}
-                    <div className="lg:col-span-7 space-y-8 lg:space-y-12 order-2 lg:order-1">
+          {/* Canvas — photo sequence renders here */}
+          <canvas
+            ref={canvasRef}
+            className={styles.canvas}
+          />
 
-                        {/* Status Label - Fades first on scroll */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6 }}
-                            className="flex items-center gap-4"
-                            style={{ opacity: statusOpacity, y: statusY }}
-                        >
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm">
-                                <span className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                                </span>
-                                <span className="text-xs font-medium text-gray-300 tracking-wide">AVAILABLE FOR WORK</span>
-                            </div>
+          {/* Grain texture overlay */}
+          <div className={styles.grain} aria-hidden />
 
-                            <div className="h-px w-8 bg-gray-800 hidden md:block"></div>
+          {/* Vignette for depth */}
+          <div className={styles.vignette} aria-hidden />
 
-                            <div className="text-xs text-gray-500 tracking-widest uppercase hidden sm:flex items-center gap-2">
-                                <span>Based in India</span>
-                                <span className="text-lg leading-none">🇮🇳</span>
-                            </div>
-                        </motion.div>
+          {/* Text reveals */}
+          <div className={styles.textLayer}>
+            {TEXT_BLOCKS.map(block => (
+              <TextReveal
+                key={block.id}
+                block={block}
+                scrollProgress={scrollProgress}
+              />
+            ))}
+          </div>
 
-                        {/* Title - Names split apart on scroll */}
-                        <div className="relative">
-                            <motion.h1
-                                className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight leading-none"
-                                initial={{ opacity: 0, x: -50 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.8, delay: 0.2 }}
-                                style={{ x: nameXLeft }}
-                            >
-                                MUKUND
-                            </motion.h1>
-                            <motion.h1
-                                className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-gray-500 tracking-tight leading-none"
-                                initial={{ opacity: 0, x: 50 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ duration: 0.8, delay: 0.4 }}
-                                style={{ x: nameXRight }}
-                            >
-                                MANGLA.
-                            </motion.h1>
-                        </div>
+          {/* ── Live Activity Widget ── */}
+          <LiveActivity ready={ready} scrollProgress={scrollProgress} />
 
-                        {/* Description */}
-                        <motion.div
-                            className="max-w-md ml-0 lg:ml-auto"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.8, delay: 0.8 }}
-                        >
-                            <p className="text-gray-400 leading-relaxed text-sm md:text-base">
-                                AI Engineer & Full-Stack Developer specializing in Agentic workflows, RAG, and high-performance intelligent applications.
-                                Bridging the gap between complex ML models and premium user experiences.
-                            </p>
-                        </motion.div>
+          {/* Scroll hint — disappears after first scroll */}
+          <div
+            className={`${styles.scrollHint} ${scrollProgress > 0.04 ? styles.hidden : ''}`}
+            aria-hidden
+          >
+            <span className={styles.scrollLabel}>scroll</span>
+            <div className={styles.scrollLine} />
+          </div>
 
-                        {/* Stats - Slide down and fade (Now Live Data) */}
-                        <motion.div
-                            className="grid grid-cols-2 gap-4 sm:gap-8 max-w-lg"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 1 }}
-                            style={{ opacity: statsOpacity, y: statsY }}
-                        >
-                            <div className="border-l border-gray-800 pl-3 sm:pl-4 group relative">
-                                <div className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
-                                    {leetCodeStats.count}
-                                    {leetCodeStats.label === "LeetCode Solved" && (
-                                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" title="Live Data" />
-                                    )}
-                                </div>
-                                <div className="text-xs text-gray-600 mt-1">{leetCodeStats.label}</div>
-                            </div>
-                            <div className="border-l border-gray-800 pl-3 sm:pl-4 group relative">
-                                <div className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
-                                    {githubActivity.text}
-                                    {githubActivity.label === "Last Code Push" && (
-                                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse" title="Live Data" />
-                                    )}
-                                </div>
-                                <div className="text-xs text-gray-600 mt-1">{githubActivity.label}</div>
-                            </div>
-                        </motion.div>
-                    </div>
+          {/* Frame counter — subtle dev detail */}
+          <div className={styles.frameCounter} aria-hidden>
+            {String(Math.floor(scrollProgress * frameCount) + 1).padStart(3, '0')} / {frameCount}
+          </div>
 
-                    {/* Right Side - Photo with Parallax */}
-                    <motion.div
-                        className="lg:col-span-5 relative flex items-center justify-center h-auto lg:h-full min-h-[300px] lg:min-h-[500px] order-1 lg:order-2"
-                        style={{ y: photoY }}
-                    >
 
-                        {/* Frame Lines container */}
-                        <motion.div
-                            className="relative p-4 lg:p-6 border border-white/5 rounded-2xl"
-                            style={{ scale: photoScale, rotate: photoRotate }}
-                        >
-                            {/* Corner Accents */}
-                            <div className="absolute top-0 left-0 w-3 lg:w-4 h-3 lg:h-4 border-t border-l border-white/40 rounded-tl-lg" />
-                            <div className="absolute top-0 right-0 w-3 lg:w-4 h-3 lg:h-4 border-t border-r border-white/40 rounded-tr-lg" />
-                            <div className="absolute bottom-0 left-0 w-3 lg:w-4 h-3 lg:h-4 border-b border-l border-white/40 rounded-bl-lg" />
-                            <div className="absolute bottom-0 right-0 w-3 lg:w-4 h-3 lg:h-4 border-b border-r border-white/40 rounded-br-lg" />
 
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ duration: 0.8, delay: 0.5 }}
-                                className="relative w-48 sm:w-64 md:w-80 lg:w-96 aspect-[3/4] rounded-lg overflow-hidden bg-gray-900 border border-white/10"
-                            >
-                                <motion.img
-                                    src="/mk_profile.jpg"
-                                    alt="Mukund Mangla"
-                                    className="w-full h-full object-cover object-top"
-                                    whileHover={{ scale: 1.05 }}
-                                    transition={{ duration: 0.7 }}
-                                />
-                            </motion.div>
-                        </motion.div>
-                    </motion.div>
-                </div>
-            </motion.div>
+        </div>
+      </section>
+    </>
+  );
+}
 
-            {/* Scroll Indicator - Fades immediately on scroll */}
-            <motion.div
-                className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 2, duration: 1 }}
-                style={{ opacity: scrollIndicatorOpacity }}
-            >
-                <motion.div
-                    className="w-[1px] h-12 bg-gradient-to-b from-transparent via-gray-500 to-transparent"
-                    animate={{ scaleY: [1, 1.2, 1] }}
-                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                />
-                <span className="text-[10px] text-gray-500 tracking-widest uppercase">Scroll</span>
-            </motion.div>
-        </section>
-    );
+// ── Word-by-word fade-up reveal ───────────────────────────────────────────────
+function TextReveal({ block, scrollProgress }) {
+  const visible = scrollProgress >= block.revealAt;
+
+  return (
+    <div className={`${styles.revealBlock} ${styles[block.style]}`}>
+      {block.words.map((word, i) => (
+        <span
+          key={i}
+          className={`${styles.word} ${visible ? styles.wordUp : ''}`}
+          style={{
+            transitionDelay: visible ? `${i * block.staggerMs}ms` : '0ms',
+          }}
+        >
+          {word}
+        </span>
+      ))}
+    </div>
+  );
 }
