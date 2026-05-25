@@ -164,11 +164,11 @@ export default function About() {
                                 <div className="w-12 h-px bg-gray-900" />
                             </div>
 
-                            <div className="relative border-l border-gray-800 ml-3 space-y-12">
+                            <div className="relative border-l border-gray-800 ml-2 md:ml-3 space-y-12">
                                 {timeline.map((item, index) => (
                                     <motion.div
                                         key={index}
-                                        className="relative pl-8 lg:pl-12"
+                                        className="relative pl-6 sm:pl-8 lg:pl-12"
                                         initial={{ opacity: 0, x: 20 }}
                                         animate={isInView ? { opacity: 1, x: 0 } : {}}
                                         transition={{ duration: 0.5, delay: 0.6 + index * 0.1 }}
@@ -190,7 +190,7 @@ export default function About() {
                                                 {item.description}
                                             </p>
                                             {item.subTimeline && (
-                                                <div className="mt-8 space-y-4 border-l border-gray-800/50 ml-4 pl-6 relative">
+                                                <div className="mt-6 md:mt-8 space-y-4 border-l border-gray-800/50 ml-2 md:ml-4 pl-4 md:pl-6 relative">
                                                     {/* Gradient highlight on the sub-timeline line */}
                                                     <div className="absolute top-0 bottom-0 -left-[1px] w-px bg-gradient-to-b from-gray-500/50 via-gray-800/30 to-transparent" />
                                                     
@@ -201,10 +201,10 @@ export default function About() {
                                                             whileHover={{ x: 8 }}
                                                         >
                                                             {/* Glowing Dot on the main line */}
-                                                            <div className="absolute -left-[28.5px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-black border border-gray-600 group-hover/sub:border-white group-hover/sub:bg-white group-hover/sub:shadow-[0_0_12px_rgba(255,255,255,0.8)] transition-all duration-300 z-10" />
+                                                            <div className="absolute -left-[20.5px] md:-left-[28.5px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-black border border-gray-600 group-hover/sub:border-white group-hover/sub:bg-white group-hover/sub:shadow-[0_0_12px_rgba(255,255,255,0.8)] transition-all duration-300 z-10" />
                                                             
                                                             {/* Connecting horizontal line */}
-                                                            <div className="absolute -left-[24px] top-1/2 -translate-y-1/2 w-[24px] h-px bg-gray-800 group-hover/sub:bg-gray-500 transition-colors duration-300" />
+                                                            <div className="absolute -left-[16px] md:-left-[24px] top-1/2 -translate-y-1/2 w-[16px] md:w-[24px] h-px bg-gray-800 group-hover/sub:bg-gray-500 transition-colors duration-300" />
                                                             
                                                             <div className="relative z-10 flex flex-col gap-2">
                                                                 <span className="inline-flex w-fit items-center gap-2 text-[10px] font-bold tracking-widest text-gray-400 uppercase bg-black/50 px-2.5 py-1 rounded-md border border-white/5 group-hover/sub:text-white group-hover/sub:border-white/20 transition-colors">

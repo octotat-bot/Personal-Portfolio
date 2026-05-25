@@ -348,6 +348,14 @@ export default function Projects() {
   const containerWrapperRef = useRef(null);
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+      const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+      checkMobile();
+      window.addEventListener('resize', checkMobile);
+      return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   const { scrollYProgress: stickyScroll } = useScroll({
       target: containerWrapperRef,
@@ -431,10 +439,10 @@ export default function Projects() {
   // Parallax Setup
 
   return (
-    <section id="projects" ref={containerWrapperRef} className="relative bg-black selection:bg-cyan-500/30" style={{ height: '250vh' }}>
+    <section id="projects" ref={containerWrapperRef} className="relative bg-black selection:bg-cyan-500/30" style={{ height: isMobile ? 'auto' : '250vh' }}>
       
       {/* Sticky Container */}
-      <div className="sticky top-0 w-full h-screen overflow-hidden flex flex-col justify-center items-center">
+      <div className={`w-full ${isMobile ? 'py-24 relative flex flex-col' : 'sticky top-0 h-screen overflow-hidden flex flex-col justify-center items-center'}`}>
 
           {/* Background grid */}
           <div className="absolute inset-0 opacity-5 z-0">
@@ -480,40 +488,40 @@ export default function Projects() {
           </motion.div>
 
           {/* Track Legend HUD — fades in as map expands, stays in fullscreen */}
-          <motion.div
-            className="absolute bottom-6 left-6 z-30 pointer-events-none"
-            style={{ opacity: hudOpacity }}
-          >
-            <div className="flex flex-col gap-2 bg-black/70 border border-white/10 rounded-xl px-4 py-3 backdrop-blur-md">
-              <div className="text-[9px] font-mono text-gray-500 uppercase tracking-widest mb-1 flex items-center gap-2">
-                <FaMapSigns className="text-gray-400" /> Track Class
-              </div>
-              {Object.values(lines).map(line => (
-                <div key={line.id} className="flex items-center gap-3">
-                  <div className="relative flex items-center justify-center w-8 h-3">
-                    <div className="absolute w-full h-[3px] opacity-60 blur-[2px]" style={{ backgroundColor: line.color }} />
-                    <div className="absolute w-full h-[1.5px]" style={{ backgroundColor: line.color }} />
-                  </div>
-                  <span className="text-[10px] font-mono text-gray-300 uppercase tracking-wider">{line.name}</span>
+          {!isMobile && (
+            <motion.div
+              className="absolute bottom-6 left-6 z-30 pointer-events-none"
+              style={{ opacity: hudOpacity }}
+            >
+              <div className="flex flex-col gap-2 bg-black/70 border border-white/10 rounded-xl px-4 py-3 backdrop-blur-md">
+                <div className="text-[9px] font-mono text-gray-500 uppercase tracking-widest mb-1 flex items-center gap-2">
+                  <FaMapSigns className="text-gray-400" /> Track Class
                 </div>
-              ))}
-            </div>
-          </motion.div>
+                {Object.values(lines).map(line => (
+                  <div key={line.id} className="flex items-center gap-3">
+                    <div className="relative flex items-center justify-center w-8 h-3">
+                      <div className="absolute w-full h-[3px] opacity-60 blur-[2px]" style={{ backgroundColor: line.color }} />
+                      <div className="absolute w-full h-[1.5px]" style={{ backgroundColor: line.color }} />
+                    </div>
+                    <span className="text-[10px] font-mono text-gray-300 uppercase tracking-wider">{line.name}</span>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
           {/* 
             =====================================================
             THE MAP — always fixed fullscreen, revealed via clip
             =====================================================
-            The inner SVG map is ALWAYS 100vw x 100vh in size.
-            A clip-path mask grows to reveal it as the user scrolls.
-            Internal content NEVER scales. Only the window opens.
           */}
-          <motion.div 
-              className="absolute inset-0 z-20"
-              style={{ clipPath: clipPathValue }}
-          >
-              {/* The Map itself — 100vw x 100vh, internal content is fixed */}
-              <div className="w-full h-full bg-[#020202] relative overflow-hidden">
+          {!isMobile && (
+            <motion.div 
+                className="absolute inset-0 z-20"
+                style={{ clipPath: clipPathValue }}
+            >
+                {/* The Map itself — 100vw x 100vh, internal content is fixed */}
+                <div className="w-full h-full bg-[#020202] relative overflow-hidden">
                 {/* Cheap CSS-based atmospheric fog (replaces 3 huge blur-100px SVG circles). */}
                 <motion.div
                     className="absolute inset-0 pointer-events-none"
@@ -828,7 +836,47 @@ export default function Projects() {
                     </AnimatePresence>
 
               </div> {/* closes inner map div */}
-          </motion.div> {/* closes clip container */}
+            </motion.div>
+          )}
+
+          {/* --- MOBILE LIST FALLBACK --- */}
+          {isMobile && (
+              <div className="mt-32 px-6 w-full z-20 flex flex-col gap-6">
+                  {stations.map(station => (
+                      <div 
+                          key={station.id} 
+                          onClick={() => setActiveStation(station)}
+                          className="bg-black border border-white/10 rounded-xl overflow-hidden cursor-pointer hover:border-cyan-500/50 transition-colors"
+                      >
+                          <div className="h-40 w-full relative overflow-hidden bg-gray-900">
+                              {station.video ? (
+                                  <video src={station.video} poster={station.image} autoPlay loop muted playsInline className="w-full h-full object-cover opacity-70" />
+                              ) : (
+                                  <img src={station.image} alt={station.title} className="w-full h-full object-cover opacity-70" />
+                              )}
+                              <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
+                              
+                              <div className="absolute bottom-4 left-4 flex gap-2">
+                                  {station.lines.map(lineId => (
+                                      <span key={lineId} className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: lines[lineId].color, boxShadow: `0 0 8px ${lines[lineId].glow}` }} />
+                                  ))}
+                              </div>
+                          </div>
+                          <div className="p-5">
+                              <div className="text-[10px] font-mono text-gray-500 mb-2">{station.year} • {station.status}</div>
+                              <h3 className="text-xl font-bold text-white mb-2">{station.title}</h3>
+                              <p className="text-sm text-gray-400 line-clamp-2 mb-4">{station.description}</p>
+                              
+                              <div className="flex flex-wrap gap-2">
+                                  {station.tech.slice(0, 4).map(t => (
+                                      <span key={t} className="text-[10px] font-mono bg-white/5 text-gray-300 px-2 py-1 rounded border border-white/10">{t}</span>
+                                  ))}
+                              </div>
+                          </div>
+                      </div>
+                  ))}
+              </div>
+          )}
 
       </div> {/* closes sticky container */}
 

@@ -193,12 +193,12 @@ export default function Contact() {
 
                         {/* Large CTA with Wave Typography Animation */}
                         <motion.div
-                            className="mb-20"
+                            className="mb-16 lg:mb-20"
                             initial={{ opacity: 0 }}
                             animate={isInView ? { opacity: 1 } : {}}
                             transition={{ duration: 0.3 }}
                         >
-                            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 lg:mb-8" style={{ perspective: "1000px" }}>
+                            <h2 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 lg:mb-8" style={{ perspective: "1000px" }}>
                                 <div className="text-white overflow-hidden">
                                     <AnimatedWord word="Let's" startIndex={0} isInView={isInView} className="" />
                                     <span> </span>

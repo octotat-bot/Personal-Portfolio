@@ -33,17 +33,22 @@ export default function Hero() {
     const iw = img.naturalWidth;
     const ih = img.naturalHeight;
 
-    // Scale image to fill the canvas height, plus a 10% zoom to crop the top headroom
-    let scale = (ch / ih) * 1.10; 
+    // For mobile portrait, we want to center the subject. For desktop, right-anchor works well.
+    const isMobile = cw < 768;
+    
+    // Scale image to fill the canvas (cover)
+    let scale = Math.max(cw / iw, ch / ih);
+    // Add a small zoom to crop edges if desired
+    scale *= isMobile ? 1.0 : 1.10; 
 
     const sw = iw * scale;
     const sh = ih * scale;
 
-    // Right-anchor: flush to right edge
-    const sx = cw - sw;
+    // On mobile, center horizontally. On desktop, flush to right edge.
+    const sx = isMobile ? (cw - sw) / 2 : (cw - sw);
     
-    // Bottom-anchor: flush to bottom edge to eliminate the thick gap underneath
-    const sy = ch - sh;
+    // Bottom-anchor or center vertically
+    const sy = isMobile ? (ch - sh) / 2 : (ch - sh);
 
     ctx.clearRect(0, 0, cw, ch);
     ctx.drawImage(img, sx, sy, sw, sh);
