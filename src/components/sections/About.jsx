@@ -189,6 +189,36 @@ export default function About() {
                                             <p className="text-sm text-gray-500 leading-relaxed">
                                                 {item.description}
                                             </p>
+                                            {item.subTimeline && (
+                                                <div className="mt-8 space-y-4 border-l border-gray-800/50 ml-4 pl-6 relative">
+                                                    {/* Gradient highlight on the sub-timeline line */}
+                                                    <div className="absolute top-0 bottom-0 -left-[1px] w-px bg-gradient-to-b from-gray-500/50 via-gray-800/30 to-transparent" />
+                                                    
+                                                    {item.subTimeline.map((sub, idx) => (
+                                                        <motion.div 
+                                                            key={idx} 
+                                                            className="relative group/sub p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-white/10 transition-all duration-500"
+                                                            whileHover={{ x: 8 }}
+                                                        >
+                                                            {/* Glowing Dot on the main line */}
+                                                            <div className="absolute -left-[28.5px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-black border border-gray-600 group-hover/sub:border-white group-hover/sub:bg-white group-hover/sub:shadow-[0_0_12px_rgba(255,255,255,0.8)] transition-all duration-300 z-10" />
+                                                            
+                                                            {/* Connecting horizontal line */}
+                                                            <div className="absolute -left-[24px] top-1/2 -translate-y-1/2 w-[24px] h-px bg-gray-800 group-hover/sub:bg-gray-500 transition-colors duration-300" />
+                                                            
+                                                            <div className="relative z-10 flex flex-col gap-2">
+                                                                <span className="inline-flex w-fit items-center gap-2 text-[10px] font-bold tracking-widest text-gray-400 uppercase bg-black/50 px-2.5 py-1 rounded-md border border-white/5 group-hover/sub:text-white group-hover/sub:border-white/20 transition-colors">
+                                                                    <span className="w-1 h-1 rounded-full bg-gray-600 group-hover/sub:bg-white transition-colors duration-300" />
+                                                                    {sub.year}
+                                                                </span>
+                                                                <p className="text-xs text-gray-500 leading-relaxed group-hover/sub:text-gray-300 transition-colors duration-300">
+                                                                    {sub.description}
+                                                                </p>
+                                                            </div>
+                                                        </motion.div>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
                                     </motion.div>
                                 ))}

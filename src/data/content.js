@@ -193,7 +193,7 @@ export const contactInfo = {
 
 export const timeline = [
     {
-        year: "2025",
+        year: "2026",
         title: "Mastering Agentic AI & RAG",
         description: "Deep-dived into the Agentic AI ecosystem, mastering LangGraph, ReAct frameworks, and Advanced RAG. Built production-ready AI agents and automated workflows using n8n.",
         type: "milestone"
@@ -202,7 +202,17 @@ export const timeline = [
         year: "2024",
         title: "B.Tech in CS & AI",
         description: "Joined Newton School of Technology. Mastered Full Stack Development while building a solid foundation in Machine Learning, Deep Learning, and NLP.",
-        type: "education"
+        type: "education",
+        subTimeline: [
+            {
+                year: "1st year",
+                description: "Learned frontend development and Data Structures & Algorithms (DSA)."
+            },
+            {
+                year: "2nd year",
+                description: "Learned backend development and Artificial Intelligence."
+            }
+        ]
     },
     {
         year: "2023",
