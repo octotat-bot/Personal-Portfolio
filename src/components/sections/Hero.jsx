@@ -33,11 +33,8 @@ export default function Hero() {
     const iw = img.naturalWidth;
     const ih = img.naturalHeight;
 
-    // Calculate base scale to fit the image
-    let scale = Math.min(cw / iw, ch / ih);
-    
-    // Zoom in by 15% to crop out the empty black headroom baked into the photo
-    scale = scale * 1.15; 
+    // Scale image to fill the canvas height, plus a 10% zoom to crop the top headroom
+    let scale = (ch / ih) * 1.10; 
 
     const sw = iw * scale;
     const sh = ih * scale;
@@ -45,9 +42,8 @@ export default function Hero() {
     // Right-anchor: flush to right edge
     const sx = cw - sw;
     
-    // Shift upwards to hide the black padding at the top of the image
-    // Center it vertically, then subtract a portion to push it up
-    const sy = ((ch - sh) / 2) - (sh * 0.08);
+    // Bottom-anchor: flush to bottom edge to eliminate the thick gap underneath
+    const sy = ch - sh;
 
     ctx.clearRect(0, 0, cw, ch);
     ctx.drawImage(img, sx, sy, sw, sh);

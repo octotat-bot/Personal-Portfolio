@@ -11,6 +11,7 @@ import Footer from './components/Footer';
 import BackToTop from './components/BackToTop';
 import CustomCursor from './components/CustomCursor';
 import SortingBackground from './components/SortingBackground';
+import AICloneWidget from './components/AICloneWidget';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -57,6 +58,7 @@ function App() {
           <Footer />
 
           <BackToTop />
+          <AICloneWidget />
         </div>
       </div>
     </>
