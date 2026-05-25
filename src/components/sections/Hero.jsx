@@ -71,7 +71,10 @@ export default function Hero() {
   // ── Drive frame from scroll ───────────────────────────────
   useEffect(() => {
     if (!ready) return;
-    const idx = Math.min(frameCount - 1, Math.floor(scrollProgress * frameCount));
+    // The first 15% of scroll is dedicated to the black intro screen.
+    // The image sequence starts advancing only after 0.15.
+    const sequenceProgress = Math.max(0, (scrollProgress - 0.15) / 0.85);
+    const idx = Math.min(frameCount - 1, Math.floor(sequenceProgress * frameCount));
     if (idx !== lastFrame.current) drawFrame(idx);
   }, [scrollProgress, ready, drawFrame, frameCount]);
 
@@ -114,13 +117,31 @@ export default function Hero() {
           {/* ── Live Activity Widget ── */}
           <LiveActivity ready={ready} scrollProgress={scrollProgress} />
 
-          {/* Scroll hint — disappears after first scroll */}
-          <div
-            className={`${styles.scrollHint} ${scrollProgress > 0.04 ? styles.hidden : ''}`}
-            aria-hidden
+          {/* Black Intro Screen */}
+          <div 
+            className="absolute inset-0 bg-black z-30 flex flex-col items-center justify-center pointer-events-none"
+            style={{ 
+              opacity: Math.max(0, 1 - (scrollProgress * 7)), // Fades out fully by ~14% scroll
+              transition: 'opacity 0.3s ease-out'
+            }}
           >
-            <span className={styles.scrollLabel}>scroll</span>
-            <div className={styles.scrollLine} />
+            <span 
+              className="text-white/70 tracking-[0.5em] uppercase text-sm mb-6"
+              style={{
+                opacity: Math.max(0, 1 - (scrollProgress * 15)), // Fades out very fast (by 6% scroll)
+                transform: `scale(${1 + scrollProgress})`,
+                transition: 'all 0.3s ease-out'
+              }}
+            >
+              Scroll to Interact
+            </span>
+            <div 
+              className="w-[1px] h-16 bg-gradient-to-b from-white/50 to-transparent animate-pulse" 
+              style={{
+                opacity: Math.max(0, 1 - (scrollProgress * 10)),
+                transition: 'opacity 0.3s ease-out'
+              }}
+            />
           </div>
 
           {/* Frame counter — subtle dev detail */}
