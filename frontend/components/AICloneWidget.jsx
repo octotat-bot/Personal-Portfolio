@@ -1,55 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { aboutContent, skills, projects, contactInfo } from '../data/content';
-
-// Simple keyword-based local RAG simulation
-const getSimulatedResponse = (input) => {
-  const lowerInput = input.toLowerCase();
-  const normalizedInput = lowerInput.replace(/[\s\-_]/g, '');
-  
-  // 1. Dynamic Project Matching
-  const matchedProject = projects.find(p => normalizedInput.includes(p.title.toLowerCase().replace(/[\s\-_]/g, '')));
-  if (matchedProject) {
-    const techString = matchedProject.technologies.join(', ');
-    return `${matchedProject.title} is one of Mukund's standout projects! It's a ${matchedProject.category} system. ${matchedProject.description} He built it using ${techString}.`;
-  }
-
-  // 2. Dynamic Skill/Category Matching
-  const matchedSkill = skills.find(s => normalizedInput.includes(s.category.toLowerCase().replace(/[\s\-_]/g, '')) || s.technologies.some(t => normalizedInput.includes(t.toLowerCase().replace(/[\s\-_]/g, ''))));
-  if (matchedSkill) {
-    const techList = matchedSkill.technologies.join(', ');
-    return `Mukund is highly proficient in ${matchedSkill.category}. His stack includes ${techList}. ${matchedSkill.description}`;
-  }
-  
-  // 3. General Intents
-  if (lowerInput.includes('project') || lowerInput.includes('work') || lowerInput.includes('build') || lowerInput.includes('portfolio')) {
-    const featured = projects.filter(p => p.featured).map(p => p.title).join(', ');
-    return `Mukund has built several production-grade systems, including ${featured}. His focus is usually on Agentic AI, RAG, and high-performance real-time architectures. Name a specific project if you want to know the tech stack!`;
-  }
-  
-  if (lowerInput.includes('skill') || lowerInput.includes('tech') || lowerInput.includes('stack')) {
-    const topSkills = skills.map(s => s.category).join(' and ');
-    return `My core expertise lies in ${topSkills}. I'm particularly dangerous with LangGraph, React, and Python. I treat software engineering like a craft.`;
-  }
-
-  if (lowerInput.includes('leet') || lowerInput.includes('dsa') || lowerInput.includes('algo') || lowerInput.includes('code')) {
-    return `Algorithms are my playground. I've crushed over 225 LeetCode problems and can optimize complex logic on the fly. Speed and efficiency are non-negotiable.`;
-  }
-
-  if (lowerInput.includes('contact') || lowerInput.includes('hire') || lowerInput.includes('email') || lowerInput.includes('reach')) {
-    return `You can reach out directly at ${contactInfo.email}. I'm currently open to roles involving AI Engineering and Agentic workflows. Let's build something impossible.`;
-  }
-
-  if (lowerInput.includes('who') || lowerInput.includes('about') || lowerInput.includes('mukund')) {
-    return aboutContent.description;
-  }
-  
-  if (lowerInput.includes('hi') || lowerInput.includes('hello') || lowerInput.includes('hey')) {
-    return `Hello! I am Mukund's autonomous agent. Ask me about his tech stack, his latest AI projects, or how to get in touch.`;
-  }
-
-  return `Interesting question. I'm primarily trained on Mukund's resume, projects, and skills. You can ask me about his tech stack, his latest AI projects, or how to get in touch!`;
-};
+// Removing mock simulated RAG function
 
 export default function AICloneWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -75,13 +26,31 @@ export default function AICloneWidget() {
 
     const userMessage = inputValue.trim();
     setInputValue('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    const updatedMessages = [...messages, { role: 'user', content: userMessage }];
+    setMessages(updatedMessages);
     setIsTyping(true);
 
-    // Simulate network delay
-    await new Promise(r => setTimeout(r, 600));
+    let responseText = "";
+    try {
+      // Format history for Gemini API: { role: 'user' | 'model', parts: [{ text: '...' }] }
+      const formattedHistory = updatedMessages.map(msg => ({
+        role: msg.role === 'user' ? 'user' : 'model',
+        parts: [{ text: msg.content }]
+      }));
 
-    const responseText = getSimulatedResponse(userMessage);
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: formattedHistory })
+      });
+
+      if (!res.ok) throw new Error('API Request Failed');
+      const data = await res.json();
+      responseText = data.reply;
+    } catch (error) {
+      console.error(error);
+      responseText = "I'm having trouble connecting to my cognitive backend. Please try again later.";
+    }
     
     // Simulate streaming
     setMessages(prev => [...prev, { role: 'agent', content: '' }]);
