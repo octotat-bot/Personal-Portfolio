@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styles from './LiveActivity.module.css';
+import useLeetCodeStats from '../../hooks/useLeetCodeStats';
 
 export default function LiveActivity({ ready, scrollProgress = 0 }) {
   const [githubState, setGithubState] = useState({ loading: true, repo: '', timeAgo: '' });
-  const [leetcodeState, setLeetcodeState] = useState({ loading: true, solved: 0 });
+  const leetCodeSolved = useLeetCodeStats(225);
 
   useEffect(() => {
-    // Fetch GitHub last push
     const fetchGithub = async () => {
       try {
         const res = await fetch('https://api.github.com/users/octotat-bot/events/public');
@@ -15,12 +15,11 @@ export default function LiveActivity({ ready, scrollProgress = 0 }) {
         if (pushEvent) {
           const repoName = pushEvent.repo.name.split('/')[1];
           const date = new Date(pushEvent.created_at);
-          
-          // Calculate time ago
+
           const diffMs = Date.now() - date.getTime();
           const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
           const diffDays = Math.floor(diffHrs / 24);
-          
+
           let timeStr = '';
           if (diffHrs < 1) timeStr = 'Just now';
           else if (diffHrs < 24) timeStr = `${diffHrs} hr${diffHrs > 1 ? 's' : ''} ago`;
@@ -30,30 +29,12 @@ export default function LiveActivity({ ready, scrollProgress = 0 }) {
         } else {
           setGithubState({ loading: false, repo: 'No recent pushes', timeAgo: '' });
         }
-      } catch (err) {
+      } catch {
         setGithubState({ loading: false, repo: 'GitHub API limit reached', timeAgo: '' });
       }
     };
 
-    // Fetch LeetCode stats
-    const fetchLeetcode = async () => {
-      try {
-        // Use alfa-leetcode-api for reliable live data
-        let res = await fetch('https://alfa-leetcode-api.onrender.com/hakka123/solved');
-        let data = await res.json();
-        
-        if (data && data.solvedProblem) {
-          setLeetcodeState({ loading: false, solved: data.solvedProblem });
-        } else {
-           setLeetcodeState({ loading: false, solved: 225 });
-        }
-      } catch (err) {
-        setLeetcodeState({ loading: false, solved: 225 }); // fallback
-      }
-    };
-
     fetchGithub();
-    fetchLeetcode();
   }, []);
 
   if (!ready) return null;
@@ -89,14 +70,8 @@ export default function LiveActivity({ ready, scrollProgress = 0 }) {
           <span className={styles.statTitle}>LeetCode Algo</span>
           <span className={styles.statIcon}>⚡</span>
         </div>
-        {!leetcodeState.loading ? (
-          <>
-            <div className={styles.statValue}>{leetcodeState.solved}</div>
-            <div className={styles.statDetail}>problems crushed</div>
-          </>
-        ) : (
-          <div className={styles.statDetail}>Crunching data...</div>
-        )}
+        <div className={styles.statValue}>{leetCodeSolved}</div>
+        <div className={styles.statDetail}>problems crushed</div>
       </a>
 
     </div>

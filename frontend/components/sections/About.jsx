@@ -1,6 +1,7 @@
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 import { aboutContent, timeline } from '../../data/content';
+import useLeetCodeStats from '../../hooks/useLeetCodeStats';
 
 export default function About() {
     const ref = useRef(null);
@@ -10,18 +11,7 @@ export default function About() {
         offset: ["start end", "end start"]
     });
 
-    const [leetCodeSolved, setLeetCodeSolved] = useState("225+");
-
-    useEffect(() => {
-        fetch("https://alfa-leetcode-api.onrender.com/Hakka123/solved")
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.solvedProblem) {
-                    setLeetCodeSolved(data.solvedProblem);
-                }
-            })
-            .catch(() => {});
-    }, []);
+    const leetCodeSolved = useLeetCodeStats();
 
     const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
     const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
