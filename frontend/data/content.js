@@ -59,6 +59,22 @@ export const skills = [
 
 export const projects = [
     {
+        id: 6,
+        title: "PlaceNext",
+        category: "AI Placement & EdTech",
+        description: "A comprehensive AI Placement Cell & Internship Management System to streamline campus recruitment. Features smart resume analysis for ATS scoring, intelligent eligibility matching, and a 24/7 AI chatbot assistant.",
+        technologies: ["React", "Node.js", "Express", "MongoDB", "Groq AI", "OpenAI API", "Tailwind CSS"],
+        image: "/projects/placenext.png",
+        link: "https://place-next.vercel.app/",
+        github: "https://github.com/octotat-bot/PlaceNext",
+        featured: true,
+        stats: {
+            matching: "Intelligent Filter",
+            analysis: "AI Resume ATS",
+            assistant: "24/7 Chatbot"
+        }
+    },
+    {
         id: 5,
         title: "DreamSignal",
         category: "AI & Microservices",
