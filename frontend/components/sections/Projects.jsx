@@ -145,6 +145,17 @@ const stations = [
     features: ["Live weather data", "Dynamic background UI", "Geolocation"],
     challenges: "Handling asynchronous API requests efficiently and gracefully managing rate limits.",
     image: "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?auto=format&fit=crop&q=80&w=800"
+  },
+  {
+    id: "placenext", title: "PlaceNext",
+    lines: ["aiml", "backend"], cx: 100, cy: 600, size: "large",
+    description: "A comprehensive AI Placement Cell & Internship Management System to streamline campus recruitment. Features smart resume analysis for ATS scoring, intelligent eligibility matching, and a 24/7 AI chatbot assistant.",
+    tech: ["React", "Node.js", "Express", "MongoDB", "Groq AI", "OpenAI API", "Tailwind CSS"],
+    status: "Completed", year: "2024",
+    github: "https://github.com/octotat-bot/PlaceNext", demo: "https://place-next.vercel.app/",
+    features: ["Intelligent Filter", "AI Resume ATS", "24/7 Chatbot"],
+    challenges: "Building an efficient ATS resume parser using OpenAI API while maintaining low latency.",
+    image: "/projects/placenext.png"
   }
 ];
 
