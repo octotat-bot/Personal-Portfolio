@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, memo } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform, useInView } from 'framer-motion';
 import { FaGithub, FaExternalLinkAlt, FaTimes, FaMapSigns, FaSatelliteDish, FaNetworkWired, FaCodeBranch } from 'react-icons/fa';
+import { LiquidButton } from '../ui/liquid-glass-button';
 
 const lines = {
   frontend: { 
@@ -915,12 +916,14 @@ export default function Projects() {
                     transition={{ type: "spring", damping: 25, stiffness: 300 }}
                     style={{ boxShadow: `0 0 100px ${lines[activeStation.lines[0]].glow}` }}
                 >
-                    <button 
+                    <LiquidButton 
+                        variant="ghost"
+                        size="icon"
                         onClick={() => setActiveStation(null)}
-                        className="absolute top-4 right-4 z-50 w-10 h-10 bg-black/50 hover:bg-white/10 rounded-full flex items-center justify-center text-white/70 hover:text-white transition-all backdrop-blur-sm border border-white/10 cursor-pointer"
+                        className="absolute top-4 right-4 z-50 w-10 h-10 bg-black/50 hover:bg-white/10 !rounded-full flex items-center justify-center text-white/70 hover:text-white transition-all backdrop-blur-sm border border-white/10 cursor-pointer"
                     >
                         <FaTimes />
-                    </button>
+                    </LiquidButton>
 
                     {/* Left: Image/Video & Decor */}
                     <div className="w-full lg:w-1/2 min-h-[300px] lg:min-h-0 relative flex items-center justify-center p-4 sm:p-8 bg-black overflow-hidden group">
@@ -1044,15 +1047,19 @@ export default function Projects() {
 
                             {/* Action Buttons */}
                             <div className="flex flex-col sm:flex-row gap-4 mt-auto">
-                                <a href={activeStation.github} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-3 py-4 bg-white text-black font-bold text-sm tracking-wider hover:bg-gray-200 transition-colors rounded-xl group relative overflow-hidden">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-50 group-hover:-translate-x-full translate-x-full transition-transform duration-1000" />
-                                    <FaGithub className="text-lg group-hover:scale-110 transition-transform" />
-                                    <span>SOURCE CODE</span>
-                                </a>
-                                <a href={activeStation.demo} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center gap-3 py-4 bg-transparent border border-white/20 text-white font-bold text-sm tracking-wider hover:bg-white/5 transition-colors rounded-xl group">
-                                    <FaExternalLinkAlt className="text-sm group-hover:scale-110 transition-transform" />
-                                    <span>LIVE DEMO</span>
-                                </a>
+                                <LiquidButton asChild variant="default" className="flex-1 font-bold text-sm tracking-wider !rounded-xl overflow-hidden group py-6">
+                                    <a href={activeStation.github} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 w-full h-full text-black">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-50 group-hover:-translate-x-full translate-x-full transition-transform duration-1000" />
+                                        <FaGithub className="text-lg group-hover:scale-110 transition-transform relative z-10" />
+                                        <span className="relative z-10">SOURCE CODE</span>
+                                    </a>
+                                </LiquidButton>
+                                <LiquidButton asChild variant="outline" className="flex-1 font-bold text-sm tracking-wider !rounded-xl group py-6 border-white/20 text-white bg-transparent">
+                                    <a href={activeStation.demo} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 w-full h-full">
+                                        <FaExternalLinkAlt className="text-sm group-hover:scale-110 transition-transform" />
+                                        <span>LIVE DEMO</span>
+                                    </a>
+                                </LiquidButton>
                             </div>
                         </div>
                     </div>

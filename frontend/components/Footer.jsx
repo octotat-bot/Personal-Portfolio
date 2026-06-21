@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { contactInfo } from '../data/content';
+import { LiquidButton } from './ui/liquid-glass-button';
 
 export default function Footer() {
     const currentYear = new Date().getFullYear();
@@ -68,15 +69,17 @@ export default function Footer() {
                         © {currentYear} Mukund Mangla. All rights reserved.
                     </div>
 
-                    <button
+                    <LiquidButton
+                        variant="ghost"
+                        size="sm"
                         onClick={scrollToTop}
-                        className="group flex items-center gap-2 text-xs text-gray-600 hover:text-white transition-colors"
+                        className="group flex items-center gap-2 text-xs text-gray-600 hover:text-white transition-colors !rounded-full"
                     >
                         <span>BACK TO TOP</span>
                         <svg className="w-4 h-4 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
                         </svg>
-                    </button>
+                    </LiquidButton>
                 </div>
             </div>
         </footer>

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { LiquidButton } from './ui/liquid-glass-button';
 
 const SUGGESTIONS = [
   "What projects has Mukund built?",
@@ -368,15 +369,17 @@ export default function AICloneWidget() {
                     Clear
                   </motion.button>
                 )}
-                <button
+                <LiquidButton
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setIsOpen(false)}
                   aria-label="Close chat"
-                  className="p-2 text-gray-600 hover:text-white hover:bg-white/10 transition-all duration-300 cursor-pointer"
+                  className="p-2 text-gray-600 hover:text-white hover:bg-white/10 transition-all duration-300 cursor-pointer !rounded-md"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
-                </button>
+                </LiquidButton>
               </div>
             </div>
 

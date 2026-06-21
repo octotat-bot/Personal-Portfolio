@@ -2,6 +2,7 @@ import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import { useRef, useState } from 'react';
 import useSound from 'use-sound';
 import { contactInfo } from '../../data/content';
+import { LiquidButton } from '../ui/liquid-glass-button';
 
 // Animated letter component for wave effect
 function AnimatedLetter({ letter, index, isInView }) {
@@ -230,12 +231,14 @@ export default function Contact() {
                                         <a href={`mailto:${contactInfo.email}`} className="text-xl text-white hover:text-gray-400 transition-colors">
                                             {contactInfo.email}
                                         </a>
-                                        <button
+                                        <LiquidButton
+                                            variant="outline"
+                                            size="sm"
                                             onClick={copyEmail}
-                                            className="px-3 py-1 text-xs border border-gray-800 hover:border-white text-gray-500 hover:text-white transition-all"
+                                            className="px-3 py-1 text-xs border border-gray-800 hover:border-white text-gray-500 hover:text-white transition-all rounded-md"
                                         >
                                             {emailCopied ? '✓ COPIED' : 'COPY'}
-                                        </button>
+                                        </LiquidButton>
                                     </div>
                                 </div>
 
@@ -327,14 +330,15 @@ export default function Contact() {
                                     </div>
                                 )}
 
-                                <button
+                                <LiquidButton
                                     type="submit"
+                                    variant="default"
+                                    size="xl"
                                     disabled={isSubmitting}
-                                    className="group relative px-8 py-4 bg-white text-black text-sm font-medium tracking-wide hover:bg-gray-200 transition-colors mt-8 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="group relative px-8 py-4 bg-white/10 border border-white/20 text-white text-sm font-medium tracking-wide hover:bg-white/20 hover:border-white/40 transition-colors mt-8 disabled:opacity-50 disabled:cursor-not-allowed w-full md:w-auto"
                                 >
                                     {isSubmitting ? 'SENDING...' : 'SEND MESSAGE'}
-                                    <div className="absolute bottom-0 left-0 w-0 h-px bg-black group-hover:w-full transition-all duration-300" />
-                                </button>
+                                </LiquidButton>
                             </motion.form>
                         </div>
                     </div>

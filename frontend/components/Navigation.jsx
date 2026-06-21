@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import Magnetic from './Magnetic';
+import { LiquidButton, GlassFilter } from './ui/liquid-glass-button';
 
 export default function Navigation() {
     const [scrolled, setScrolled] = useState(false);
@@ -86,10 +87,12 @@ export default function Navigation() {
           `}
                     style={{
                         background: 'linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02), rgba(255,255,255,0.05))',
-                        backdropFilter: 'blur(20px) saturate(150%)',
-                        WebkitBackdropFilter: 'blur(20px) saturate(150%)',
                     }}
                 >
+                    <GlassFilter />
+                    <div className="absolute top-0 left-0 z-0 h-full w-full rounded-[inherit] pointer-events-none shadow-[0_0_6px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3px_rgba(0,0,0,0.9),inset_-3px_-3px_0.5px_-3px_rgba(0,0,0,0.85),inset_1px_1px_1px_-0.5px_rgba(0,0,0,0.6),inset_-1px_-1px_1px_-0.5px_rgba(0,0,0,0.6),inset_0_0_6px_6px_rgba(0,0,0,0.12),inset_0_0_2px_2px_rgba(0,0,0,0.06),0_0_12px_rgba(255,255,255,0.15)] transition-all dark:shadow-[0_0_8px_rgba(0,0,0,0.03),0_2px_6px_rgba(0,0,0,0.08),inset_3px_3px_0.5px_-3.5px_rgba(255,255,255,0.09),inset_-3px_-3px_0.5px_-3.5px_rgba(255,255,255,0.85),inset_1px_1px_1px_-0.5px_rgba(255,255,255,0.6),inset_-1px_-1px_1px_-0.5px_rgba(255,255,255,0.6),inset_0_0_6px_6px_rgba(255,255,255,0.12),inset_0_0_2px_2px_rgba(255,255,255,0.06),0_0_12px_rgba(0,0,0,0.15)]" />
+                    <div className="absolute top-0 left-0 isolate -z-10 h-full w-full overflow-hidden rounded-[inherit] pointer-events-none" style={{ backdropFilter: 'url("#container-glass")' }} />
+
                     {/* Animated Liquid Gradient Overlay */}
                     <div className="absolute inset-0 opacity-10 pointer-events-none">
                         <div
@@ -162,7 +165,7 @@ export default function Navigation() {
                                 <button
                                     onClick={() => scrollToSection(link.id)}
                                     className={`
-                                        relative px-5 py-2.5 text-xs uppercase tracking-wider font-medium 
+                                        relative px-5 py-2 text-[11px] uppercase tracking-[0.15em] font-normal 
                                         transition-all duration-300 rounded-full
                                         ${activeSection === link.id
                                             ? 'text-white bg-white/20 shadow-lg shadow-white/10'
@@ -216,10 +219,10 @@ export default function Navigation() {
 
                     {/* Download Resume Button with Magnetic */}
                     <Magnetic>
-                        <a
-                            href="/resume.pdf"
+                        <a 
+                            href="/resume.pdf" 
                             download="Mukund_Mangla_Resume.pdf"
-                            className="hidden md:flex items-center gap-2 px-6 py-3 bg-gradient-to-br from-white/10 to-white/5 text-white text-xs uppercase tracking-wider font-bold rounded-full border border-white/20 hover:border-white/40 hover:bg-white/20 transition-all duration-300 backdrop-blur-sm"
+                            className="hidden md:flex items-center gap-2 text-white text-[11px] uppercase tracking-[0.15em] font-normal rounded-full border border-white/20 hover:border-white/40 hover:bg-white/5 transition-all duration-300 px-4 py-2"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -243,7 +246,7 @@ export default function Navigation() {
                     <Magnetic>
                         <button
                             onClick={() => scrollToSection('contact')}
-                            className="hidden md:block px-6 py-3 bg-white text-black text-xs uppercase tracking-wider font-bold rounded-full hover:bg-gray-200 transition-colors"
+                            className="hidden md:flex items-center justify-center text-white border border-white/20 text-[11px] uppercase tracking-[0.15em] font-normal rounded-full transition-colors hover:border-white/40 hover:bg-white/5 px-4 py-2"
                         >
                             Talk
                         </button>
