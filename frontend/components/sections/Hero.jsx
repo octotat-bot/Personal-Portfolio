@@ -4,8 +4,9 @@ import { useFrameLoader } from './useFrameLoader';
 import { useScrollProgress } from './useScrollProgress';
 import { TEXT_BLOCKS } from './textBlocks';
 import styles from './HeroSequence.module.css';
+import { FloatingPaths } from '../ui/background-paths';
 
-export default function Hero() {
+export default function Hero({ isAppLoaded }) {
   const sectionRef = useRef(null);
   const canvasRef  = useRef(null);
   const lastFrame  = useRef(-1);
@@ -88,6 +89,16 @@ export default function Hero() {
     if (ready) drawFrame(0);
   }, [ready, drawFrame]);
 
+  const [startVisible, setStartVisible] = useState(false);
+  useEffect(() => {
+    if (ready) {
+      const timer = setTimeout(() => {
+        setStartVisible(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [ready]);
+
   return (
     <>
       {/* ── Preloader is now globally managed in LoadingScreen.jsx ── */}
@@ -124,29 +135,35 @@ export default function Hero() {
 
           {/* Black Intro Screen */}
           <div 
-            className="absolute inset-0 bg-black z-30 flex flex-col items-center justify-center pointer-events-none"
+            className="absolute inset-0 bg-black z-30 overflow-hidden"
             style={{ 
               opacity: Math.max(0, 1 - (scrollProgress * 7)), // Fades out fully by ~14% scroll
-              transition: 'opacity 0.3s ease-out'
+              transition: 'opacity 0.3s ease-out',
+              pointerEvents: scrollProgress > 0.1 ? 'none' : 'auto'
             }}
           >
-            <span 
-              className="text-white/70 tracking-[0.5em] uppercase text-sm mb-6"
-              style={{
-                opacity: Math.max(0, 1 - (scrollProgress * 15)), // Fades out very fast (by 6% scroll)
-                transform: `scale(${1 + scrollProgress})`,
-                transition: 'all 0.3s ease-out'
-              }}
-            >
-              Scroll to Interact
-            </span>
+            {/* Background Paths Animation - Mounts only after Preloader finishes */}
+            {isAppLoaded && (
+              <div className="absolute inset-0 z-0 pointer-events-none">
+                <FloatingPaths position={1} />
+                <FloatingPaths position={-1} />
+              </div>
+            )}
+            
+            {/* Scroll to Interact Indicator */}
             <div 
-              className="w-[1px] h-16 bg-gradient-to-b from-white/50 to-transparent animate-pulse" 
-              style={{
-                opacity: Math.max(0, 1 - (scrollProgress * 10)),
-                transition: 'opacity 0.3s ease-out'
-              }}
-            />
+              className={`
+                absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 z-10
+                transition-all duration-1000 ease-out flex flex-col items-center
+                ${startVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
+              `}
+            >
+              <span className="text-white tracking-[0.4em] uppercase text-sm mb-6 animate-pulse pointer-events-none drop-shadow-lg">
+                Scroll to interact
+              </span>
+              
+              <div className="w-[1px] h-24 bg-gradient-to-b from-white/70 to-transparent animate-pulse" />
+            </div>
           </div>
 
           {/* Frame counter — subtle dev detail */}

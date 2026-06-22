@@ -7,7 +7,7 @@ export default function LoadingScreen({ onLoadingComplete }) {
 
     useEffect(() => {
         // Smooth progress animation using requestAnimationFrame
-        const duration = 3000; // 3 seconds
+        const duration = 8000; // 8 seconds
         const startTime = Date.now();
 
         const updateProgress = () => {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import LoadingScreen from './components/LoadingScreen';
 import Navigation from './components/Navigation';
@@ -15,6 +15,15 @@ import AICloneWidget from './components/AICloneWidget';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Prevent browser from remembering scroll position on refresh
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    // Force scroll to top on mount
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <>
@@ -48,7 +57,7 @@ function App() {
           <Navigation />
 
           <main>
-            <Hero />
+            <Hero isAppLoaded={!isLoading} />
             <About />
             <Skills />
             <Projects />

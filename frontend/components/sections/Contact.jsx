@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import useSound from 'use-sound';
 import { contactInfo } from '../../data/content';
 import { LiquidButton } from '../ui/liquid-glass-button';
+import { GooeyText } from '../ui/gooey-text-morphing';
 
 // Animated letter component for wave effect
 function AnimatedLetter({ letter, index, isInView }) {
@@ -205,12 +206,13 @@ export default function Contact() {
                                     <span> </span>
                                     <AnimatedWord word="work" startIndex={6} isInView={isInView} className="" />
                                 </div>
-                                <div className="overflow-hidden">
-                                    <AnimatedWord
-                                        word="together"
-                                        startIndex={11}
-                                        isInView={isInView}
-                                        className="text-gray-600 gradient-text-animated"
+                                <div className="relative h-[40px] sm:h-[60px] md:h-[72px] lg:h-[84px] mt-2 w-full">
+                                    <GooeyText 
+                                        texts={["together", "innovate", "build", "create"]} 
+                                        morphTime={1}
+                                        cooldownTime={2}
+                                        className="absolute inset-0"
+                                        textClassName="text-gray-600 gradient-text-animated left-0"
                                     />
                                 </div>
                             </h2>
