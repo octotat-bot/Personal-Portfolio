@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import LoadingScreen from './components/LoadingScreen';
 import Navigation from './components/Navigation';
@@ -15,6 +15,10 @@ import AICloneWidget from './components/AICloneWidget';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+  // Hero owns the frame sequence, so it reports load progress up for the preloader.
+  const [frameProgress, setFrameProgress] = useState(0);
+
+  const handleLoadingComplete = useCallback(() => setIsLoading(false), []);
 
   useEffect(() => {
     // Prevent browser from remembering scroll position on refresh
@@ -33,7 +37,8 @@ function App() {
         {isLoading && (
           <LoadingScreen
             key="loading"
-            onLoadingComplete={() => setIsLoading(false)}
+            frameProgress={frameProgress}
+            onLoadingComplete={handleLoadingComplete}
           />
         )}
       </AnimatePresence>
@@ -57,7 +62,7 @@ function App() {
           <Navigation />
 
           <main>
-            <Hero isAppLoaded={!isLoading} />
+            <Hero isAppLoaded={!isLoading} onLoadProgress={setFrameProgress} />
             <About />
             <Skills />
             <Projects />

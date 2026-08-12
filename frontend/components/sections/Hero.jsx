@@ -6,19 +6,28 @@ import { TEXT_BLOCKS } from './textBlocks';
 import styles from './HeroSequence.module.css';
 import { FloatingPaths } from '../ui/background-paths';
 
-export default function Hero({ isAppLoaded }) {
+export default function Hero({ isAppLoaded, onLoadProgress }) {
   const sectionRef = useRef(null);
   const canvasRef  = useRef(null);
   const lastFrame  = useRef(-1);
+  // What the scroll position asks for, which may not be downloaded yet.
+  const wantedFrame = useRef(0);
 
-  const { images, progress: loadProgress, ready, frameCount } = useFrameLoader();
+  const { frameAt, progress: loadProgress, firstFrameReady, ready, frameCount } = useFrameLoader();
   const scrollProgress = useScrollProgress(sectionRef);
 
-  // ── Lock scroll until all frames loaded ──────────────────
+  // ── Report load state to the preloader ───────────────────
   useEffect(() => {
-    document.body.style.overflow = ready ? 'auto' : 'hidden';
+    onLoadProgress?.(loadProgress);
+  }, [loadProgress, onLoadProgress]);
+
+  // ── Lock scroll only until something is paintable ────────
+  // Remaining frames stream in behind the intro screen; drawFrame holds the
+  // last good frame if the user outruns the download.
+  useEffect(() => {
+    document.body.style.overflow = firstFrameReady ? 'auto' : 'hidden';
     return () => { document.body.style.overflow = 'auto'; };
-  }, [ready]);
+  }, [firstFrameReady]);
 
   // ── Draw frame — SHARP, NO BLUR ──────────────────────────
   const drawFrame = useCallback((idx) => {
@@ -26,7 +35,8 @@ export default function Hero({ isAppLoaded }) {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    const img = images[idx];
+    const img = frameAt(idx);
+    // Not downloaded yet — leave the previous frame on screen rather than blanking.
     if (!img || !img.complete || !img.naturalWidth) return;
 
     const cw = canvas.width;
@@ -54,7 +64,7 @@ export default function Hero({ isAppLoaded }) {
     ctx.clearRect(0, 0, cw, ch);
     ctx.drawImage(img, sx, sy, sw, sh);
     lastFrame.current = idx;
-  }, [images]);
+  }, [frameAt]);
 
   // ── Resize canvas to container — prevents blur from CSS scaling ──
   useEffect(() => {
@@ -76,28 +86,37 @@ export default function Hero({ isAppLoaded }) {
 
   // ── Drive frame from scroll ───────────────────────────────
   useEffect(() => {
-    if (!ready) return;
+    if (!firstFrameReady) return;
     // The first 15% of scroll is dedicated to the black intro screen.
     // The image sequence starts advancing only after 0.15.
     const sequenceProgress = Math.max(0, (scrollProgress - 0.15) / 0.85);
     const idx = Math.min(frameCount - 1, Math.floor(sequenceProgress * frameCount));
+    wantedFrame.current = idx;
     if (idx !== lastFrame.current) drawFrame(idx);
-  }, [scrollProgress, ready, drawFrame, frameCount]);
+  }, [scrollProgress, firstFrameReady, drawFrame, frameCount]);
 
-  // ── Draw first frame once loaded ─────────────────────────
+  // ── Paint the opening frame as soon as it arrives ────────
   useEffect(() => {
-    if (ready) drawFrame(0);
-  }, [ready, drawFrame]);
+    if (firstFrameReady) drawFrame(0);
+  }, [firstFrameReady, drawFrame]);
+
+  // ── Catch up if the user outran the download ──────────────
+  // Each newly arrived frame is a chance to satisfy a request drawFrame
+  // had to skip because the image was still in flight.
+  useEffect(() => {
+    if (!firstFrameReady || ready) return;
+    if (wantedFrame.current !== lastFrame.current) drawFrame(wantedFrame.current);
+  }, [loadProgress, firstFrameReady, ready, drawFrame]);
 
   const [startVisible, setStartVisible] = useState(false);
   useEffect(() => {
-    if (ready) {
+    if (firstFrameReady) {
       const timer = setTimeout(() => {
         setStartVisible(true);
       }, 1000);
       return () => clearTimeout(timer);
     }
-  }, [ready]);
+  }, [firstFrameReady]);
 
   return (
     <>
@@ -131,7 +150,7 @@ export default function Hero({ isAppLoaded }) {
           </div>
 
           {/* ── Live Activity Widget ── */}
-          <LiveActivity ready={ready} scrollProgress={scrollProgress} />
+          <LiveActivity ready={firstFrameReady} scrollProgress={scrollProgress} />
 
           {/* Black Intro Screen */}
           <div 
