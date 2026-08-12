@@ -1,6 +1,10 @@
 /**
  * Converts the hero PNG sequence to WebP.
  *
+ * The PNG originals live in assets-src/ rather than public/ so Vite does not
+ * copy ~86MB of unused source images into every deploy. Only the generated
+ * WebP output under public/hero-frames/ is served.
+ *
  * Consecutive duplicate frames in the source are "held" frames that create
  * deliberate pauses in the motion. They are encoded once and referenced
  * multiple times by the manifest, so the 191-step timeline is preserved
@@ -16,7 +20,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const SRC_DIR = join(ROOT, 'public', 'ohhooo');
+const SRC_DIR = join(ROOT, 'assets-src', 'hero-frames-png');
 const OUT_DIR = join(ROOT, 'public', 'hero-frames');
 const MANIFEST = join(ROOT, 'frontend', 'components', 'sections', 'frameManifest.js');
 

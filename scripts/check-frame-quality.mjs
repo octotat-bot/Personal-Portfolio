@@ -10,7 +10,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const SRC_DIR = join(ROOT, 'public', 'ohhooo');
+const SRC_DIR = join(ROOT, 'assets-src', 'hero-frames-png');
 const TMP = '/tmp/frame-quality';
 mkdirSync(TMP, { recursive: true });
 
