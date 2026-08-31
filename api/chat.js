@@ -29,7 +29,7 @@ ${timeline.map(t => `${t.year}: ${t.title} — ${t.description}`).join('\n')}
 ${skills.map(s => `- ${s.category} (${s.proficiency}% proficiency): ${s.technologies.join(', ')}. ${s.description}`).join('\n')}
 
 --- PROJECTS ---
-${projects.map(p => `- **${p.title}** (${p.category}): ${p.description} Tech: ${p.technologies.join(', ')}. Live: ${p.link} | GitHub: ${p.github}`).join('\n')}
+${projects.map(p => `- **${p.title}** (${p.category}): ${p.description} Tech: ${p.technologies.join(', ')}. ${p.link ? `Live: ${p.link} | ` : 'No public demo. '}GitHub: ${p.github}`).join('\n')}
 
 --- CASE STUDY ---
 ${caseStudies.map(c => `${c.title} (${c.role}, ${c.duration}): ${c.overview} Challenge: ${c.challenge} Solution: ${c.solution} Results: ${c.results.map(r => `${r.metric}: ${r.value}`).join(', ')}`).join('\n')}

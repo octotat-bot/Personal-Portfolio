@@ -59,6 +59,38 @@ export const skills = [
 
 export const projects = [
     {
+        id: 8,
+        title: "RepoMind",
+        category: "RAG & Code Intelligence",
+        description: "RepoMind indexes any GitHub repository — cloning, chunking and embedding every file — then answers questions about it in plain English, citing the exact files and line ranges behind each answer. It adds semantic code search, an interactive dependency graph with circular-import detection, and AST-based dead-code analysis. Built with Next.js, FastAPI, FAISS and Postgres, on local or hosted models.",
+        technologies: ["Next.js 15", "React 19", "Tailwind v4", "FastAPI", "Python 3.13", "SQLAlchemy 2", "FAISS", "Ollama", "Groq", "PostgreSQL", "Prisma", "Vercel", "Render", "Neon"],
+        image: "/projects/repomind.png",
+        link: "https://repomind-eight-mu.vercel.app/",
+        github: "https://github.com/octotat-bot/RepoMind",
+        featured: true,
+        stats: {
+            retrieval: "FAISS + Reranker",
+            citations: "File and Line",
+            analysis: "AST Dead Code"
+        }
+    },
+    {
+        id: 7,
+        title: "Marginalia",
+        category: "RAG & Document Intelligence",
+        description: "Marginalia is a retrieval-augmented question-answering app for PDFs. Upload documents, ask in plain English, and get answers drawn only from the text, each citing its source file and page. A similarity threshold plus a grounded prompt make it refuse rather than guess. Built with LangChain, Chroma, FastAPI and Streamlit; providers are swappable, uploads are discarded after indexing.",
+        technologies: ["Python", "LangChain", "FastAPI", "Streamlit", "ChromaDB", "PyMuPDF", "Groq", "OpenAI", "Ollama", "pytest"],
+        image: "/projects/marginalia.png",
+        link: "https://marginalia-main.streamlit.app/",
+        github: "https://github.com/octotat-bot/Marginalia",
+        featured: true,
+        stats: {
+            citations: "Page-level",
+            guardrail: "Refuses to Guess",
+            providers: "Swappable LLM"
+        }
+    },
+    {
         id: 6,
         title: "PlaceNext",
         category: "AI Placement & EdTech",

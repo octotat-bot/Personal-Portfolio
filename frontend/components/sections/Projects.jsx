@@ -157,6 +157,28 @@ const stations = [
     features: ["Intelligent Filter", "AI Resume ATS", "24/7 Chatbot"],
     challenges: "Building an efficient ATS resume parser using OpenAI API while maintaining low latency.",
     image: "/projects/placenext.png"
+  },
+  {
+    id: "repomind", title: "RepoMind",
+    lines: ["aiml"], cx: 500, cy: 50, size: "large",
+    description: "RepoMind indexes any GitHub repository — cloning, chunking and embedding every file — then answers questions about it in plain English, citing the exact files and line ranges behind each answer. It adds semantic code search, an interactive dependency graph with circular-import detection, and AST-based dead-code analysis. Built with Next.js, FastAPI, FAISS and Postgres, on local or hosted models.",
+    tech: ["Next.js 15", "React 19", "Tailwind v4", "FastAPI", "Python 3.13", "SQLAlchemy 2", "FAISS", "Ollama", "Groq", "PostgreSQL", "Prisma", "Vercel", "Render", "Neon"],
+    status: "Completed", year: "2026",
+    github: "https://github.com/octotat-bot/RepoMind", demo: "https://repomind-eight-mu.vercel.app/",
+    features: ["Citations to exact line ranges", "Interactive dependency graph", "AST-based dead-code analysis"],
+    challenges: "Pure vector similarity kept returning several chunks from whichever single file sat closest in embedding space. Retrieval needed a reranking pass — per-file diversity plus identifier splitting, so that asking where a token is verified matches verifyToken — to let lower-scoring but genuinely relevant files reach the context window.",
+    image: "/projects/repomind.png"
+  },
+  {
+    id: "marginalia", title: "Marginalia",
+    lines: ["aiml"], cx: 700, cy: 450, size: "large",
+    description: "Marginalia is a retrieval-augmented question-answering app for PDFs. Upload documents, ask in plain English, and get answers drawn only from the text, each citing its source file and page. A similarity threshold plus a grounded prompt make it refuse rather than guess. Built with LangChain, Chroma, FastAPI and Streamlit; providers are swappable, uploads are discarded after indexing.",
+    tech: ["Python", "LangChain", "FastAPI", "Streamlit", "ChromaDB", "PyMuPDF", "Groq", "OpenAI", "Ollama", "pytest"],
+    status: "Completed", year: "2026",
+    github: "https://github.com/octotat-bot/Marginalia", demo: "https://marginalia-main.streamlit.app/",
+    features: ["Page-level citations", "Refuses rather than guessing", "Swappable LLM providers"],
+    challenges: "Smaller models would set answer_found=true and then write \"there is no mention of this in the excerpt\" into the answer field, returning a refusal with a citation attached. That needed a third guardrail layer on top of the similarity threshold and the model's own verdict: short answers matching refusal phrasing are normalised back into a real refusal with no sources.",
+    image: "/projects/marginalia.png"
   }
 ];
 
@@ -1054,12 +1076,14 @@ export default function Projects() {
                                         <span className="relative z-10">SOURCE CODE</span>
                                     </a>
                                 </LiquidButton>
-                                <LiquidButton asChild variant="outline" className="flex-1 font-bold text-sm tracking-wider !rounded-xl group py-6 border-white/20 text-white bg-transparent">
-                                    <a href={activeStation.demo} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 w-full h-full">
-                                        <FaExternalLinkAlt className="text-sm group-hover:scale-110 transition-transform" />
-                                        <span>LIVE DEMO</span>
-                                    </a>
-                                </LiquidButton>
+                                {activeStation.demo && (
+                                    <LiquidButton asChild variant="outline" className="flex-1 font-bold text-sm tracking-wider !rounded-xl group py-6 border-white/20 text-white bg-transparent">
+                                        <a href={activeStation.demo} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 w-full h-full">
+                                            <FaExternalLinkAlt className="text-sm group-hover:scale-110 transition-transform" />
+                                            <span>LIVE DEMO</span>
+                                        </a>
+                                    </LiquidButton>
+                                )}
                             </div>
                         </div>
                     </div>
