@@ -241,7 +241,7 @@ export default function AICloneWidget() {
       const data = await res.json();
       responseText = data.reply;
     } catch {
-      responseText = "I'm having trouble connecting right now. Please try again in a moment, or reach out to Mukund directly at mangalmukund123@gmail.com";
+      responseText = "I'm having trouble connecting right now. Please try again in a moment, or reach out to Mukund directly at manglamukund123@gmail.com";
     }
 
     setMessages(prev => [...prev, { role: 'agent', content: '' }]);

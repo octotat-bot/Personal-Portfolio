@@ -46,7 +46,7 @@ export default function LiveActivity({ ready, scrollProgress = 0 }) {
     <div className={styles.statsContainer}>
       
       {/* GitHub Stat Card */}
-      <a href="https://github.com/mukundmangla" target="_blank" rel="noreferrer" className={`${styles.statCard} ${gitVisible ? styles.visible : ''}`}>
+      <a href="https://github.com/octotat-bot" target="_blank" rel="noreferrer" className={`${styles.statCard} ${gitVisible ? styles.visible : ''}`}>
         <div className={styles.statHeader}>
           <span className={styles.statTitle}>Live Git Push</span>
           <span className={styles.statIcon}>🐙</span>
@@ -65,7 +65,7 @@ export default function LiveActivity({ ready, scrollProgress = 0 }) {
       </a>
 
       {/* LeetCode Stat Card */}
-      <a href="https://leetcode.com/u/hakka123/" target="_blank" rel="noreferrer" className={`${styles.statCard} ${leetVisible ? styles.visible : ''}`}>
+      <a href="https://leetcode.com/u/Hakka123/" target="_blank" rel="noreferrer" className={`${styles.statCard} ${leetVisible ? styles.visible : ''}`}>
         <div className={styles.statHeader}>
           <span className={styles.statTitle}>LeetCode Algo</span>
           <span className={styles.statIcon}>⚡</span>

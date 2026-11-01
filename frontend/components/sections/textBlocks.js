@@ -1,23 +1,25 @@
+// revealAt is hero scroll progress (0–1). Label, name and role are in the
+// first screen (0); the rest reveal as the sequence plays.
 export const TEXT_BLOCKS = [
   {
     id: 'greeting',
-    words: ['Portfolio', '·', '2026'],
+    words: ['Open', 'to', 'remote', 'internships', '·', 'available', 'now'],
     style: 'label',
-    revealAt: 0.18,
+    revealAt: 0,
     staggerMs: 60,
   },
   {
     id: 'name',
     words: ['Mukund', 'Mangla'],
     style: 'name',
-    revealAt: 0.25,
+    revealAt: 0,
     staggerMs: 0,
   },
   {
     id: 'role',
-    words: ['Full-stack', 'engineer', '&', 'GenAI', 'builder'],
+    words: ['Full-stack', 'engineer', 'who', 'builds', 'LLM-powered', 'products'],
     style: 'role',
-    revealAt: 0.35,
+    revealAt: 0,
     staggerMs: 70,
   },
   {

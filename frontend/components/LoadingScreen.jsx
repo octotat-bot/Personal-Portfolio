@@ -1,46 +1,46 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Preloader from './Preloader';
 
-// The preloader's own reveal is choreographed in CSS: the monogram rises at
-// 5.0s and the label at 5.4s. Dismissing earlier than that would cut off the
-// intro, so this is the floor even when the frames are already cached.
-const MIN_DURATION = 6200;
+// Long enough for the monogram to register, short enough that it never stands
+// between a visitor and the page. The rest of the hero frames stream in behind
+// the first screen, so only the opening frame is waited on.
+const MIN_DURATION = 1000;
+// Matches the .exit opacity transition in Preloader.module.css.
+const EXIT_MS = 450;
+// A timer rather than requestAnimationFrame, so dismissal never waits on a
+// tab that isn't painting (background tabs, throttled webviews).
+const TICK_MS = 50;
 
-export default function LoadingScreen({ frameProgress = 0, onLoadingComplete }) {
+export default function LoadingScreen({ heroReady = false, onLoadingComplete }) {
     const [progress, setProgress] = useState(0);
     const [visible, setVisible] = useState(true);
-    const startedAt = useRef(Date.now());
-    const frameProgressRef = useRef(frameProgress);
-
-    frameProgressRef.current = frameProgress;
+    const heroReadyRef = useRef(heroReady);
 
     useEffect(() => {
-        let raf;
-        let done = false;
+        heroReadyRef.current = heroReady;
+    }, [heroReady]);
+
+    useEffect(() => {
+        const startedAt = Date.now();
+        let timer;
 
         const tick = () => {
-            const elapsed = Date.now() - startedAt.current;
+            const elapsed = Date.now() - startedAt;
             const timePct = Math.min((elapsed / MIN_DURATION) * 100, 100);
 
-            // Readiness is limited by whichever condition is further behind, so
-            // the bar only reaches 100 once the intro has played *and* the
-            // frames have arrived.
-            const next = Math.min(timePct, frameProgressRef.current);
+            // Hold just short of full until the opening frame has arrived.
+            const next = heroReadyRef.current ? timePct : Math.min(timePct, 90);
             setProgress(Math.round(next));
 
             if (next >= 100) {
-                done = true;
+                clearInterval(timer);
                 setVisible(false);
-                setTimeout(() => onLoadingComplete(), 900);
-                return;
+                setTimeout(() => onLoadingComplete(), EXIT_MS);
             }
-            raf = requestAnimationFrame(tick);
         };
 
-        raf = requestAnimationFrame(tick);
-        return () => {
-            if (!done) cancelAnimationFrame(raf);
-        };
+        timer = setInterval(tick, TICK_MS);
+        return () => clearInterval(timer);
     }, [onLoadingComplete]);
 
     return <Preloader progress={progress} visible={visible} />;

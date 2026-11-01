@@ -57,138 +57,9 @@ export const skills = [
 ];
 
 
-export const projects = [
-    {
-        id: 8,
-        title: "RepoMind",
-        category: "RAG & Code Intelligence",
-        description: "RepoMind indexes any GitHub repository — cloning, chunking and embedding every file — then answers questions about it in plain English, citing the exact files and line ranges behind each answer. It adds semantic code search, an interactive dependency graph with circular-import detection, and AST-based dead-code analysis. Built with Next.js, FastAPI, FAISS and Postgres, on local or hosted models.",
-        technologies: ["Next.js 15", "React 19", "Tailwind v4", "FastAPI", "Python 3.13", "SQLAlchemy 2", "FAISS", "Ollama", "Groq", "PostgreSQL", "Prisma", "Vercel", "Render", "Neon"],
-        image: "/projects/repomind.png",
-        link: "https://repomind-eight-mu.vercel.app/",
-        github: "https://github.com/octotat-bot/RepoMind",
-        featured: true,
-        stats: {
-            retrieval: "FAISS + Reranker",
-            citations: "File and Line",
-            analysis: "AST Dead Code"
-        }
-    },
-    {
-        id: 7,
-        title: "Marginalia",
-        category: "RAG & Document Intelligence",
-        description: "Marginalia is a retrieval-augmented question-answering app for PDFs. Upload documents, ask in plain English, and get answers drawn only from the text, each citing its source file and page. A similarity threshold plus a grounded prompt make it refuse rather than guess. Built with LangChain, Chroma, FastAPI and Streamlit; providers are swappable, uploads are discarded after indexing.",
-        technologies: ["Python", "LangChain", "FastAPI", "Streamlit", "ChromaDB", "PyMuPDF", "Groq", "OpenAI", "Ollama", "pytest"],
-        image: "/projects/marginalia.png",
-        link: "https://marginalia-main.streamlit.app/",
-        github: "https://github.com/octotat-bot/Marginalia",
-        featured: true,
-        stats: {
-            citations: "Page-level",
-            guardrail: "Refuses to Guess",
-            providers: "Swappable LLM"
-        }
-    },
-    {
-        id: 6,
-        title: "PlaceNext",
-        category: "AI Placement & EdTech",
-        description: "A comprehensive AI Placement Cell & Internship Management System to streamline campus recruitment. Features smart resume analysis for ATS scoring, intelligent eligibility matching, and a 24/7 AI chatbot assistant.",
-        technologies: ["React", "Node.js", "Express", "MongoDB", "Groq AI", "OpenAI API", "Tailwind CSS"],
-        image: "/projects/placenext.png",
-        link: "https://place-next.vercel.app/",
-        github: "https://github.com/octotat-bot/PlaceNext",
-        featured: true,
-        stats: {
-            matching: "Intelligent Filter",
-            analysis: "AI Resume ATS",
-            assistant: "24/7 Chatbot"
-        }
-    },
-    {
-        id: 5,
-        title: "DreamSignal",
-        category: "AI & Microservices",
-        description: "An immersive, analog-themed classified dossier system for recording, analyzing, and archiving dreams. Uses a distributed microservices architecture to transcribe voice, extract emotional spectrums and symbolic meaning, and semantically link related entries using vector embeddings and RAG.",
-        technologies: ["React", "Node.js", "Python", "FastAPI", "MongoDB", "Whisper", "Gemini API"],
-        image: "/projects/dreamsignal.png",
-        link: "https://dream-signal.vercel.app/",
-        github: "https://github.com/octotat-bot/DreamSignal",
-        featured: true,
-        stats: {
-            pipeline: "Async AI",
-            search: "Semantic RAG",
-            streaming: "SSE Real-time"
-        }
-    },
-    {
-        id: 1,
-        title: "Grief Companion",
-        category: "Agentic AI & Mental Health",
-        description: "An empathetic AI writing instrument that uses Agentic workflows and RAG to help users navigate difficult life transitions. Built with the MERN stack and Groq AI, featuring real-time SSE streaming and A/B tone comparison for high-precision content generation.",
-        technologies: ["React", "Node.js", "MongoDB", "Groq AI", "LangChain", "RAG", "Vanilla CSS"],
-        image: "/projects/griefcompanion.jpg",
-        link: "https://grief-companion-two.vercel.app/",
-        github: "https://github.com/octotat-bot/grief-companion",
-        featured: true,
-        stats: {
-            llm: "Llama 3.1",
-            rag: "Vector Search",
-            agent: "ReAct"
-        }
-    },
-    {
-        id: 2,
-        title: "HabitFlow AI",
-        category: "AI Productivity",
-        description: "An AI-powered habit tracking OS that uses behavioral analysis to gamify growth. Implements intelligent insights and personalized coaching using LLM-driven recommendation engines.",
-        technologies: ["React", "Node.js", "MongoDB", "OpenAI API", "Tailwind CSS"],
-        image: "/projects/habitflow.jpg",
-        link: "https://habitflow-one-omega.vercel.app",
-        github: "https://github.com/octotat-bot/habitflow",
-        featured: true,
-        stats: {
-            insights: "LLM-Powered",
-            tracking: "Gamified",
-            analytics: "Deep Learning"
-        }
-    },
-    {
-        id: 3,
-        title: "Ember",
-        category: "Real-time Operations",
-        description: "Premium cafe management system with role-based dashboards and live order tracking. Demonstrates expertise in handling high-concurrency real-time data which is critical for AI agent interfaces.",
-        technologies: ["React", "Node.js", "Express", "MongoDB", "Socket.io", "Tailwind CSS"],
-        image: "/projects/ember.png",
-        link: "https://ember-mu-lilac.vercel.app/login",
-        github: "https://github.com/octotat-bot/ember",
-        featured: true,
-        stats: {
-            realtime: "Socket.io",
-            roles: "RBAC",
-            stack: "MERN"
-        }
-    },
-    {
-        id: 4,
-        title: "OpsPilot",
-        category: "Enterprise Automation",
-        description: "Internal operations platform with automated reporting and multi-level workflows. Currently being integrated with low-code AI automation using n8n to streamline enterprise logic.",
-        technologies: ["React", "Node.js", "Express", "MongoDB", "n8n", "Tailwind CSS"],
-        image: "/projects/opspilot.png",
-        link: "https://ops-pilot-two.vercel.app/login",
-        github: "https://github.com/octotat-bot/Ops-Pilot",
-        featured: true,
-        stats: {
-            automation: "n8n",
-            security: "JWT",
-            workflow: "Agentic"
-        }
-    }
-];
-
-
+// NOTE: The metrics and testimonial below are unverified and are NOT used
+// anywhere (removed from the chatbot prompt on 2026-11-01). Do not render or
+// reuse them unless they come from a real, reproducible measurement.
 export const caseStudies = [
     {
         id: 1,
@@ -218,7 +89,7 @@ export const caseStudies = [
 ];
 
 export const aboutContent = {
-    intro: "I'm Mukund Mangla, building the next generation of Agentic AI Systems.",
+    intro: "I'm Mukund Mangla, a full-stack engineer who builds LLM-powered products.",
     description: "I'm an AI Engineer and Full-Stack Developer dedicated to creating intelligent, autonomous applications. I bridge the gap between complex Machine Learning models and premium user experiences, specializing in LangGraph, RAG, and Agentic workflows.",
     approach: "Agentic Intelligence. Scalable Architecture. Premium Design.",
     stats: [
@@ -229,13 +100,13 @@ export const aboutContent = {
 };
 
 export const contactInfo = {
-    email: "mangalmukund123@gmail.com",
+    email: "manglamukund123@gmail.com",
     location: "India",
-    availability: "Open to AI/Agentic Engineering roles",
+    availability: "Open to remote internships · available now",
     social: {
-        github: "https://github.com/mukundmangla",
-        linkedin: "https://linkedin.com/in/mukundmangla",
-        leetcode: "https://leetcode.com/mukundmangla"
+        github: "https://github.com/octotat-bot",
+        linkedin: "https://www.linkedin.com/in/mukund-mangla/",
+        leetcode: "https://leetcode.com/u/Hakka123/"
     }
 };
 
