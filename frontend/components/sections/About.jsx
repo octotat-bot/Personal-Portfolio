@@ -204,6 +204,16 @@ export default function About() {
                                                                 <p className="text-xs text-gray-500 leading-relaxed group-hover/sub:text-gray-300 transition-colors duration-300">
                                                                     {sub.description}
                                                                 </p>
+                                                                {sub.link && (
+                                                                    <a
+                                                                        href={sub.link}
+                                                                        target="_blank"
+                                                                        rel="noreferrer"
+                                                                        className="w-fit text-[10px] tracking-widest uppercase text-gray-400 underline underline-offset-4 decoration-gray-700 hover:text-white hover:decoration-white transition-colors"
+                                                                    >
+                                                                        View project ↗
+                                                                    </a>
+                                                                )}
                                                             </div>
                                                         </motion.div>
                                                     ))}

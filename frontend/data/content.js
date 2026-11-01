@@ -119,7 +119,8 @@ export const timeline = [
         subTimeline: [
             {
                 year: "Aug 2026 – Present",
-                description: "Skill Orbit · AI/ML Intern (remote). Building RAG projects."
+                description: "Skill Orbit · AI/ML Intern (remote). Built a resume analyzer: rule-based scoring and ATS keyword matching, with an optional RAG mode (TF-IDF retrieval + Gemini) that cites its sources. React, Flask, spaCy.",
+                link: "https://intern-skillorbit.vercel.app"
             },
             {
                 year: "Jul – Aug 2026",
@@ -129,30 +130,34 @@ export const timeline = [
     },
     {
         year: "2026",
-        title: "Mastering Agentic AI & RAG",
-        description: "Deep-dived into the Agentic AI ecosystem, mastering LangGraph, ReAct frameworks, and Advanced RAG. Built production-ready AI agents and automated workflows using n8n.",
+        title: "Built RepoMind and Marginalia",
+        description: "Two retrieval-augmented apps that answer only from their sources and cite them: RepoMind for GitHub repositories (exact files and line ranges), Marginalia for PDFs (file and page).",
         type: "milestone"
     },
     {
-        year: "2024",
-        title: "B.Tech in CS & AI",
-        description: "Joined Newton School of Technology. Mastered Full Stack Development while building a solid foundation in Machine Learning, Deep Learning, and NLP.",
+        year: "2024 – 2028",
+        title: "B.Tech in Artificial Intelligence",
+        description: "Newton School of Technology, Rishihood University.",
         type: "education",
         subTimeline: [
             {
-                year: "1st year",
-                description: "Learned frontend development and Data Structures & Algorithms (DSA)."
+                year: "Year 1 · 2024–25",
+                description: "Frontend development and Data Structures & Algorithms (DSA)."
             },
             {
-                year: "2nd year",
-                description: "Learned backend development and Artificial Intelligence."
+                year: "Year 2 · 2025–26",
+                description: "Backend development and Artificial Intelligence."
+            },
+            {
+                year: "Year 3 · 2026–27",
+                description: "In progress."
             }
         ]
     },
     {
         year: "2023",
-        title: "Strategic Gap Year",
-        description: "Focused on analytical problem solving and mathematics, building the resilience required for complex engineering.",
+        title: "Gap year",
+        description: "Took a year after Class XII before starting my B.Tech.",
         type: "milestone"
     },
     {
@@ -162,4 +167,3 @@ export const timeline = [
         type: "milestone"
     }
 ];
-
