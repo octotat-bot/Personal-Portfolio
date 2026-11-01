@@ -113,6 +113,22 @@ export const contactInfo = {
 export const timeline = [
     {
         year: "2026",
+        title: "AI/ML Intern",
+        description: "Two remote AI/ML internships, building retrieval-augmented generation (RAG) projects.",
+        type: "experience",
+        subTimeline: [
+            {
+                year: "Aug 2026 – Present",
+                description: "Skill Orbit · AI/ML Intern (remote). Building RAG projects."
+            },
+            {
+                year: "Jul – Aug 2026",
+                description: "Mindenious · AI/ML Intern (remote). Built RAG projects."
+            }
+        ]
+    },
+    {
+        year: "2026",
         title: "Mastering Agentic AI & RAG",
         description: "Deep-dived into the Agentic AI ecosystem, mastering LangGraph, ReAct frameworks, and Advanced RAG. Built production-ready AI agents and automated workflows using n8n.",
         type: "milestone"

@@ -24,7 +24,7 @@ Approach: ${aboutContent.approach}
 Stats: ${aboutContent.stats.map(s => `${s.label}: ${s.value}`).join(' | ')}
 
 --- JOURNEY ---
-${timeline.map(t => `${t.year}: ${t.title} — ${t.description}`).join('\n')}
+${timeline.map(t => `${t.year}: ${t.title} — ${t.description}${t.subTimeline ? t.subTimeline.map(s => `\n  - ${s.year}: ${s.description}`).join('') : ''}`).join('\n')}
 
 --- SKILLS ---
 ${skills.map(s => `- ${s.category} (${s.proficiency}% proficiency): ${s.technologies.join(', ')}. ${s.description}`).join('\n')}
