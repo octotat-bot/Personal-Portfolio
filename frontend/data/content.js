@@ -113,7 +113,7 @@ export const contactInfo = {
 export const timeline = [
     {
         year: "Oct 2026 – Present",
-        title: "Founder · Repetite",
+        title: "Building Repetite",
         description: "A workout log and a food tracker in one app: it tells you what to lift next and how much to eat, and your logs stay on your device.",
         type: "experience",
         link: "https://repetiteapp.github.io/repetite-app/"
