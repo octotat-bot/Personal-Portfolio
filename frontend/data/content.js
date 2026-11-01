@@ -102,7 +102,7 @@ export const aboutContent = {
 export const contactInfo = {
     email: "manglamukund123@gmail.com",
     location: "India",
-    availability: "Open to remote internships · available now",
+    availability: "Open to internships",
     social: {
         github: "https://github.com/octotat-bot",
         linkedin: "https://www.linkedin.com/in/mukund-mangla/",

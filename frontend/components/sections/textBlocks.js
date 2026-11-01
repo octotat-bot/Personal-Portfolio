@@ -3,7 +3,7 @@
 export const TEXT_BLOCKS = [
   {
     id: 'greeting',
-    words: ['Open', 'to', 'remote', 'internships', '·', 'available', 'now'],
+    words: ['Open', 'to', 'internships'],
     style: 'label',
     revealAt: 0,
     staggerMs: 60,
