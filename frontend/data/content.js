@@ -119,12 +119,6 @@ export const timeline = [
         link: "https://repetiteapp.github.io/repetite-app/"
     },
     {
-        year: "2026",
-        title: "Built RepoMind and Marginalia",
-        description: "Two retrieval-augmented apps that answer only from their sources and cite them: RepoMind for GitHub repositories (exact files and line ranges), Marginalia for PDFs (file and page).",
-        type: "milestone"
-    },
-    {
         year: "2024 – 2028",
         title: "B.Tech in Artificial Intelligence",
         description: "Newton School of Technology, Rishihood University.",
