@@ -112,21 +112,11 @@ export const contactInfo = {
 
 export const timeline = [
     {
-        year: "2026",
-        title: "AI/ML Intern",
-        description: "Two remote AI/ML internships, building retrieval-augmented generation (RAG) projects.",
+        year: "Oct 2026 – Present",
+        title: "Founder · Repetite",
+        description: "A workout log and a food tracker in one app: it tells you what to lift next and how much to eat, and your logs stay on your device.",
         type: "experience",
-        subTimeline: [
-            {
-                year: "Aug 2026 – Present",
-                description: "Skill Orbit · AI/ML Intern (remote). Built a resume analyzer: rule-based scoring and ATS keyword matching, with an optional RAG mode (TF-IDF retrieval + Gemini) that cites its sources. React, Flask, spaCy.",
-                link: "https://intern-skillorbit.vercel.app"
-            },
-            {
-                year: "Jul – Aug 2026",
-                description: "Mindenious · AI/ML Intern (remote). Built RAG projects."
-            }
-        ]
+        link: "https://repetiteapp.github.io/repetite-app/"
     },
     {
         year: "2026",

@@ -179,6 +179,16 @@ export default function About() {
                                             <p className="text-sm text-gray-500 leading-relaxed">
                                                 {item.description}
                                             </p>
+                                            {item.link && (
+                                                <a
+                                                    href={item.link}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="inline-block mt-3 text-[10px] tracking-widest uppercase text-gray-400 underline underline-offset-4 decoration-gray-700 hover:text-white hover:decoration-white transition-colors"
+                                                >
+                                                    Visit site ↗
+                                                </a>
+                                            )}
                                             {item.subTimeline && (
                                                 <div className="mt-6 md:mt-8 space-y-4 border-l border-gray-800/50 ml-2 md:ml-4 pl-4 md:pl-6 relative">
                                                     {/* Gradient highlight on the sub-timeline line */}
