@@ -1,4 +1,5 @@
-import React, { useRef, useEffect, useCallback, useState } from 'react';
+import React, { useRef, useEffect, useCallback, useState, Fragment } from 'react';
+import { useReducedMotion } from 'framer-motion';
 import LiveActivity from './LiveActivity';
 import { useFrameLoader } from './useFrameLoader';
 import { useScrollProgress } from './useScrollProgress';
@@ -6,7 +7,7 @@ import { TEXT_BLOCKS } from './textBlocks';
 import styles from './HeroSequence.module.css';
 import { FloatingPaths } from '../ui/background-paths';
 
-export default function Hero({ isAppLoaded, onLoadProgress }) {
+export default function Hero({ isAppLoaded, onFirstFrameReady }) {
   const sectionRef = useRef(null);
   const canvasRef  = useRef(null);
   const lastFrame  = useRef(-1);
@@ -15,11 +16,19 @@ export default function Hero({ isAppLoaded, onLoadProgress }) {
 
   const { frameAt, progress: loadProgress, firstFrameReady, ready, frameCount } = useFrameLoader();
   const scrollProgress = useScrollProgress(sectionRef);
+  const reduceMotion = useReducedMotion();
 
   // ── Report load state to the preloader ───────────────────
   useEffect(() => {
-    onLoadProgress?.(loadProgress);
-  }, [loadProgress, onLoadProgress]);
+    onFirstFrameReady?.(firstFrameReady);
+  }, [firstFrameReady, onFirstFrameReady]);
+
+  const scrollToId = (e, id) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    e.preventDefault();
+    el.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+  };
 
   // ── Lock scroll only until something is paintable ────────
   // Remaining frames stream in behind the intro screen; drawFrame holds the
@@ -141,13 +150,26 @@ export default function Hero({ isAppLoaded, onLoadProgress }) {
           {/* Text reveals */}
           <div className={styles.textLayer}>
             {TEXT_BLOCKS.map(block => (
-              <TextReveal
-                key={block.id}
-                block={block}
-                scrollProgress={scrollProgress}
-              />
+              <Fragment key={block.id}>
+                <TextReveal block={block} scrollProgress={scrollProgress} />
+                {/* Recruiter actions sit with the name and role in the first screen */}
+                {block.id === 'role' && (
+                  <div className={styles.cta}>
+                    <a href="/resume.pdf" target="_blank" rel="noreferrer" className={`${styles.ctaButton} ${styles.ctaPrimary}`}>
+                      Resume
+                    </a>
+                    <a href="#projects" onClick={(e) => scrollToId(e, 'projects')} className={styles.ctaButton}>
+                      Projects
+                    </a>
+                  </div>
+                )}
+              </Fragment>
             ))}
           </div>
+
+          <a href="#about" onClick={(e) => scrollToId(e, 'about')} className={styles.skipIntro}>
+            Skip intro ↓
+          </a>
 
           {/* ── Live Activity Widget ── */}
           <LiveActivity ready={firstFrameReady} scrollProgress={scrollProgress} />
@@ -162,7 +184,7 @@ export default function Hero({ isAppLoaded, onLoadProgress }) {
             }}
           >
             {/* Background Paths Animation - Mounts only after Preloader finishes */}
-            {isAppLoaded && (
+            {isAppLoaded && !reduceMotion && (
               <div className="absolute inset-0 z-0 pointer-events-none">
                 <FloatingPaths position={1} />
                 <FloatingPaths position={-1} />
@@ -172,16 +194,16 @@ export default function Hero({ isAppLoaded, onLoadProgress }) {
             {/* Scroll to Interact Indicator */}
             <div 
               className={`
-                absolute left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 z-10
+                absolute left-1/2 top-[22%] md:top-auto md:bottom-24 -translate-x-1/2 z-10
                 transition-all duration-1000 ease-out flex flex-col items-center
                 ${startVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
               `}
             >
-              <span className="text-white tracking-[0.4em] uppercase text-sm mb-6 animate-pulse pointer-events-none drop-shadow-lg">
+              <span className="text-white/70 tracking-[0.4em] uppercase text-[11px] mb-4 animate-pulse pointer-events-none drop-shadow-lg whitespace-nowrap">
                 Scroll to interact
               </span>
               
-              <div className="w-[1px] h-24 bg-gradient-to-b from-white/70 to-transparent animate-pulse" />
+              <div className="w-[1px] h-12 bg-gradient-to-b from-white/70 to-transparent animate-pulse" />
             </div>
           </div>
 

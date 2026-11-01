@@ -13,12 +13,31 @@ import CustomCursor from './components/CustomCursor';
 import SortingBackground from './components/SortingBackground';
 import AICloneWidget from './components/AICloneWidget';
 
-function App() {
-  const [isLoading, setIsLoading] = useState(true);
-  // Hero owns the frame sequence, so it reports load progress up for the preloader.
-  const [frameProgress, setFrameProgress] = useState(0);
+const INTRO_SEEN_KEY = 'mm:intro-seen';
 
-  const handleLoadingComplete = useCallback(() => setIsLoading(false), []);
+// Repeat visitors and reduced-motion users go straight to the page.
+function shouldSkipIntro() {
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return true;
+  try {
+    return localStorage.getItem(INTRO_SEEN_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function App() {
+  const [isLoading, setIsLoading] = useState(() => !shouldSkipIntro());
+  // Hero owns the frame sequence, so it tells the preloader when the opening frame is paintable.
+  const [heroReady, setHeroReady] = useState(false);
+
+  const handleLoadingComplete = useCallback(() => {
+    setIsLoading(false);
+    try {
+      localStorage.setItem(INTRO_SEEN_KEY, '1');
+    } catch {
+      // Storage blocked (private mode etc.) — the intro just plays again next time.
+    }
+  }, []);
 
   useEffect(() => {
     // Prevent browser from remembering scroll position on refresh
@@ -37,7 +56,7 @@ function App() {
         {isLoading && (
           <LoadingScreen
             key="loading"
-            frameProgress={frameProgress}
+            heroReady={heroReady}
             onLoadingComplete={handleLoadingComplete}
           />
         )}
@@ -62,7 +81,7 @@ function App() {
           <Navigation />
 
           <main>
-            <Hero isAppLoaded={!isLoading} onLoadProgress={setFrameProgress} />
+            <Hero isAppLoaded={!isLoading} onFirstFrameReady={setHeroReady} />
             <About />
             <Skills />
             <Projects />
