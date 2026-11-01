@@ -1,5 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
-import { aboutContent, skills, projects, contactInfo, timeline, caseStudies } from '../frontend/data/content.js';
+import { aboutContent, skills, contactInfo, timeline } from '../frontend/data/content.js';
+import { stations as projects } from '../frontend/data/projects.js';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -29,10 +30,7 @@ ${timeline.map(t => `${t.year}: ${t.title} — ${t.description}`).join('\n')}
 ${skills.map(s => `- ${s.category} (${s.proficiency}% proficiency): ${s.technologies.join(', ')}. ${s.description}`).join('\n')}
 
 --- PROJECTS ---
-${projects.map(p => `- **${p.title}** (${p.category}): ${p.description} Tech: ${p.technologies.join(', ')}. ${p.link ? `Live: ${p.link} | ` : 'No public demo. '}GitHub: ${p.github}`).join('\n')}
-
---- CASE STUDY ---
-${caseStudies.map(c => `${c.title} (${c.role}, ${c.duration}): ${c.overview} Challenge: ${c.challenge} Solution: ${c.solution} Results: ${c.results.map(r => `${r.metric}: ${r.value}`).join(', ')}`).join('\n')}
+${projects.map(p => `- **${p.title}** (${p.year}): ${p.description} Tech: ${p.tech.join(', ')}. Key features: ${p.features.join('; ')}. Hardest problem: ${p.challenges} ${p.demo ? `Live: ${p.demo} | ` : 'No public demo. '}GitHub: ${p.github}`).join('\n')}
 
 --- CONTACT ---
 Email: ${contactInfo.email}
