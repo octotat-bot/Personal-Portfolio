@@ -1,7 +1,7 @@
 export const TEXT_BLOCKS = [
   {
     id: 'greeting',
-    words: ['Portfolio', '·', '2026'],
+    words: ['Open', 'to', 'remote', 'internships', '·', 'available', 'now'],
     style: 'label',
     revealAt: 0.18,
     staggerMs: 60,
@@ -15,7 +15,7 @@ export const TEXT_BLOCKS = [
   },
   {
     id: 'role',
-    words: ['Full-stack', 'engineer', '&', 'GenAI', 'builder'],
+    words: ['Full-stack', 'engineer', 'who', 'builds', 'LLM-powered', 'products'],
     style: 'role',
     revealAt: 0.35,
     staggerMs: 70,

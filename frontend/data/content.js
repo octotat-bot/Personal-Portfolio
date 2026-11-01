@@ -89,7 +89,7 @@ export const caseStudies = [
 ];
 
 export const aboutContent = {
-    intro: "I'm Mukund Mangla, building the next generation of Agentic AI Systems.",
+    intro: "I'm Mukund Mangla, a full-stack engineer who builds LLM-powered products.",
     description: "I'm an AI Engineer and Full-Stack Developer dedicated to creating intelligent, autonomous applications. I bridge the gap between complex Machine Learning models and premium user experiences, specializing in LangGraph, RAG, and Agentic workflows.",
     approach: "Agentic Intelligence. Scalable Architecture. Premium Design.",
     stats: [
@@ -102,7 +102,7 @@ export const aboutContent = {
 export const contactInfo = {
     email: "manglamukund123@gmail.com",
     location: "India",
-    availability: "Open to AI/Agentic Engineering roles",
+    availability: "Open to remote internships · available now",
     social: {
         github: "https://github.com/octotat-bot",
         linkedin: "https://www.linkedin.com/in/mukund-mangla/",
