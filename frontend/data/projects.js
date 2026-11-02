@@ -19,23 +19,23 @@ export const stations = [
   {
     id: "grief-companion", title: "Grief Companion",
     lines: ["aiml", "backend"], cx: 500, cy: 600, size: "large",
-    description: "An empathetic AI writing instrument that uses Agentic workflows and RAG to help users navigate difficult life transitions.",
-    tech: ["React", "Node.js", "MongoDB", "Groq AI", "LangChain", "RAG"],
+    description: "An AI writing tool that uses retrieved example messages to help people write difficult messages, such as condolences and apologies.",
+    tech: ["React", "Node.js", "Python", "MongoDB", "Groq AI", "RAG"],
     status: "Completed", year: "2026",
     github: "https://github.com/octotat-bot/grief-companion", demo: "https://grief-companion-two.vercel.app/",
-    features: ["Real-time SSE streaming", "A/B tone comparison", "ReAct Agent", "Vector Search"],
-    challenges: "Traditional LLMs lacked the specific nuance for mental health, solved using custom RAG pipeline grounding.",
+    features: ["Real-time SSE streaming", "A/B tone comparison", "TF-IDF retrieval", "Draft history"],
+    challenges: "Generic LLM drafts lacked nuance for difficult messages, so drafts are grounded in a corpus of example messages retrieved with TF-IDF.",
     image: "/projects/griefcompanion.jpg"
   },
   {
     id: "habitflow", title: "HabitFlow AI",
     lines: ["aiml", "frontend"], cx: 500, cy: 200, size: "large",
-    description: "An AI-powered habit tracking OS that uses behavioral analysis to gamify growth and personalize coaching.",
-    tech: ["React", "Node.js", "MongoDB", "OpenAI", "Tailwind CSS"],
+    description: "An AI-powered habit tracker with streaks, mood analytics, gamification and weekly AI summaries.",
+    tech: ["React", "Node.js", "MongoDB", "Gemini API", "Framer Motion"],
     status: "Completed", year: "2024",
     github: "https://github.com/octotat-bot/habitflow", demo: "https://habitflow-one-omega.vercel.app",
-    features: ["LLM-Powered insights", "Gamified tracking", "Deep Learning analytics", "Custom OS layout"],
-    challenges: "Building a complex recommendation engine and seamless user experience.",
+    features: ["AI weekly summaries", "Gamified tracking", "Mood correlation analytics", "Multi-tab sessions"],
+    challenges: "Turning habit and mood logs into correlations and weekly summaries that are useful to read.",
     image: "/projects/habitflow.jpg"
   },
   {
@@ -63,12 +63,12 @@ export const stations = [
   {
     id: "balancio", title: "Balancio",
     lines: ["backend"], cx: 900, cy: 600, size: "medium",
-    description: "Collaborative fintech platform for managing shared expenses and simplified debt settlements with real-time sync.",
+    description: "Collaborative app for managing shared expenses and member-to-member balances with real-time sync.",
     tech: ["React 19", "Node.js", "Express", "MongoDB", "Socket.io"],
     status: "Completed", year: "2024",
     github: "https://github.com/octotat-bot/balancio", demo: "https://balancio-three.vercel.app",
-    features: ["Real-time Socket.io sync", "Smart debt simplification", "Dual-layer JWT auth"],
-    challenges: "Developing a smart debt simplification algorithm to minimize required payments between users.",
+    features: ["Real-time Socket.io sync", "Member-to-member balances", "Group chat"],
+    challenges: "Keeping balances and settlements in sync across group members in real time.",
     image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=800"
   },
   {
@@ -85,12 +85,12 @@ export const stations = [
   {
     id: "opspilot", title: "OpsPilot",
     lines: ["frontend"], cx: 300, cy: 200, size: "medium",
-    description: "Internal operations platform with automated reporting and multi-level agentic workflows.",
-    tech: ["React", "Node.js", "MongoDB", "n8n", "Tailwind CSS"],
+    description: "Internal operations platform with multi-level approvals, delegation, SLA checks and analytics.",
+    tech: ["React", "Node.js", "Express", "MongoDB", "Tailwind CSS"],
     status: "Active", year: "2023",
     github: "https://github.com/octotat-bot/Ops-Pilot", demo: "https://ops-pilot-two.vercel.app/login",
-    features: ["n8n automation", "JWT security", "Agentic workflow", "Automated reporting"],
-    challenges: "Integrating low-code AI automation (n8n) into complex enterprise logic.",
+    features: ["Multi-level approvals", "JWT security", "Delegation", "SLA tracking"],
+    challenges: "Modelling multi-level approval workflows with delegation and versioned request templates.",
     image: "/projects/opspilot.png"
   },
   {
