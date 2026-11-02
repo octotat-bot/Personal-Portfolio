@@ -105,17 +105,6 @@ export const stations = [
     image: "https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&q=80&w=800"
   },
   {
-    id: "taskflow", title: "TaskFlow",
-    lines: ["frontend"], cx: 800, cy: 300, size: "small",
-    description: "A highly intuitive task manager and todo list application featuring a premium UI and secure authentication.",
-    tech: ["React", "Clerk", "HTML", "CSS"],
-    status: "Completed", year: "2022",
-    github: "https://github.com/octotat-bot/task-manager-app", demo: "https://task-manager-app-rosy-kappa.vercel.app",
-    features: ["Clerk Auth", "Task categorization", "Progress tracking", "Responsive Design"],
-    challenges: "Optimizing state management for dragging and reordering tasks seamlessly.",
-    image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?auto=format&fit=crop&q=80&w=800"
-  },
-  {
     id: "weatherapp", title: "Weather Forecast",
     lines: ["frontend"], cx: 300, cy: 400, size: "small",
     description: "A real-time weather forecasting application that provides accurate data with a clean, dynamic visual interface.",
