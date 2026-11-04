@@ -71,43 +71,43 @@ export default function Navigation() {
       </a>
 
       <header
-        className={`fixed inset-x-0 top-0 z-50 border-b border-rule bg-black/90 backdrop-blur-sm transition-[transform,opacity,visibility] duration-500 ${
-          shown ? 'translate-y-0 opacity-100 visible' : '-translate-y-full opacity-0 invisible'
+        className={`fixed inset-x-0 top-3 md:top-4 z-50 px-3 transition-[transform,opacity,visibility] duration-500 ${
+          shown ? 'translate-y-0 opacity-100 visible' : '-translate-y-[140%] opacity-0 invisible'
         }`}
         style={{ transitionTimingFunction: 'var(--ease-out)' }}
       >
-        <div className="container-ed h-14 flex items-center justify-between gap-6">
-          <a href="#home" onClick={(e) => go(e, 'home')} className="font-serif text-xl text-ink whitespace-nowrap min-h-[44px] inline-flex items-center">
+        <div className="mx-auto max-w-[920px] h-14 pl-5 pr-2 flex items-center justify-between gap-4 rounded-full bg-white/90 backdrop-blur-md border border-rule shadow-md">
+          <a href="#home" onClick={(e) => go(e, 'home')} className="font-display font-semibold tracking-[-0.02em] text-[17px] text-ink whitespace-nowrap min-h-[44px] inline-flex items-center gap-2.5">
+            <span aria-hidden className="grid place-items-center w-7 h-7 rounded-full bg-ink text-surface text-[11px] font-bold tracking-normal">MM</span>
             Mukund Mangla
           </a>
 
           <nav aria-label="Primary" className="hidden md:block">
-            <ul className="flex items-center gap-8">
+            <ul className="flex items-center gap-1">
               {LINKS.map((l) => (
                 <li key={l.id}>
                   <a
                     href={`#${l.id}`}
                     onClick={(e) => go(e, l.id)}
                     aria-current={active === l.id ? 'true' : undefined}
-                    className={`inline-flex items-center gap-2 min-h-[44px] text-[12px] uppercase tracking-[0.14em] transition-colors ${
-                      active === l.id ? 'text-ink' : 'text-ink-3 hover:text-ink'
+                    className={`inline-flex items-center h-10 px-4 rounded-full text-[14px] font-medium transition-colors ${
+                      active === l.id ? 'bg-ink text-surface' : 'text-ink-2 hover:bg-sunk hover:text-ink'
                     }`}
                   >
-                    <span className={`text-[10px] ${active === l.id ? 'text-ink-3' : 'text-ink-4'}`}>{l.n}</span>
-                    <span className={`border-b ${active === l.id ? 'border-ink' : 'border-transparent'} pb-0.5`}>{l.label}</span>
+                    {l.label}
                   </a>
                 </li>
               ))}
             </ul>
           </nav>
 
-          <div className="flex items-center gap-3">
-            <a href="/resume.pdf" target="_blank" rel="noreferrer" className="btn-ed btn-ed-solid !min-h-[36px] !px-4 hidden sm:inline-flex">
+          <div className="flex items-center gap-2">
+            <a href="/resume.pdf" target="_blank" rel="noreferrer" className="btn-ed btn-ed-solid !min-h-[40px] !px-5 hidden sm:inline-flex !shadow-none">
               Resume
             </a>
             <button
               type="button"
-              className="md:hidden btn-ed !px-3"
+              className="md:hidden btn-ed !min-h-[40px] !px-4 !shadow-none"
               aria-expanded={menuOpen}
               aria-controls="mobile-menu"
               onClick={() => setMenuOpen((o) => !o)}
@@ -125,28 +125,28 @@ export default function Navigation() {
             role="dialog"
             aria-modal="true"
             aria-label="Site menu"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 top-14 z-40 bg-bg md:hidden"
+            className="fixed inset-x-3 top-[76px] z-40 md:hidden card !shadow-lg p-3"
           >
-            <nav aria-label="Mobile" className="container-ed pt-6">
-              <ul className="border-t border-rule">
+            <nav aria-label="Mobile">
+              <ul>
                 {LINKS.map((l) => (
-                  <li key={l.id} className="border-b border-rule">
+                  <li key={l.id}>
                     <a
                       href={`#${l.id}`}
                       onClick={(e) => go(e, l.id)}
-                      className="flex items-baseline gap-4 py-5 font-serif text-4xl text-ink"
+                      className={`flex items-center justify-between px-4 py-4 rounded-2xl font-display font-semibold text-[28px] tracking-[-0.03em] ${active === l.id ? 'bg-sunk text-ink' : 'text-ink'}`}
                     >
-                      <span className="font-mono text-[12px] text-ink-3">{l.n}</span>
                       {l.label}
+                      <span className="font-mono text-[12px] text-ink-3">{l.n}</span>
                     </a>
                   </li>
                 ))}
               </ul>
-              <a href="/resume.pdf" target="_blank" rel="noreferrer" className="btn-ed btn-ed-solid w-full mt-8">
+              <a href="/resume.pdf" target="_blank" rel="noreferrer" className="btn-ed btn-ed-solid w-full mt-3">
                 Resume (PDF)
               </a>
             </nav>

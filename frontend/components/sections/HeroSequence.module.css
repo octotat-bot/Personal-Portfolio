@@ -1,11 +1,10 @@
 /* ── Tokens ── */
 :root {
-  --bg: #000000;
-  --white: #f0ede8;
-  --muted: rgba(240, 237, 232, 0.35);
-  --accent: #c8a97e;
-  --font-mono: 'DM Mono', monospace;
-  --font-serif: 'DM Serif Display', serif;
+  /* Hero-only colours; the hero stays a dark "screen" framed on the light page. */
+  --hero-bg: #000000;
+  --hero-ink: #f4f2ee;
+  --hero-muted: rgba(244, 242, 238, 0.35);
+  --hero-accent: #a9b6ff;
 }
 
 /* ── Section: tall enough for scroll room ── */
@@ -22,6 +21,11 @@
   height: 100vh;
   overflow: hidden;
   background: #000000;
+  /* Framed as a rounded screen on the paper background. */
+  clip-path: inset(10px round 28px);
+}
+@media (max-width: 767px) {
+  .sticky { clip-path: inset(6px round 20px); }
 }
 
 /* ── Canvas — CRITICAL: use % sizing, NOT px ── */
@@ -95,45 +99,47 @@
 
 /* ── Style variants ── */
 .label {
-  font-family: var(--font-mono);
+  font-family: var(--f-mono);
   font-size: clamp(9px, 1vw, 11px);
   letter-spacing: 0.22em;
-  color: var(--accent);
+  color: var(--hero-accent);
   text-transform: uppercase;
   margin-bottom: 14px;
 }
 
 .name {
-  font-family: var(--font-serif);
+  font-family: var(--f-display);
   font-size: clamp(42px, 7vw, 84px);
-  color: var(--white);
-  line-height: 1.0;
-  font-style: italic;
+  color: var(--hero-ink);
+  line-height: 0.95;
+  font-weight: 600;
+  letter-spacing: -0.035em;
   margin-bottom: 16px;
 }
 
 .role {
-  font-family: var(--font-mono);
-  font-size: clamp(12px, 1.4vw, 15px);
-  color: rgba(240, 237, 232, 0.6);   /* The headline — needs to read over the photo */
-  letter-spacing: 0.06em;
+  font-family: var(--f-mono);
+  font-family: var(--f-body);
+  font-size: clamp(15px, 1.6vw, 19px);
+  color: rgba(244, 242, 238, 0.78);   /* The headline — needs to read over the photo */
+  letter-spacing: 0;
   line-height: 1.8;
   margin-bottom: 20px;
 }
 
 .obsession {
-  font-family: var(--font-serif);
+  font-family: var(--f-display);
   font-size: clamp(20px, 3vw, 32px);
-  color: var(--white);
+  color: var(--hero-ink);
   line-height: 1.25;
   margin-bottom: 20px;
 }
 
 .stack {
-  font-family: var(--font-mono);
+  font-family: var(--f-mono);
   font-size: clamp(9px, 1vw, 11px);
   letter-spacing: 0.14em;
-  color: var(--accent);
+  color: var(--hero-accent);
   opacity: 0.7;
 }
 
@@ -151,31 +157,34 @@
   align-items: center;
   min-height: 44px;
   padding: 0 22px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  font-family: var(--f-mono);
+  font-family: var(--f-body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0;
   text-decoration: none;
-  color: var(--white);
-  border: 1px solid rgba(240, 237, 232, 0.35);
+  color: var(--hero-ink);
+  border: 1px solid rgba(244, 242, 238, 0.35);
+  border-radius: 999px;
   background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
   transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 .ctaButton:hover,
 .ctaButton:focus-visible {
-  border-color: var(--white);
+  border-color: var(--hero-ink);
   background: rgba(240, 237, 232, 0.1);
 }
 
 .ctaPrimary {
-  background: var(--white);
-  border-color: var(--white);
-  color: #000;
+  background: #2f45e8;
+  border-color: #2f45e8;
+  color: #fff;
 }
 .ctaPrimary:hover,
 .ctaPrimary:focus-visible {
   background: transparent;
-  color: var(--white);
+  color: var(--hero-ink);
 }
 
 .skipIntro {
@@ -183,7 +192,7 @@
   left: clamp(20px, 6vw, 80px);
   bottom: 24px;
   z-index: 40;
-  font-family: var(--font-mono);
+  font-family: var(--f-mono);
   font-size: 10px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -194,7 +203,7 @@
 }
 .skipIntro:hover,
 .skipIntro:focus-visible {
-  color: var(--white);
+  color: var(--hero-ink);
 }
 
 /* ── Scroll hint ── */
@@ -213,7 +222,7 @@
 .scrollHint.hidden { opacity: 0; }
 
 .scrollLabel {
-  font-family: var(--font-mono);
+  font-family: var(--f-mono);
   font-size: 9px;
   letter-spacing: 0.2em;
   color: rgba(240, 237, 232, 0.2);
@@ -237,7 +246,7 @@
   position: absolute;
   bottom: 24px;
   right: 28px;
-  font-family: var(--font-mono);
+  font-family: var(--f-mono);
   font-size: 9px;
   color: rgba(240, 237, 232, 0.12);
   letter-spacing: 0.1em;
@@ -250,7 +259,7 @@
   top: 0;
   left: 0;
   height: 1px;
-  background: linear-gradient(90deg, var(--accent), rgba(200, 169, 126, 0.15));
+  background: linear-gradient(90deg, var(--hero-accent), rgba(200, 169, 126, 0.15));
   transition: width 0.05s linear;
   pointer-events: none;
 }
@@ -259,7 +268,7 @@
 .loader {
   position: fixed;
   inset: 0;
-  background: var(--bg);
+  background: var(--hero-bg);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -269,7 +278,7 @@
 }
 
 .loaderLabel {
-  font-family: var(--font-mono);
+  font-family: var(--f-mono);
   font-size: 9px;
   letter-spacing: 0.22em;
   color: rgba(200, 169, 126, 0.4);
@@ -289,12 +298,12 @@
   top: 0;
   left: 0;
   height: 100%;
-  background: var(--accent);
+  background: var(--hero-accent);
   transition: width 0.1s linear;
 }
 
 .loaderPct {
-  font-family: var(--font-mono);
+  font-family: var(--f-mono);
   font-size: 10px;
   color: rgba(240, 237, 232, 0.2);
   letter-spacing: 0.1em;

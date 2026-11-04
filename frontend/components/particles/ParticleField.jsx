@@ -2,10 +2,11 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { buildShapes, rng, RERANK_QUERY, RERANK_PICKS } from './shapes';
 
-// One fixed WebGL particle field behind everything after the hero. Any element
-// with data-shape="<name>" is an anchor: as it scrolls past the middle of the
-// viewport the field holds that shape, then morphs into the next anchor's
-// shape — the same scrubbed-frame feel as the hero sequence.
+// A WebGL particle field that fills its parent (a sticky "stage" card in the
+// Work section). Any element with data-shape="<name>" is an anchor: as it
+// scrolls past the middle of the viewport the field holds that shape, then
+// morphs into the next anchor's shape — the same scrubbed-frame feel as the
+// hero sequence. Particles are drawn as dark ink on the light card.
 //
 // Hover highlighting: dispatch `particles:highlight` with { detail: index }
 // (or null) to brighten one group in the ring shape.
@@ -13,7 +14,7 @@ import { buildShapes, rng, RERANK_QUERY, RERANK_PICKS } from './shapes';
 const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 
-export default function ParticleField({ projectCount, timelineCount }) {
+export default function ParticleField({ projectCount, timelineCount, className = '' }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -22,14 +23,14 @@ export default function ParticleField({ projectCount, timelineCount }) {
 
     let renderer;
     try {
-      renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: 'high-performance' });
+      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
     } catch {
       return undefined; // No WebGL: the page works without the field.
     }
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const small = window.innerWidth < 768;
-    const N = small ? 5200 : 9000;
+    const N = small ? 4200 : 7000;
     const shapes = buildShapes(N, { projectCount, timelineCount });
 
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
@@ -62,7 +63,7 @@ export default function ParticleField({ projectCount, timelineCount }) {
     const material = new THREE.ShaderMaterial({
       transparent: true,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
+      blending: THREE.NormalBlending,
       uniforms,
       vertexShader: `
         attribute float aLum; attribute float aGroup; attribute float aSeed;
@@ -74,7 +75,7 @@ export default function ParticleField({ projectCount, timelineCount }) {
           gl_Position = projectionMatrix * mv;
           float hi = (aGroup >= 0. && abs(aGroup - uHi) < .5) ? 1. : 0.;
           float l = mix(aLum, 1., hi);
-          gl_PointSize = (1.4 + l * 2.2 + hi * 1.2) * uPx * (7.5 / -mv.z);
+          gl_PointSize = (1.6 + l * 2.0 + hi * 1.4) * uPx * (7.5 / -mv.z);
           vL = l;
         }`,
       fragmentShader: `
@@ -82,31 +83,37 @@ export default function ParticleField({ projectCount, timelineCount }) {
         void main(){
           float d = length(gl_PointCoord - .5);
           if (d > .5) discard;
-          gl_FragColor = vec4(vec3(.94, .93, .91), smoothstep(.5, 0., d) * vL * .85 * uDim);
+          // Bright particles shift from ink toward the cobalt accent.
+          vec3 ink = vec3(.08, .08, .08), accent = vec3(.184, .271, .91);
+          vec3 c = mix(ink, accent, smoothstep(.85, 1., vL));
+          gl_FragColor = vec4(c, smoothstep(.5, .15, d) * (.15 + vL * .75) * uDim);
         }`,
     });
     group.add(new THREE.Points(geo, material));
 
     // Query point and its four retrieved chunks, shown around the reranked shape.
     const q = new THREE.Vector3(...RERANK_QUERY);
-    const lineMat = new THREE.LineBasicMaterial({ color: 0xf0ede8, transparent: true, opacity: 0 });
+    const lineMat = new THREE.LineBasicMaterial({ color: 0x2f45e8, transparent: true, opacity: 0 });
     const lineGeo = new THREE.BufferGeometry().setFromPoints(RERANK_PICKS.flatMap((p) => [q.clone(), new THREE.Vector3(...p)]));
     group.add(new THREE.LineSegments(lineGeo, lineMat));
-    const qMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.12, transparent: true, opacity: 0 });
+    const qMat = new THREE.PointsMaterial({ color: 0x2f45e8, size: 0.16, transparent: true, opacity: 0 });
     const qGeo = new THREE.BufferGeometry().setFromPoints([q]);
     group.add(new THREE.Points(qGeo, qMat));
 
+    const host = canvas.parentElement;
     const resize = () => {
-      const w = window.innerWidth, h = window.innerHeight;
+      const w = Math.max(1, host.clientWidth), h = Math.max(1, host.clientHeight);
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
-      // Desktop: the shape sits right of the text column. Phones: centred, higher.
-      camera.setViewOffset(w, h, w >= 768 ? -w * 0.17 : 0, w >= 768 ? 0 : h * 0.14, w, h);
-      camera.position.set(0, 0, w >= 768 ? 8.2 : 10.8);
+      // Pull back on narrow or short stages so shapes are never cropped.
+      const aspect = w / h;
+      // Taller-than-wide stages pull back so the widest shape (the ring) still fits.
+      camera.position.set(0, 0, aspect >= 1 ? 8.6 : Math.min(16, 9.2 / aspect));
       camera.updateProjectionMatrix();
     };
     resize();
-    window.addEventListener('resize', resize);
+    const ro = new ResizeObserver(resize);
+    ro.observe(host);
 
     let mx = 0, my = 0;
     const onPointer = (e) => { mx = e.clientX / window.innerWidth - 0.5; my = e.clientY / window.innerHeight - 0.5; };
@@ -123,15 +130,14 @@ export default function ParticleField({ projectCount, timelineCount }) {
     mo.observe(document.body, { childList: true, subtree: true });
 
     const readTarget = () => {
-      if (!anchors.length) return { idx: 0, fade: 0 };
+      if (!anchors.length) return { idx: 0 };
       const ref = window.innerHeight * 0.5;
       const tops = anchors.map((a) => a.getBoundingClientRect().top);
-      const fade = clamp01((window.innerHeight - tops[0]) / (window.innerHeight * 0.7));
       let i = 0;
       while (i < tops.length - 1 && tops[i + 1] <= ref) i++;
       const span = i < tops.length - 1 ? tops[i + 1] - tops[i] : 1;
       const frac = i < tops.length - 1 ? clamp01((ref - tops[i]) / span) : 0;
-      return { idx: i + frac, fade };
+      return { idx: i + frac };
     };
 
     let current = readTarget().idx;
@@ -140,9 +146,10 @@ export default function ParticleField({ projectCount, timelineCount }) {
 
     const frame = () => {
       raf = requestAnimationFrame(frame);
-      const { idx, fade } = readTarget();
-      canvas.style.opacity = String(fade);
-      if (fade <= 0.001) return; // Still in the hero: nothing to draw.
+      const { idx } = readTarget();
+      // Off-screen stage: skip the work.
+      const rect = canvas.getBoundingClientRect();
+      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
 
       current += reduce ? idx - current : (idx - current) * 0.08;
       const names = anchors.map((a) => a.dataset.shape);
@@ -185,7 +192,7 @@ export default function ParticleField({ projectCount, timelineCount }) {
     return () => {
       cancelAnimationFrame(raf);
       mo.disconnect();
-      window.removeEventListener('resize', resize);
+      ro.disconnect();
       window.removeEventListener('pointermove', onPointer);
       window.removeEventListener('particles:highlight', onHighlight);
       geo.dispose(); material.dispose(); lineGeo.dispose(); lineMat.dispose(); qGeo.dispose(); qMat.dispose();
@@ -197,8 +204,7 @@ export default function ParticleField({ projectCount, timelineCount }) {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="fixed inset-0 w-screen h-screen pointer-events-none z-0"
-      style={{ opacity: 0 }}
+      className={`block w-full h-full pointer-events-none ${className}`}
     />
   );
 }

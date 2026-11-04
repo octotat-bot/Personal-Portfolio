@@ -58,9 +58,9 @@ function renderMarkdown(text) {
 function Message({ msg, streaming }) {
   const isUser = msg.role === 'user';
   return (
-    <div className={`py-4 border-b border-rule ${isUser ? 'pl-8' : ''}`}>
-      <div className="eyebrow mb-1.5">{isUser ? 'You' : "Mukund's AI"}</div>
-      <div className={`text-[13px] leading-relaxed ${isUser ? 'text-ink' : 'text-ink-2'}`}>
+    <div className={`py-2 flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
+      <span className="sr-only">{isUser ? 'You said:' : "Mukund's AI said:"}</span>
+      <div className={`max-w-[88%] px-4 py-2.5 rounded-2xl text-[14px] leading-relaxed ${isUser ? 'bg-accent text-white rounded-br-md' : 'bg-raised border border-rule text-ink-2 rounded-bl-md'}`}>
         {isUser ? msg.content : renderMarkdown(msg.content)}
         {streaming && !msg.content && <span className="text-ink-3">Thinking…</span>}
         {streaming && msg.content && (
@@ -74,19 +74,19 @@ function Message({ msg, streaming }) {
 function WelcomeView({ onSuggestionClick }) {
   return (
     <div className="flex-1 overflow-y-auto px-5 py-6">
-      <p className="font-serif text-[26px] leading-tight text-ink mb-3">Ask about my work.</p>
+      <p className="font-display font-semibold tracking-[-0.03em] text-[28px] leading-tight text-ink mb-3">Ask about my <span className="text-accent">work.</span></p>
       <p className="text-[13px] text-ink-3 leading-relaxed mb-7">
         Answers come only from the projects, timeline and contact details on this site.
         For anything else, email me.
       </p>
       <div className="eyebrow mb-2">Try asking</div>
-      <ul className="border-t border-rule">
+      <ul>
         {SUGGESTIONS.map((s) => (
-          <li key={s} className="border-b border-rule">
+          <li key={s} className="mb-2">
             <button
               type="button"
               onClick={() => onSuggestionClick(s)}
-              className="group w-full flex items-center justify-between gap-4 text-left text-[13px] text-ink-2 hover:text-ink py-3 min-h-[44px] transition-colors"
+              className="group w-full flex items-center justify-between gap-4 text-left text-[14px] text-ink-2 hover:text-accent px-4 py-3 min-h-[44px] rounded-2xl bg-raised border border-rule hover:border-accent transition-colors"
             >
               {s}
               <span aria-hidden className="text-ink-4 group-hover:text-ink transition-colors">→</span>
@@ -195,13 +195,13 @@ export default function AICloneWidget() {
         aria-expanded={isOpen}
         aria-controls="ai-chat"
         onClick={() => (isOpen ? close() : setIsOpen(true))}
-        className={`fixed bottom-5 right-5 md:bottom-6 md:right-6 z-50 btn-ed ${isOpen ? 'btn-ed-solid' : 'bg-bg'}`}
+        className={`fixed bottom-5 right-5 md:bottom-6 md:right-6 z-50 btn-ed !shadow-lg ${isOpen ? '' : 'btn-ed-dark'}`}
       >
         {isOpen ? (
           <>Close <span aria-hidden>×</span></>
         ) : (
           <>
-            <span aria-hidden className="w-1.5 h-1.5 bg-ink" />
+            <span aria-hidden className="w-2 h-2 rounded-full bg-[#7CF2A8]" />
             Ask my AI
           </>
         )}
@@ -217,11 +217,11 @@ export default function AICloneWidget() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 12 }}
             transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed z-50 inset-x-3 bottom-[76px] md:inset-x-auto md:right-6 md:bottom-[84px] md:w-[400px] h-[min(560px,calc(100dvh-110px))] flex flex-col bg-raised border border-rule-strong"
+            className="fixed z-50 inset-x-3 bottom-[76px] md:inset-x-auto md:right-6 md:bottom-[84px] md:w-[400px] h-[min(560px,calc(100dvh-110px))] flex flex-col bg-surface border border-rule rounded-[24px] shadow-lg overflow-hidden"
           >
             <div className="flex items-center justify-between gap-4 pl-5 pr-2 h-14 border-b border-rule shrink-0">
               <div className="flex items-baseline gap-3 min-w-0">
-                <span className="font-serif text-lg text-ink whitespace-nowrap">Mukund's AI</span>
+                <span className="font-display font-semibold tracking-[-0.02em] text-lg text-ink whitespace-nowrap">Mukund's AI</span>
                 <span className="eyebrow truncate">Gemini · site data only</span>
               </div>
               {!isWelcome && (

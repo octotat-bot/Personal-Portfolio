@@ -8,19 +8,28 @@ export default {
         extend: {
             colors: {
                 bg: 'var(--bg)',
-                raised: 'var(--bg-raised)',
+                surface: 'var(--surface)',
+                raised: 'var(--raised)',
+                sunk: 'var(--sunk)',
                 ink: 'var(--ink)',
                 'ink-2': 'var(--ink-2)',
                 'ink-3': 'var(--ink-3)',
                 'ink-4': 'var(--ink-4)',
                 rule: 'var(--rule)',
                 'rule-strong': 'var(--rule-strong)',
+                accent: 'var(--accent)',
+                'accent-soft': 'var(--accent-soft)',
                 danger: 'var(--danger)',
             },
             fontFamily: {
-                serif: ['"DM Serif Display"', 'Georgia', 'serif'],
-                mono: ['"DM Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
-                sans: ['"DM Mono"', 'ui-monospace', 'monospace'],
+                display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
+                sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+                mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+            },
+            boxShadow: {
+                sm: 'var(--shadow-sm)',
+                md: 'var(--shadow-md)',
+                lg: 'var(--shadow-lg)',
             },
             fontSize: {
                 'display': ['72px', { lineHeight: '1.1', letterSpacing: '-0.01em', fontWeight: '700' }],

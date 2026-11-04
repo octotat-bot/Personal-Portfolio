@@ -1,56 +1,62 @@
 import { aboutContent, contactInfo, timeline } from '../../data/content';
 import useLeetCodeStats from '../../hooks/useLeetCodeStats';
-import { Reveal, ArrowUpRight } from '../ui/editorial';
+import { Reveal, SectionHeader, ArrowUpRight } from '../ui/editorial';
 
 export default function About() {
   const leetCodeSolved = useLeetCodeStats();
   const leetcode = aboutContent.stats.find((s) => s.label === 'LeetCode solved');
 
   return (
-    <section id="about" data-shape="timeline" aria-labelledby="about-title" className="relative min-h-[100svh] py-28 md:py-40">
+    <section id="about" aria-labelledby="about-title" className="relative py-24 md:py-32">
       <div className="container-ed">
-        <Reveal>
-          <div className="eyebrow mb-6 flex items-center gap-4">02 — About <span className="w-14 h-px bg-rule-strong" aria-hidden /></div>
-          <h2 id="about-title" className="font-serif text-[44px] md:text-[76px] leading-[0.98] tracking-[-0.015em] text-ink max-w-[880px]">
-            {aboutContent.intro}
-          </h2>
-          <p className="mt-8 text-[14px] text-ink-2 leading-[1.8] max-w-[520px]">{aboutContent.description}</p>
-        </Reveal>
+        <SectionHeader number="02" label="About" id="about-title" title={aboutContent.intro} />
 
-        <Reveal delay={0.08} className="mt-16 grid grid-cols-2 md:grid-cols-4 border-t border-rule max-w-[880px]">
-          {[
-            ['Studying', 'B.Tech AI · 2024–28'],
-            ['Based in', contactInfo.location],
-            ['Status', contactInfo.availability],
-            ['LeetCode', (
-              <a key="lc" href={leetcode.link} target="_blank" rel="noreferrer" className="link-ed inline-flex items-center gap-1.5">
-                {leetCodeSolved ?? leetcode.value} solved <ArrowUpRight />
-              </a>
-            )],
-          ].map(([term, detail]) => (
-            <div key={term} className="py-5 pr-4 border-b border-rule">
-              <div className="eyebrow mb-2">{term}</div>
-              <div className="text-[14px] text-ink">{detail}</div>
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+          <Reveal className="card p-7 md:p-9 md:col-span-4 flex flex-col justify-between gap-8">
+            <p className="text-[18px] md:text-[20px] leading-[1.6] text-ink-2 max-w-[620px]">{aboutContent.description}</p>
+            <div className="flex flex-wrap gap-2">
+              <span className="chip !shadow-none"><span aria-hidden className="w-1.5 h-1.5 rounded-full bg-[#1f9d55]" />{contactInfo.availability}</span>
+              <span className="chip !shadow-none">{contactInfo.location}</span>
+              <span className="chip !shadow-none">B.Tech AI · 2024–28</span>
             </div>
-          ))}
-        </Reveal>
+          </Reveal>
 
-        <Reveal delay={0.12} className="mt-16 max-w-[880px]">
-          <h3 className="eyebrow text-ink-2 mb-4">Timeline</h3>
-          <ol>
-            {timeline.map((item) => (
-              <li key={`${item.year}-${item.title}`} className="grid grid-cols-[120px_1fr] md:grid-cols-[180px_1fr_auto] items-baseline gap-x-6 gap-y-1 py-4 border-b border-rule">
-                <span className="text-[12px] text-ink-3 tabular-nums">{item.year}</span>
-                <span className="font-serif text-[22px] md:text-[26px] text-ink leading-tight">{item.title}</span>
-                {item.link ? (
-                  <a href={item.link} target="_blank" rel="noreferrer" className="col-start-2 md:col-start-auto link-ed inline-flex items-center gap-1.5 text-[12px] min-h-[44px]">
-                    Visit <ArrowUpRight /><span className="sr-only">{item.title} (opens in a new tab)</span>
-                  </a>
-                ) : <span className="hidden md:block" />}
-              </li>
-            ))}
-          </ol>
-        </Reveal>
+          {leetcode && (
+            <Reveal delay={0.06} className="md:col-span-2">
+              <a
+                href={leetcode.link}
+                target="_blank"
+                rel="noreferrer"
+                className="group card card-hover !bg-accent !border-accent text-white p-7 md:p-9 h-full min-h-[220px] flex flex-col justify-between"
+              >
+                <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-white/80 flex items-center justify-between">
+                  LeetCode <ArrowUpRight className="w-4 h-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </span>
+                <span>
+                  <span className="block font-display font-semibold text-[64px] md:text-[80px] leading-none tracking-[-0.05em]">{leetCodeSolved ?? leetcode.value}</span>
+                  <span className="block mt-2 text-[15px] text-white/85">problems solved · live count</span>
+                </span>
+              </a>
+            </Reveal>
+          )}
+
+          <Reveal delay={0.1} className="card p-7 md:p-9 md:col-span-6">
+            <h3 className="eyebrow mb-6">Timeline</h3>
+            <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {timeline.map((item, i) => (
+                <li key={`${item.year}-${item.title}`} className={`relative rounded-2xl p-5 ${i === 0 ? 'bg-ink text-white' : 'bg-raised border border-rule'}`}>
+                  <span className={`font-mono text-[11px] tracking-[0.06em] ${i === 0 ? 'text-white/70' : 'text-ink-3'}`}>{item.year}</span>
+                  <p className={`mt-3 font-display font-semibold text-[21px] leading-tight tracking-[-0.02em] ${i === 0 ? 'text-white' : 'text-ink'}`}>{item.title}</p>
+                  {item.link && (
+                    <a href={item.link} target="_blank" rel="noreferrer" className={`mt-3 inline-flex items-center gap-1.5 text-[14px] font-medium underline underline-offset-4 min-h-[44px] ${i === 0 ? 'text-white decoration-white/40 hover:decoration-white' : 'text-ink decoration-rule-strong hover:decoration-accent'}`}>
+                      Visit <ArrowUpRight /><span className="sr-only">{item.title} (opens in a new tab)</span>
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </Reveal>
+        </div>
       </div>
     </section>
   );

@@ -11,7 +11,7 @@ export default function Footer() {
     <footer className="bg-bg border-t border-rule">
       <div className="container-ed py-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-baseline gap-4">
-          <span className="font-serif text-2xl text-ink">Mukund Mangla</span>
+          <span className="font-display font-semibold tracking-[-0.03em] text-2xl text-ink">Mukund Mangla</span>
           <span className="eyebrow">© {year}</span>
         </div>
         <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-8 gap-y-2 text-[13px] md:pr-36">
