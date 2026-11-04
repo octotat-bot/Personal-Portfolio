@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { AnimatePresence, MotionConfig } from 'framer-motion';
 import LoadingScreen from './components/LoadingScreen';
 import Navigation from './components/Navigation';
@@ -9,6 +9,12 @@ import Projects from './components/sections/Projects';
 import Contact from './components/sections/Contact';
 import Footer from './components/Footer';
 import AICloneWidget from './components/AICloneWidget';
+import { stations } from './data/projects';
+import { timeline } from './data/content';
+
+// Three.js is only needed below the hero, so it loads in its own chunk.
+const ParticleField = lazy(() => import('./components/particles/ParticleField'));
+const ringCount = stations.filter((p) => p.tier !== 'featured').length;
 
 const INTRO_SEEN_KEY = 'mm:intro-seen';
 
@@ -59,9 +65,14 @@ function App() {
       </AnimatePresence>
 
       <div className="relative bg-bg text-ink overflow-x-clip">
+        {!isLoading && (
+          <Suspense fallback={null}>
+            <ParticleField projectCount={ringCount} timelineCount={timeline.length} />
+          </Suspense>
+        )}
         <Navigation />
 
-        <main>
+        <main className="relative z-10">
           <Hero isAppLoaded={!isLoading} onFirstFrameReady={setHeroReady} />
           <Projects />
           <About />
@@ -69,7 +80,7 @@ function App() {
           <Contact />
         </main>
 
-        <Footer />
+        <div className="relative z-10"><Footer /></div>
         <AICloneWidget />
       </div>
     </MotionConfig>

@@ -10,6 +10,7 @@ Vite + React 19 + Tailwind 3 + Framer Motion, deployed on Vercel. `api/chat.js` 
 ## Where content lives
 - `frontend/data/projects.js` — **the only place project data is defined.** Used by `components/sections/Projects.jsx` and `api/chat.js`. `tier` sets placement: `featured` (case study), `more` (index), `earlier` (compact list). `projectsUsing(tech)` powers the Toolkit section.
 - `frontend/data/content.js` — skill groups (a tool only renders if a project lists it), about, timeline, contact info.
+- `components/particles/` — the Three.js particle field behind everything after the hero (lazy-loaded chunk). Any element with `data-shape="<name>"` is a scroll anchor; shapes live in `shapes.js`. Featured projects' `scenes` in `projects.js` set the shape and the few words shown per scene.
 - Design tokens (`--ink`, `--rule`, …) and shared classes (`btn-ed`, `eyebrow`, `link-ed`) live in `frontend/index.css`; section header and reveal helpers in `components/ui/editorial.jsx`.
 - `frontend/components/sections/textBlocks.js` — hero text and reveal timing.
 - `public/hero-frames/` — 153 WebP frames for the scroll-driven canvas hero. Source PNGs live in `assets-src/` (not deployed).

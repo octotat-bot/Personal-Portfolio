@@ -14,7 +14,7 @@ export default function Footer() {
           <span className="font-serif text-2xl text-ink">Mukund Mangla</span>
           <span className="eyebrow">© {year}</span>
         </div>
-        <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-8 gap-y-2 text-[13px]">
+        <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-8 gap-y-2 text-[13px] md:pr-36">
           <a href={`mailto:${contactInfo.email}`} className="link-ed min-h-[44px] inline-flex items-center">Email</a>
           <a href={contactInfo.social.github} target="_blank" rel="noreferrer" className="link-ed min-h-[44px] inline-flex items-center">GitHub</a>
           <a href={contactInfo.social.linkedin} target="_blank" rel="noreferrer" className="link-ed min-h-[44px] inline-flex items-center">LinkedIn</a>

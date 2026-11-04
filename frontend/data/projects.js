@@ -6,6 +6,10 @@
 //   "featured" — full case study at the top of Work (keep to two or three)
 //   "more"     — the project index
 //   "earlier"  — the compact "Earlier work" list
+//
+// scenes (featured only) drive the scroll story in the Work section: each one
+// is a particle shape plus the few words shown over it. Captions must describe
+// something real (a test case, an actual output), never an illustration.
 
 export const stations = [
   {
@@ -139,6 +143,10 @@ export const stations = [
     github: "https://github.com/octotat-bot/RepoMind", demo: "https://repomind-eight-mu.vercel.app/",
     features: ["Citations to exact line ranges", "Interactive dependency graph", "AST-based dead-code analysis"],
     challenges: "Pure vector similarity kept returning several chunks from whichever single file sat closest in embedding space. Retrieval needed a reranking pass — per-file diversity plus identifier splitting, so that asking where a token is verified matches verifyToken — to let lower-scoring but genuinely relevant files reach the context window.",
+    scenes: [
+      { shape: "clusters", title: ["Ask any", "repo."], line: "Every point is a chunk of code. One file kept crowding out the rest.", caption: "RepoMind's own test · vector-only top 4: big.py ×4" },
+      { shape: "reranked", title: ["The right file", "gets in."], caption: "Same test through rerank() · other.py reaches the top 4" }
+    ],
     image: "/projects/repomind.png"
   },
   {
@@ -150,6 +158,9 @@ export const stations = [
     github: "https://github.com/octotat-bot/Marginalia", demo: "https://marginalia-main.streamlit.app/",
     features: ["Page-level citations", "Refuses rather than guessing", "Swappable LLM providers"],
     challenges: "Smaller models would set answer_found=true and then write \"there is no mention of this in the excerpt\" into the answer field, returning a refusal with a citation attached. That needed a third guardrail layer on top of the similarity threshold and the model's own verdict: short answers matching refusal phrasing are normalised back into a real refusal with no sources.",
+    scenes: [
+      { shape: "pages", title: ["Ask any", "PDF."], line: "It cites the page, or it refuses.", caption: "Answers carry file and page citations" }
+    ],
     image: "/projects/marginalia.png"
   }
 ];

@@ -1,256 +1,117 @@
-import { useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useCallback, useState } from 'react';
 import { stations } from '../../data/projects';
-import { Reveal, SectionHeader, ArrowUpRight } from '../ui/editorial';
+import { Reveal, ArrowUpRight } from '../ui/editorial';
+import ProjectDrawer from './ProjectDrawer';
 
 const byYearDesc = (a, b) => Number(b.year) - Number(a.year);
 const featured = stations.filter((p) => p.tier === 'featured');
-const more = stations.filter((p) => p.tier === 'more').sort(byYearDesc);
-const earlier = stations.filter((p) => p.tier === 'earlier').sort(byYearDesc);
+const indexProjects = [
+  ...stations.filter((p) => p.tier === 'more').sort(byYearDesc),
+  ...stations.filter((p) => p.tier === 'earlier').sort(byYearDesc),
+];
 
-// Stock photos are not evidence of anything, so only images and video that
-// live in /public are shown.
-const isLocal = (src) => typeof src === 'string' && src.startsWith('/');
+const highlight = (i) => window.dispatchEvent(new CustomEvent('particles:highlight', { detail: i }));
 
-function ProjectLinks({ project, compact = false }) {
-  const cls = compact ? 'link-ed inline-flex items-center gap-1.5 text-[13px] min-h-[44px]' : 'btn-ed';
+// A tall block whose content sticks to the viewport while the particle field
+// behind it holds this scene's shape.
+function Scene({ shape, children, caption, tall = true }) {
   return (
-    <div className={`flex flex-wrap ${compact ? 'gap-x-6' : 'gap-3'}`}>
-      {project.demo && (
-        <a href={project.demo} target="_blank" rel="noreferrer" className={`${cls} ${compact ? '' : 'btn-ed-solid'}`}>
-          Live demo <ArrowUpRight />
-          <span className="sr-only">for {project.title} (opens in a new tab)</span>
-        </a>
-      )}
-      {project.github && (
-        <a href={project.github} target="_blank" rel="noreferrer" className={cls}>
-          Source <ArrowUpRight />
-          <span className="sr-only">code for {project.title} on GitHub (opens in a new tab)</span>
-        </a>
-      )}
+    <div data-shape={shape} className={`relative ${tall ? 'md:h-[170vh]' : ''}`}>
+      <div className="md:sticky md:top-0 min-h-[100svh] flex flex-col justify-end md:justify-center pb-[14vh] md:pb-0">
+        <div className="container-ed">
+          <div className="max-w-[560px]">
+            {children}
+            {caption && (
+              <p className="eyebrow mt-8 pt-4 border-t border-rule max-w-[360px] leading-[1.9]">{caption}</p>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
-function TechList({ tech }) {
+function Title({ parts, as = 'h3', id }) {
+  const Tag = as;
   return (
-    <ul className="flex flex-wrap gap-x-3 gap-y-1 text-[12px] text-ink-3" aria-label="Built with">
-      {tech.map((t, i) => (
-        <li key={t}>
-          {t}
-          {i < tech.length - 1 && <span aria-hidden className="ml-3 text-ink-4">/</span>}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function CaseStudy({ project, index }) {
-  const flip = index % 2 === 1;
-  return (
-    <article
-      id={`project-${project.id}`}
-      aria-labelledby={`project-${project.id}-title`}
-      className="border-t border-rule pt-10 md:pt-14 pb-16 md:pb-24 scroll-mt-24"
-    >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
-        <Reveal className={`lg:col-span-5 ${flip ? 'lg:order-2' : ''}`}>
-          <div className="flex items-baseline justify-between gap-4 mb-6">
-            <span className="eyebrow text-ink-2">Case study {String(index + 1).padStart(2, '0')}</span>
-            <span className="eyebrow">{project.year} · {project.status}</span>
-          </div>
-          <h3 id={`project-${project.id}-title`} className="font-serif text-5xl md:text-6xl leading-none text-ink mb-6">
-            {project.title}
-          </h3>
-          <p className="text-ink-2 leading-relaxed mb-8">{project.description}</p>
-
-          <div className="border-l border-rule-strong pl-5 mb-8">
-            <div className="eyebrow mb-3">The hard part</div>
-            <p className="text-ink text-[14px] leading-relaxed">{project.challenges}</p>
-          </div>
-
-          <ul className="mb-8 border-t border-rule">
-            {project.features.map((f) => (
-              <li key={f} className="border-b border-rule py-3 text-[13px] text-ink-2 flex gap-3">
-                <span aria-hidden className="text-ink-4">—</span>
-                {f}
-              </li>
-            ))}
-          </ul>
-
-          <div className="mb-8">
-            <TechList tech={project.tech} />
-          </div>
-
-          <ProjectLinks project={project} />
-        </Reveal>
-
-        <Reveal delay={0.1} className={`lg:col-span-7 ${flip ? 'lg:order-1' : ''}`}>
-          {isLocal(project.image) && (
-            <figure className="media-frame lg:sticky lg:top-24">
-              <div className="border border-rule bg-raised overflow-hidden aspect-[16/10]">
-                <img
-                  src={project.image}
-                  alt={`Screenshot of ${project.title}`}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover object-top"
-                />
-              </div>
-              <figcaption className="eyebrow mt-3 flex justify-between">
-                <span>{project.title}</span>
-                <span>Fig. {String(index + 1).padStart(2, '0')}</span>
-              </figcaption>
-            </figure>
-          )}
-        </Reveal>
-      </div>
-    </article>
-  );
-}
-
-function IndexRow({ project, open, onToggle }) {
-  const reduce = useReducedMotion();
-  const panelId = `project-${project.id}-details`;
-  return (
-    <li id={`project-${project.id}`} className="border-b border-rule scroll-mt-24">
-      <h3>
-        <button
-          type="button"
-          onClick={onToggle}
-          aria-expanded={open}
-          aria-controls={panelId}
-          className="group w-full text-left grid grid-cols-[1fr_auto] md:grid-cols-[72px_minmax(0,1.1fr)_minmax(0,2fr)_32px] items-baseline gap-x-6 gap-y-1 py-5 md:py-6 min-h-[44px]"
-        >
-          <span className="hidden md:block text-[12px] text-ink-3 tabular-nums">{project.year}</span>
-          <span className="font-serif text-2xl md:text-3xl text-ink group-hover:translate-x-1 transition-transform duration-300">
-            {project.title}
-          </span>
-          <span className="col-span-2 md:col-span-1 row-start-2 md:row-start-auto text-[13px] text-ink-2 leading-snug line-clamp-2">
-            <span className="md:hidden text-ink-3">{project.year} · </span>
-            {project.description}
-          </span>
-          <span aria-hidden className="col-start-2 row-start-1 md:col-start-auto md:row-start-auto justify-self-end text-ink-2 text-xl leading-none">
-            {open ? '−' : '+'}
-          </span>
-        </button>
-      </h3>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            id={panelId}
-            role="region"
-            aria-label={`${project.title} details`}
-            initial={reduce ? false : { height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={reduce ? undefined : { height: 0, opacity: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-[72px_minmax(0,1.1fr)_minmax(0,2fr)_32px] gap-x-6 gap-y-8 pb-10">
-              <div className="hidden md:block" />
-              <div className="space-y-6">
-                <div>
-                  <div className="eyebrow mb-3">The hard part</div>
-                  <p className="text-[13px] text-ink leading-relaxed">{project.challenges}</p>
-                </div>
-                <ul className="space-y-1.5 text-[13px] text-ink-2">
-                  {project.features.map((f) => (
-                    <li key={f} className="flex gap-3"><span aria-hidden className="text-ink-4">—</span>{f}</li>
-                  ))}
-                </ul>
-                <TechList tech={project.tech} />
-                <ProjectLinks project={project} compact />
-              </div>
-              <div>
-                {isLocal(project.video) ? (
-                  <div className="media-frame border border-rule bg-raised aspect-video overflow-hidden">
-                    <video
-                      src={project.video}
-                      poster={isLocal(project.image) ? project.image : undefined}
-                      controls
-                      muted
-                      playsInline
-                      preload="none"
-                      className="w-full h-full object-cover"
-                      aria-label={`Demo recording of ${project.title}`}
-                    />
-                  </div>
-                ) : isLocal(project.image) ? (
-                  <div className="media-frame border border-rule bg-raised aspect-[16/10] overflow-hidden">
-                    <img
-                      src={project.image}
-                      alt={`Image of ${project.title}`}
-                      loading="lazy"
-                      decoding="async"
-                      className="w-full h-full object-cover object-top"
-                    />
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </li>
+    <Tag id={id} className="font-serif text-[64px] leading-[0.92] md:text-[104px] tracking-[-0.02em] text-ink">
+      {parts[0]}<br /><em className="text-ink-2">{parts[1]}</em>
+    </Tag>
   );
 }
 
 export default function Projects() {
-  const [openId, setOpenId] = useState(null);
-  const toggle = (id) => setOpenId((cur) => (cur === id ? null : id));
+  const [open, setOpen] = useState(null);
+  const close = useCallback(() => setOpen(null), []);
 
   return (
-    <section id="projects" aria-labelledby="work-title" className="relative bg-bg py-24 md:py-36">
-      <div className="container-ed">
-        <SectionHeader
-          number="01"
-          label="Work"
-          id="work-title"
-          title="Selected work"
-          intro="Two LLM projects in depth, with the failure that shaped each one. Everything else follows as an index, so open any row for details."
-        />
+    <section id="projects" aria-labelledby="work-title" className="relative">
+      <Scene shape="sphere">
+        <Reveal>
+          <div className="eyebrow mb-6 flex items-center gap-4">01 — Work <span className="w-14 h-px bg-rule-strong" aria-hidden /></div>
+          <h2 id="work-title" className="font-serif text-[64px] leading-[0.92] md:text-[112px] tracking-[-0.02em] text-ink">
+            Built to <em className="text-ink-2">cite.</em><br />Built to <em className="text-ink-2">refuse.</em>
+          </h2>
+          <p className="mt-6 text-[14px] text-ink-2">Scroll. Each shape is how the project works.</p>
+        </Reveal>
+      </Scene>
 
-        {featured.map((p, i) => (
-          <CaseStudy key={p.id} project={p} index={i} />
-        ))}
+      {featured.map((p) =>
+        p.scenes.map((scene, si) => {
+          const last = si === p.scenes.length - 1;
+          return (
+            <Scene key={`${p.id}-${scene.shape}`} shape={scene.shape} caption={scene.caption}>
+              <Reveal>
+                <div className="eyebrow mb-6 flex items-center gap-4">
+                  {p.title} · {p.year} <span className="w-14 h-px bg-rule-strong" aria-hidden />
+                </div>
+                <Title parts={scene.title} id={si === 0 ? `project-${p.id}` : undefined} />
+                {scene.line && <p className="mt-6 text-[14px] text-ink-2 max-w-[400px] leading-relaxed">{scene.line}</p>}
+                {last && (
+                  <div className="mt-8 flex flex-wrap gap-3">
+                    {p.demo && (
+                      <a href={p.demo} target="_blank" rel="noreferrer" className="btn-ed btn-ed-solid">
+                        Live demo <ArrowUpRight /><span className="sr-only">for {p.title} (opens in a new tab)</span>
+                      </a>
+                    )}
+                    <button type="button" onClick={() => setOpen(p)} className="btn-ed bg-black/40">
+                      Details<span className="sr-only"> about {p.title}</span>
+                    </button>
+                  </div>
+                )}
+              </Reveal>
+            </Scene>
+          );
+        })
+      )}
 
-        <div className="mt-8 md:mt-12">
-          <div className="flex items-baseline justify-between border-b border-rule-strong pb-4">
-            <h3 className="font-serif text-3xl md:text-4xl text-ink">Index</h3>
-            <span className="eyebrow">{more.length} projects</span>
+      <Scene shape="ring" tall={false}>
+        <Reveal>
+          <div className="eyebrow mb-8 flex items-center gap-4">
+            {indexProjects.length} more <span className="w-14 h-px bg-rule-strong" aria-hidden />
           </div>
-          <div className="hidden md:grid grid-cols-[72px_minmax(0,1.1fr)_minmax(0,2fr)_32px] gap-x-6 py-3 border-b border-rule eyebrow" aria-hidden>
-            <span>Year</span><span>Project</span><span>What it is</span><span />
-          </div>
-          <ul>
-            {more.map((p) => (
-              <IndexRow key={p.id} project={p} open={openId === p.id} onToggle={() => toggle(p.id)} />
+          <ul className="flex flex-wrap gap-x-7 gap-y-3" onMouseLeave={() => highlight(null)}>
+            {indexProjects.map((p, i) => (
+              <li key={p.id} id={`project-${p.id}`} className="scroll-mt-24">
+                <button
+                  type="button"
+                  onClick={() => setOpen(p)}
+                  onMouseEnter={() => highlight(i)}
+                  onFocus={() => highlight(i)}
+                  onBlur={() => highlight(null)}
+                  className="group font-serif text-[26px] md:text-[30px] leading-tight text-ink-2 hover:text-ink focus-visible:text-ink transition-colors min-h-[44px] text-left"
+                >
+                  {p.title}
+                  <sup className="font-mono text-[10px] text-ink-4 group-hover:text-ink-3 ml-1 align-super">{p.year}</sup>
+                </button>
+              </li>
             ))}
           </ul>
-        </div>
+          <p className="mt-8 eyebrow">Select one for the full story</p>
+        </Reveal>
+      </Scene>
 
-        {earlier.length > 0 && (
-          <div className="mt-20">
-            <div className="flex items-baseline justify-between border-b border-rule pb-4 mb-2">
-              <h3 className="eyebrow text-ink-2">Earlier work</h3>
-              <span className="eyebrow">Learning projects</span>
-            </div>
-            <ul className="grid grid-cols-1 md:grid-cols-3 gap-x-10">
-              {earlier.map((p) => (
-                <li key={p.id} id={`project-${p.id}`} className="py-5 border-b border-rule md:border-b-0 scroll-mt-24">
-                  <div className="flex items-baseline justify-between gap-4 mb-1">
-                    <span className="font-serif text-xl text-ink">{p.title}</span>
-                    <span className="text-[12px] text-ink-3 tabular-nums">{p.year}</span>
-                  </div>
-                  <p className="text-[13px] text-ink-3 leading-snug mb-1">{p.description}</p>
-                  <ProjectLinks project={p} compact />
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
+      <ProjectDrawer project={open} onClose={close} />
     </section>
   );
 }

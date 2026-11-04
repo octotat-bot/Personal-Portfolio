@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { contactInfo } from '../../data/content';
-import { Reveal, SectionHeader, ArrowUpRight } from '../ui/editorial';
+import { Reveal, ArrowUpRight } from '../ui/editorial';
 
 // Web3Forms keys are public by design: they only allow sending to the
 // inbox registered with the key.
@@ -41,6 +41,7 @@ export default function Contact() {
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('idle'); // idle | sending | sent | failed
   const [copied, setCopied] = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
 
   const update = (key) => (e) => {
     setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -83,15 +84,15 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" aria-labelledby="contact-title" className="relative bg-bg py-24 md:py-36 border-t border-rule">
+    <section id="contact" data-shape="horizon" aria-labelledby="contact-title" className="relative min-h-[100svh] py-28 md:py-40">
       <div className="container-ed">
-        <SectionHeader
-          number="04"
-          label="Contact"
-          id="contact-title"
-          title="Let's talk."
-          intro={`${contactInfo.availability}. Email is the fastest way to reach me.`}
-        />
+        <Reveal className="mb-16">
+          <div className="eyebrow mb-6 flex items-center gap-4">04 — Contact <span className="w-14 h-px bg-rule-strong" aria-hidden /></div>
+          <h2 id="contact-title" className="font-serif text-[72px] md:text-[128px] leading-[0.9] tracking-[-0.02em] text-ink">
+            Let's <em className="text-ink-2">talk.</em>
+          </h2>
+          <p className="mt-6 text-[14px] text-ink-2">{contactInfo.availability}.</p>
+        </Reveal>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
           <Reveal className="lg:col-span-6">
@@ -141,8 +142,16 @@ export default function Contact() {
           </Reveal>
 
           <Reveal delay={0.1} className="lg:col-span-5 lg:col-start-8">
-            <form onSubmit={handleSubmit} noValidate className="space-y-8" aria-describedby="form-note">
-              <p id="form-note" className="text-[13px] text-ink-3">Or send a note here. It goes to the same inbox.</p>
+            <button
+              type="button"
+              aria-expanded={formOpen}
+              aria-controls="contact-form"
+              onClick={() => setFormOpen((o) => !o)}
+              className="btn-ed w-full justify-between"
+            >
+              Or write a message here <span aria-hidden>{formOpen ? '−' : '+'}</span>
+            </button>
+            <form id="contact-form" hidden={!formOpen} onSubmit={handleSubmit} noValidate className="space-y-8 mt-8">
               <Field id="name" label="Name" autoComplete="name" value={form.name} onChange={update('name')} error={errors.name} />
               <Field id="email" label="Email" type="email" autoComplete="email" value={form.email} onChange={update('email')} error={errors.email} />
               <Field id="message" label="Message" as="textarea" rows={5} value={form.message} onChange={update('message')} error={errors.message} />
