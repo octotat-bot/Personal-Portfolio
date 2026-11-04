@@ -1,6 +1,9 @@
 import { aboutContent, contactInfo, timeline } from '../../data/content';
 import useLeetCodeStats from '../../hooks/useLeetCodeStats';
 import { Reveal, SectionHeader, ArrowUpRight } from '../ui/editorial';
+import { CountUp, Stagger } from '../ui/motion';
+import { staggerItem } from '../ui/motionVariants';
+import { motion } from 'framer-motion';
 
 export default function About() {
   const leetCodeSolved = useLeetCodeStats();
@@ -33,7 +36,7 @@ export default function About() {
                   LeetCode <ArrowUpRight className="w-4 h-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </span>
                 <span>
-                  <span className="block font-display font-semibold text-[64px] md:text-[80px] leading-none tracking-[-0.05em]">{leetCodeSolved ?? leetcode.value}</span>
+                  <span className="block font-display font-semibold text-[64px] md:text-[80px] leading-none tracking-[-0.05em]"><CountUp value={leetCodeSolved ?? leetcode.value} /></span>
                   <span className="block mt-2 text-[15px] text-white/85">problems solved · live count</span>
                 </span>
               </a>
@@ -42,9 +45,9 @@ export default function About() {
 
           <Reveal delay={0.1} className="card p-7 md:p-9 md:col-span-6">
             <h3 className="eyebrow mb-6">Timeline</h3>
-            <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Stagger as="ol" step={0.09} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {timeline.map((item, i) => (
-                <li key={`${item.year}-${item.title}`} className={`relative rounded-2xl p-5 ${i === 0 ? 'bg-ink text-white' : 'bg-raised border border-rule'}`}>
+                <motion.li variants={staggerItem} key={`${item.year}-${item.title}`} className={`relative rounded-2xl p-5 ${i === 0 ? 'bg-ink text-white' : 'bg-raised border border-rule'}`}>
                   <span className={`font-mono text-[11px] tracking-[0.06em] ${i === 0 ? 'text-white/70' : 'text-ink-3'}`}>{item.year}</span>
                   <p className={`mt-3 font-display font-semibold text-[21px] leading-tight tracking-[-0.02em] ${i === 0 ? 'text-white' : 'text-ink'}`}>{item.title}</p>
                   {item.link && (
@@ -52,9 +55,9 @@ export default function About() {
                       Visit <ArrowUpRight /><span className="sr-only">{item.title} (opens in a new tab)</span>
                     </a>
                   )}
-                </li>
+                </motion.li>
               ))}
-            </ol>
+            </Stagger>
           </Reveal>
         </div>
       </div>

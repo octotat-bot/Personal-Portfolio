@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { contactInfo } from '../../data/content';
 import { Reveal, ArrowUpRight } from '../ui/editorial';
+import { ScrollWords, DriftBlobs } from '../ui/motion';
 
 // Web3Forms keys are public by design: they only allow sending to the
 // inbox registered with the key.
@@ -86,15 +87,20 @@ export default function Contact() {
     <section id="contact" aria-labelledby="contact-title" className="relative py-24 md:py-32">
       <div className="container-ed grid grid-cols-1 lg:grid-cols-12 gap-4">
         <Reveal className="lg:col-span-7 relative overflow-hidden rounded-[28px] bg-accent text-white p-8 md:p-12 shadow-lg flex flex-col justify-between min-h-[520px]">
+          <DriftBlobs colors={['rgba(255,255,255,0.28)', 'rgba(120,160,255,0.45)']} />
           <div aria-hidden className="absolute -right-24 -top-24 w-[420px] h-[420px] rounded-full border border-white/15" />
           <div aria-hidden className="absolute -right-8 -top-8 w-[260px] h-[260px] rounded-full border border-white/15" />
           <div className="relative">
             <span className="inline-flex items-center gap-2 h-[30px] px-3 rounded-full bg-white/15 font-mono text-[11px] font-medium uppercase tracking-[0.06em]">
               <span aria-hidden className="w-1.5 h-1.5 rounded-full bg-[#7CF2A8]" />{contactInfo.availability}
             </span>
-            <h2 id="contact-title" className="mt-8 font-display font-semibold text-[64px] md:text-[112px] leading-[0.88] tracking-[-0.05em]">
-              Let's talk.
-            </h2>
+            {/* Words land from large to size as the card scrolls in. */}
+            <ScrollWords
+              id="contact-title"
+              mode="land"
+              parts={[{ text: 'Let’s talk.' }]}
+              className="mt-8 font-display font-semibold text-[64px] md:text-[112px] leading-[0.88] tracking-[-0.05em]"
+            />
           </div>
 
           <div className="relative mt-12">

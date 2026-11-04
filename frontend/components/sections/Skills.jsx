@@ -1,6 +1,9 @@
 import { skills } from '../../data/content';
 import { projectsUsing } from '../../data/projects';
 import { Reveal, SectionHeader } from '../ui/editorial';
+import { Stagger } from '../ui/motion';
+import { staggerItem } from '../ui/motionVariants';
+import { motion } from 'framer-motion';
 
 // Only tools that some project lists, each with the projects behind it.
 const groups = skills
@@ -22,7 +25,7 @@ export default function Skills() {
           number="03"
           label="Toolkit"
           id="skills-title"
-          title={<>Tools, with <span className="text-accent">receipts.</span></>}
+          title={[{ text: 'Tools, with' }, { text: 'receipts.', className: 'text-accent' }]}
           intro="The number is how many of my projects use each tool. Hover or focus one to see which."
         />
 
@@ -33,9 +36,9 @@ export default function Skills() {
                 <h3 className="font-display font-semibold text-[20px] tracking-[-0.02em] text-ink">{g.category}</h3>
                 <span className="font-mono text-[11px] text-ink-3">{g.rows.length}</span>
               </div>
-              <ul className="flex flex-wrap gap-2">
+              <Stagger step={0.035} delay={0.1} className="flex flex-wrap gap-2">
                 {g.rows.map(({ tech, projects }) => (
-                  <li key={tech} className="group relative">
+                  <motion.li variants={staggerItem} key={tech} className="group relative">
                     <span
                       tabIndex={0}
                       aria-describedby={toolId(tech)}
@@ -53,9 +56,9 @@ export default function Skills() {
                     >
                       {projects.map((p) => p.title).join(', ')}
                     </span>
-                  </li>
+                  </motion.li>
                 ))}
-              </ul>
+              </Stagger>
             </Reveal>
           ))}
         </div>

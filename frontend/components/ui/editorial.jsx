@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { ScrollWords } from './motion';
 
 // Fade-and-rise on first entry into the viewport. Under reduced motion the
 // content renders in its final state with no movement.
@@ -32,9 +33,12 @@ export function SectionHeader({ number, label, title, intro, id, className = '' 
         <span aria-hidden className="w-px h-3 bg-rule-strong" />
         {label}
       </span>
-      <h2 id={id} className="font-display font-semibold text-[44px] leading-[0.98] md:text-[72px] tracking-[-0.035em] text-ink max-w-4xl">
-        {title}
-      </h2>
+      {/* Words light up as the heading scrolls into view (Repetite-style). */}
+      <ScrollWords
+        id={id}
+        parts={typeof title === 'string' ? [{ text: title }] : title}
+        className="font-display font-semibold text-[44px] leading-[0.98] md:text-[72px] tracking-[-0.035em] text-ink max-w-4xl"
+      />
       {intro && <p className="mt-5 max-w-xl text-ink-2 text-[17px] leading-relaxed">{intro}</p>}
     </Reveal>
   );

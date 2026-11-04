@@ -90,11 +90,20 @@ export default function Navigation() {
                     href={`#${l.id}`}
                     onClick={(e) => go(e, l.id)}
                     aria-current={active === l.id ? 'true' : undefined}
-                    className={`inline-flex items-center h-10 px-4 rounded-full text-[14px] font-medium transition-colors ${
-                      active === l.id ? 'bg-ink text-surface' : 'text-ink-2 hover:bg-sunk hover:text-ink'
+                    className={`relative inline-flex items-center h-10 px-4 rounded-full text-[14px] font-medium transition-colors duration-300 ${
+                      active === l.id ? 'text-white' : 'text-ink-2 hover:text-ink'
                     }`}
                   >
-                    {l.label}
+                    {/* One highlight that slides to the active link. */}
+                    {active === l.id && (
+                      <motion.span
+                        layoutId="nav-active"
+                        aria-hidden
+                        className="absolute inset-0 rounded-full bg-ink"
+                        transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                      />
+                    )}
+                    <span className="relative">{l.label}</span>
                   </a>
                 </li>
               ))}

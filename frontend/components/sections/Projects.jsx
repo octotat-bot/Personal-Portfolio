@@ -1,8 +1,11 @@
 import { lazy, Suspense, useCallback, useState } from 'react';
+import { motion } from 'framer-motion';
 import { stations } from '../../data/projects';
 import { timeline } from '../../data/content';
 import { Reveal, ArrowUpRight, ArrowRight } from '../ui/editorial';
 import ProjectDrawer from './ProjectDrawer';
+import { MaskLines, DropIn, Lift, Stagger } from '../ui/motion';
+import { staggerItem } from '../ui/motionVariants';
 
 // Three.js only loads once the Work section mounts, in its own chunk.
 const ParticleField = lazy(() => import('../particles/ParticleField'));
@@ -27,18 +30,23 @@ function Scene({ shape, children, last = false }) {
 
 function Title({ parts, id }) {
   return (
-    <h3 id={id} className="font-display font-semibold text-[40px] md:text-[76px] leading-[0.95] tracking-[-0.04em] text-ink">
-      {parts[0]} <span className="text-accent">{parts[1]}</span>
-    </h3>
+    <MaskLines
+      as="h3"
+      id={id}
+      lines={[{ text: parts[0] }, { text: parts[1], className: 'text-accent' }]}
+      className="font-display font-semibold text-[40px] md:text-[76px] leading-[0.95] tracking-[-0.04em] text-ink"
+    />
   );
 }
 
 function Caption({ children }) {
   return (
-    <p className="mt-6 inline-flex items-start gap-2.5 max-w-[420px] rounded-2xl bg-surface border border-rule px-4 py-3 shadow-sm">
-      <span aria-hidden className="mt-[7px] w-1.5 h-1.5 rounded-full bg-accent shrink-0" />
-      <span className="font-mono text-[12px] leading-relaxed text-ink-2">{children}</span>
-    </p>
+    <DropIn className="mt-6 inline-block" delay={0.35}>
+      <p className="inline-flex items-start gap-3 max-w-[420px] rounded-2xl bg-white/80 backdrop-blur-md border border-white px-4 py-3 shadow-lg">
+        <span aria-hidden className="grid place-items-center w-7 h-7 rounded-lg bg-accent text-white text-[12px] shrink-0">✓</span>
+        <span className="font-mono text-[12px] leading-relaxed text-ink-2 pt-[5px]">{children}</span>
+      </p>
+    </DropIn>
   );
 }
 
@@ -51,6 +59,7 @@ export default function Projects() {
       <div className="container-ed grid grid-cols-1 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-x-10 lg:gap-x-16">
         {/* Stage: sticky card that holds the particle field. First on mobile so it sits on top. */}
         <div className="md:order-2 md:self-start sticky top-[76px] md:top-24 z-10 h-[32svh] md:h-[calc(100vh-128px)] mb-6 md:mb-0">
+          <Lift className="h-full">
           <div className="relative h-full card !shadow-md overflow-hidden bg-gradient-to-b from-white to-raised">
             <div aria-hidden className="absolute inset-0 opacity-50" style={{ backgroundImage: 'radial-gradient(rgba(20,20,20,0.08) 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
             <Suspense fallback={null}>
@@ -58,15 +67,18 @@ export default function Projects() {
             </Suspense>
             <span className="absolute left-4 bottom-4 eyebrow !text-[10px]">Live render · scroll to morph</span>
           </div>
+          </Lift>
         </div>
 
         <div className="md:order-1 relative">
           <Scene shape="sphere">
             <Reveal>
               <span className="chip mb-6"><span className="text-accent">01</span><span aria-hidden className="w-px h-3 bg-rule-strong" />Selected work</span>
-              <h2 id="work-title" className="font-display font-semibold text-[52px] md:text-[84px] leading-[0.92] tracking-[-0.045em] text-ink">
-                Built to <span className="text-accent">cite.</span><br />Built to <span className="text-accent">refuse.</span>
-              </h2>
+              <MaskLines
+                id="work-title"
+                lines={[{ text: 'Built to cite.' }, { text: 'Built to refuse.', className: 'text-accent' }]}
+                className="font-display font-semibold text-[52px] md:text-[84px] leading-[0.92] tracking-[-0.045em] text-ink"
+              />
               <p className="mt-6 text-[17px] text-ink-2 max-w-[380px]">Scroll. Each shape is how the project works.</p>
             </Reveal>
           </Scene>
@@ -105,9 +117,9 @@ export default function Projects() {
               <h3 className="font-display font-semibold text-[40px] md:text-[56px] leading-[0.98] tracking-[-0.04em] text-ink mb-8">
                 Everything <span className="text-accent">else.</span>
               </h3>
-              <ul className="flex flex-wrap gap-2.5" onMouseLeave={() => highlight(null)}>
+              <Stagger className="flex flex-wrap gap-2.5" onMouseLeave={() => highlight(null)}>
                 {indexProjects.map((p, i) => (
-                  <li key={p.id} id={`project-${p.id}`} className="scroll-mt-28">
+                  <motion.li key={p.id} id={`project-${p.id}`} className="scroll-mt-28" variants={staggerItem}>
                     <button
                       type="button"
                       onClick={() => setOpen(p)}
@@ -119,9 +131,9 @@ export default function Projects() {
                       {p.title}
                       <span className="font-mono text-[11px] text-ink-3 group-hover:text-accent">{p.year}</span>
                     </button>
-                  </li>
+                  </motion.li>
                 ))}
-              </ul>
+              </Stagger>
               <p className="mt-6 text-[14px] text-ink-3">Hover a project to find it in the ring. Select it for details.</p>
             </Reveal>
           </Scene>
