@@ -1,87 +1,28 @@
-import { motion } from 'framer-motion';
 import { contactInfo } from '../data/content';
-import { LiquidButton } from './ui/liquid-glass-button';
 
 export default function Footer() {
-    const currentYear = new Date().getFullYear();
+  const year = new Date().getFullYear();
+  const toTop = () => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+  };
 
-    const scrollToTop = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    return (
-        <footer className="relative bg-black border-t border-gray-900 py-16 overflow-hidden">
-            <div className="container mx-auto px-6 lg:px-12">
-
-                <div className="grid md:grid-cols-3 gap-12 mb-16">
-
-                    {/* Brand */}
-                    <div>
-                        <motion.div
-                            className="text-4xl font-bold text-white mb-4"
-                            whileHover={{ scale: 1.05 }}
-                        >
-                            MM
-                        </motion.div>
-                        <p className="text-sm text-gray-600 max-w-xs">
-                            Building digital experiences with clean code and creative solutions.
-                        </p>
-                    </div>
-
-                    {/* Quick Links */}
-                    <div>
-                        <div className="text-xs text-gray-600 uppercase tracking-wider mb-4">Navigate</div>
-                        <div className="space-y-2">
-                            {['About', 'Expertise', 'Work', 'Contact'].map((link) => (
-                                <a
-                                    key={link}
-                                    href={`#${link.toLowerCase()}`}
-                                    className="block text-sm text-gray-500 hover:text-white transition-colors"
-                                >
-                                    {link}
-                                </a>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Social */}
-                    <div>
-                        <div className="text-xs text-gray-600 uppercase tracking-wider mb-4">Connect</div>
-                        <div className="space-y-2">
-                            {Object.entries(contactInfo.social).map(([platform, url]) => (
-                                <a
-                                    key={platform}
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="block text-sm text-gray-500 hover:text-white transition-colors capitalize"
-                                >
-                                    {platform} →
-                                </a>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Bottom Bar */}
-                <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-gray-900">
-                    <div className="text-xs text-gray-600">
-                        © {currentYear} Mukund Mangla. All rights reserved.
-                    </div>
-
-                    <LiquidButton
-                        variant="ghost"
-                        size="sm"
-                        onClick={scrollToTop}
-                        className="group flex items-center gap-2 text-xs text-gray-600 hover:text-white transition-colors !rounded-full"
-                    >
-                        <span>BACK TO TOP</span>
-                        <svg className="w-4 h-4 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                        </svg>
-                    </LiquidButton>
-                </div>
-            </div>
-        </footer>
-    );
+  return (
+    <footer className="bg-bg border-t border-rule">
+      <div className="container-ed py-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="flex items-baseline gap-4">
+          <span className="font-serif text-2xl text-ink">Mukund Mangla</span>
+          <span className="eyebrow">© {year}</span>
+        </div>
+        <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-8 gap-y-2 text-[13px]">
+          <a href={`mailto:${contactInfo.email}`} className="link-ed min-h-[44px] inline-flex items-center">Email</a>
+          <a href={contactInfo.social.github} target="_blank" rel="noreferrer" className="link-ed min-h-[44px] inline-flex items-center">GitHub</a>
+          <a href={contactInfo.social.linkedin} target="_blank" rel="noreferrer" className="link-ed min-h-[44px] inline-flex items-center">LinkedIn</a>
+          <button type="button" onClick={toTop} className="eyebrow hover:text-ink transition-colors min-h-[44px]">
+            Back to top ↑
+          </button>
+        </nav>
+      </div>
+    </footer>
+  );
 }

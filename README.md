@@ -1,11 +1,11 @@
 # Personal Portfolio
 
-My portfolio site: a monochrome, editorial design with a scroll-driven hero, a transit-map view of my projects and an AI chat widget that answers questions about my work.
+My portfolio site: a monochrome, editorial design with a scroll-driven hero, an index of my projects with two in-depth case studies, and an AI chat widget that answers questions about my work.
 
 ## How it works
 
 - **Scroll-driven hero:** plays 153 WebP frames on a canvas as you scroll. Scripts in `scripts/` build the frames and check their quality.
-- **One source for project data:** `frontend/data/projects.js` feeds both the Projects section and the chatbot prompt, so they can't drift apart.
+- **One source for project data:** `frontend/data/projects.js` feeds the Work and Toolkit sections and the chatbot prompt, so they can't drift apart.
 - **AI chat:** `api/chat.js` is a Vercel serverless function that calls Gemini, which keeps the API key on the server.
 - **Live activity:** a section that shows current LeetCode stats.
 

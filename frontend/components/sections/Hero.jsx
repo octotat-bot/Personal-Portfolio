@@ -84,8 +84,7 @@ export default function Hero({ isAppLoaded, onFirstFrameReady }) {
       const dpr  = window.devicePixelRatio || 1;
       canvas.width  = rect.width  * dpr;
       canvas.height = rect.height * dpr;
-      const ctx = canvas.getContext('2d');
-      // Removed ctx.scale(dpr, dpr) to prevent double-scaling
+      // No ctx.scale(dpr): drawFrame works in device pixels already.
       drawFrame(lastFrame.current >= 0 ? lastFrame.current : 0);
     };
     resize();
@@ -167,7 +166,7 @@ export default function Hero({ isAppLoaded, onFirstFrameReady }) {
             ))}
           </div>
 
-          <a href="#about" onClick={(e) => scrollToId(e, 'about')} className={styles.skipIntro}>
+          <a href="#projects" onClick={(e) => scrollToId(e, 'projects')} className={styles.skipIntro}>
             Skip intro ↓
           </a>
 

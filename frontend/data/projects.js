@@ -1,12 +1,16 @@
 // Single source of truth for projects.
 // Used by the Projects section (frontend/components/sections/Projects.jsx)
 // and by the AI chatbot prompt (api/chat.js). Edit projects here only.
-// cx / cy / lines / size are layout fields for the transit-map view.
+//
+// tier controls where a project appears:
+//   "featured" — full case study at the top of Work (keep to two or three)
+//   "more"     — the project index
+//   "earlier"  — the compact "Earlier work" list
 
 export const stations = [
   {
     id: "dreamsignal", title: "DreamSignal",
-    lines: ["aiml", "backend"], cx: 700, cy: 600, size: "large",
+    tier: "more",
     description: "An immersive, analog-themed classified dossier system for recording, analyzing, and archiving dreams.",
     tech: ["React", "Node.js", "Python", "FastAPI", "MongoDB", "Whisper", "Gemini API"],
     status: "Completed", year: "2024",
@@ -18,7 +22,7 @@ export const stations = [
   },
   {
     id: "grief-companion", title: "Grief Companion",
-    lines: ["aiml", "backend"], cx: 500, cy: 600, size: "large",
+    tier: "more",
     description: "An AI writing tool that uses retrieved example messages to help people write difficult messages, such as condolences and apologies.",
     tech: ["React", "Node.js", "Python", "MongoDB", "Groq AI", "RAG"],
     status: "Completed", year: "2026",
@@ -29,7 +33,7 @@ export const stations = [
   },
   {
     id: "habitflow", title: "HabitFlow AI",
-    lines: ["aiml", "frontend"], cx: 500, cy: 200, size: "large",
+    tier: "more",
     description: "An AI-powered habit tracker with streaks, mood analytics, gamification and weekly AI summaries.",
     tech: ["React", "Node.js", "MongoDB", "Gemini API", "Framer Motion"],
     status: "Completed", year: "2024",
@@ -40,7 +44,7 @@ export const stations = [
   },
   {
     id: "smartresume", title: "SmartResume",
-    lines: ["aiml", "frontend"], cx: 500, cy: 400, size: "large",
+    tier: "more",
     description: "An AI-powered smart resume builder that generates professional templates and uses LLMs to iteratively improve your resume content.",
     tech: ["React", "Node.js", "Express", "JWT", "AI API"],
     status: "Completed", year: "2024",
@@ -51,7 +55,7 @@ export const stations = [
   },
   {
     id: "ember", title: "Ember",
-    lines: ["backend"], cx: 300, cy: 600, size: "medium",
+    tier: "more",
     description: "Premium cafe management system with role-based dashboards and live order tracking.",
     tech: ["React", "Node.js", "Express", "MongoDB", "Socket.io"],
     status: "Completed", year: "2026",
@@ -62,7 +66,7 @@ export const stations = [
   },
   {
     id: "balancio", title: "Balancio",
-    lines: ["backend"], cx: 900, cy: 600, size: "medium",
+    tier: "more",
     description: "Collaborative app for managing shared expenses and member-to-member balances with real-time sync.",
     tech: ["React 19", "Node.js", "Express", "MongoDB", "Socket.io"],
     status: "Completed", year: "2024",
@@ -73,18 +77,18 @@ export const stations = [
   },
   {
     id: "portfolio", title: "Portfolio Website",
-    lines: ["frontend"], cx: 100, cy: 200, size: "medium",
-    description: "This futuristic, highly interactive personal portfolio showcasing a cyberpunk transit map concept.",
-    tech: ["React", "Tailwind CSS", "Framer Motion", "SVG"],
+    tier: "more",
+    description: "This site. A scroll-driven canvas hero that plays a 153-frame WebP sequence, an editorial project index, and a Gemini-backed chatbot that answers from the same project data you are reading.",
+    tech: ["React", "Vite", "Tailwind CSS", "Framer Motion", "Canvas", "Vercel", "Gemini API"],
     status: "Active", year: "2024",
     github: "https://github.com/octotat-bot/Personal-Portfolio", demo: "",
-    features: ["Cyberpunk transit map", "Custom animations", "Glassmorphism", "Interactive nodes"],
-    challenges: "Building a scalable SVG transit map with interactive nodes and complex path animations.",
+    features: ["Scroll-driven canvas frame sequence", "Chatbot grounded in the site's own data", "One data file for every project"],
+    challenges: "The hero sequence started at 80MB of frames. Converting to WebP cut it to 6.5MB, and preloading the first frame lets the canvas paint before the rest stream in.",
     image: "/projects/portfolio.png"
   },
   {
     id: "opspilot", title: "OpsPilot",
-    lines: ["frontend"], cx: 300, cy: 200, size: "medium",
+    tier: "more",
     description: "Internal operations platform with multi-level approvals, delegation, SLA checks and analytics.",
     tech: ["React", "Node.js", "Express", "MongoDB", "Tailwind CSS"],
     status: "Active", year: "2023",
@@ -95,7 +99,7 @@ export const stations = [
   },
   {
     id: "notora", title: "Notora",
-    lines: ["frontend"], cx: 700, cy: 200, size: "small",
+    tier: "earlier",
     description: "Modern note-taking web application focused on secure authentication, structured organization, and distraction-free writing.",
     tech: ["React.js", "Clerk", "HTML", "CSS"],
     status: "Completed", year: "2023",
@@ -106,7 +110,7 @@ export const stations = [
   },
   {
     id: "weatherapp", title: "Weather Forecast",
-    lines: ["frontend"], cx: 300, cy: 400, size: "small",
+    tier: "earlier",
     description: "A real-time weather forecasting application that provides accurate data with a clean, dynamic visual interface.",
     tech: ["JavaScript", "HTML", "CSS", "Weather API"],
     status: "Completed", year: "2022",
@@ -117,7 +121,7 @@ export const stations = [
   },
   {
     id: "placenext", title: "PlaceNext",
-    lines: ["aiml", "backend"], cx: 100, cy: 600, size: "large",
+    tier: "more",
     description: "A comprehensive AI Placement Cell & Internship Management System to streamline campus recruitment. Features smart resume analysis for ATS scoring, intelligent eligibility matching, and a 24/7 AI chatbot assistant.",
     tech: ["React", "Node.js", "Express", "MongoDB", "Groq AI", "OpenAI API", "Tailwind CSS"],
     status: "Completed", year: "2024",
@@ -128,7 +132,7 @@ export const stations = [
   },
   {
     id: "repomind", title: "RepoMind",
-    lines: ["aiml"], cx: 500, cy: 50, size: "large",
+    tier: "featured",
     description: "RepoMind indexes any GitHub repository — cloning, chunking and embedding every file — then answers questions about it in plain English, citing the exact files and line ranges behind each answer. It adds semantic code search, an interactive dependency graph with circular-import detection, and AST-based dead-code analysis. Built with Next.js, FastAPI, FAISS and Postgres, on local or hosted models.",
     tech: ["Next.js 15", "React 19", "Tailwind v4", "FastAPI", "Python 3.13", "SQLAlchemy 2", "FAISS", "Ollama", "Groq", "PostgreSQL", "Prisma", "Vercel", "Render", "Neon"],
     status: "Completed", year: "2026",
@@ -139,7 +143,7 @@ export const stations = [
   },
   {
     id: "marginalia", title: "Marginalia",
-    lines: ["aiml"], cx: 700, cy: 450, size: "large",
+    tier: "featured",
     description: "Marginalia is a retrieval-augmented question-answering app for PDFs. Upload documents, ask in plain English, and get answers drawn only from the text, each citing its source file and page. A similarity threshold plus a grounded prompt make it refuse rather than guess. Built with LangChain, Chroma, FastAPI and Streamlit; providers are swappable, uploads are discarded after indexing.",
     tech: ["Python", "LangChain", "FastAPI", "Streamlit", "ChromaDB", "PyMuPDF", "Groq", "OpenAI", "Ollama", "pytest"],
     status: "Completed", year: "2026",
@@ -149,3 +153,17 @@ export const stations = [
     image: "/projects/marginalia.png"
   }
 ];
+
+// Tools are matched to projects by name, ignoring version suffixes
+// ("Next.js 15" → "next.js") and a few spelling variants.
+const TECH_ALIASES = { "react.js": "react", "tailwind": "tailwind css", "openai api": "openai", "groq ai": "groq" };
+
+export const normalizeTech = (name) => {
+  const base = name.toLowerCase().trim().replace(/\s+v?\d+(\.\d+)*$/, "");
+  return TECH_ALIASES[base] ?? base;
+};
+
+export const projectsUsing = (tech) => {
+  const key = normalizeTech(tech);
+  return stations.filter((p) => p.tech.some((t) => normalizeTech(t) === key));
+};

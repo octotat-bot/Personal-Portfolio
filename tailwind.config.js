@@ -7,21 +7,20 @@ export default {
     theme: {
         extend: {
             colors: {
-                background: '#000000',
-                primary: '#FFFFFF',
-                secondary: '#808080',
-                accent: '#E5E5E5',
-                textPrimary: '#FFFFFF',
-                textMuted: '#A0A0A0',
-                textDark: '#404040',
-                cardBg: 'rgba(255,255,255,0.05)',
-                cardBgLight: 'rgba(255,255,255,0.08)',
-                borderSubtle: 'rgba(255,255,255,0.1)',
-                borderLight: 'rgba(255,255,255,0.15)',
+                bg: 'var(--bg)',
+                raised: 'var(--bg-raised)',
+                ink: 'var(--ink)',
+                'ink-2': 'var(--ink-2)',
+                'ink-3': 'var(--ink-3)',
+                'ink-4': 'var(--ink-4)',
+                rule: 'var(--rule)',
+                'rule-strong': 'var(--rule-strong)',
+                danger: 'var(--danger)',
             },
             fontFamily: {
-                sans: ['Inter', 'system-ui', 'sans-serif'],
-                display: ['Satoshi', 'Inter', 'system-ui', 'sans-serif'],
+                serif: ['"DM Serif Display"', 'Georgia', 'serif'],
+                mono: ['"DM Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+                sans: ['"DM Mono"', 'ui-monospace', 'monospace'],
             },
             fontSize: {
                 'display': ['72px', { lineHeight: '1.1', letterSpacing: '-0.01em', fontWeight: '700' }],

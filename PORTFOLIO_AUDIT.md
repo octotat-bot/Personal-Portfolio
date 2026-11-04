@@ -17,6 +17,15 @@ The site is technically current (React 19, Vite 7). The problems are what it say
 
 ---
 
+## Done on branch `redesign/editorial` (2026-11-04)
+
+- Everything below the hero rebuilt in one editorial system (tokens in `index.css`): Work → About → Toolkit → Contact.
+- Transit map replaced by two case studies (RepoMind, Marginalia), a project index, and an "Earlier work" list. Stock Unsplash photos are no longer shown.
+- Self-ratings, "Speed Demon", "AI Architect", "15+ LLM Integrations" and "20+ AI Workflows" removed. Toolkit lists only tools some project uses, linked to those projects. LangGraph, PyTorch, Scikit-Learn and Transformers dropped for lack of a project.
+- Custom cursor, sorting background, liquid-glass nav, gooey text and missing sound files removed; `three`, `@react-three/*`, `maath`, `use-sound`, `react-icons`, `lucide-react` uninstalled.
+- Labelled form fields with inline errors, visible focus, skip link, 44px targets, reduced-motion support.
+- Sitemap reduced to `/`. Lint: 38 → 6 problems, all in vendored `components/ui/` files.
+
 ## Still to do, in priority order
 
 ### 1. Use one headline everywhere (needs Mukund's decision)
